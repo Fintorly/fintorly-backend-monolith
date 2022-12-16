@@ -12,7 +12,7 @@ namespace Fintorly.Application.Behaviors
             _logger = logger;
         }
 
-        public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
             //Request
             _logger.LogInformation("Executing {Name} operation...", typeof(TRequest).Name);
@@ -28,6 +28,7 @@ namespace Fintorly.Application.Behaviors
             var response = await next();
             return response;
         }
+
     }
 }
 
