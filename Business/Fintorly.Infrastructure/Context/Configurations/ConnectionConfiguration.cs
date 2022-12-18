@@ -13,7 +13,7 @@ public class ConnectionConfiguration:IEntityTypeConfiguration<Connection>
         builder.Property(a => a.ConnectionId).IsRequired();
         builder.Property(a => a.IsConnected).IsRequired();
         builder.Property(a => a.ConnectionStartDate).IsRequired();
-        builder.Property(a => a.ConnectionEndDate).IsRequired(false);
+        builder.Property(a => a.ConnectionEndDate).IsRequired();
 
         builder.HasOne<User>(a => a.User).WithMany(a => a.Connections).HasForeignKey(a => a.UserId);
         builder.HasOne<Mentor>(a => a.Mentor).WithMany(a => a.Connections).HasForeignKey(a => a.MentorId);

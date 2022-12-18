@@ -11,8 +11,6 @@ public class CommentConfiguration : IEntityTypeConfiguration<Comment>
         builder.HasKey(a => a.Id);
 
         builder.Property(a => a.Content).IsRequired();
-        builder.Property(a => a.North).IsRequired(false);
-        builder.Property(a => a.South).IsRequired(false);
         builder.Property(a => a.FileName).IsRequired(false);
         builder.Property(a => a.FilePath).IsRequired(false);
         

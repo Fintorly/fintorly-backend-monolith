@@ -7,6 +7,7 @@ namespace Fintorly.Domain.Entities
 {
     public class Mentor : BaseEntity, IEntity
     {
+
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string UserName { get; set; }
@@ -69,7 +70,7 @@ namespace Fintorly.Domain.Entities
 
         //validate tokens
         public ICollection<ValidateToken> ValidateTokens { get; set; }
-        
+
         //interested tokens
         public ICollection<Token> InterestedTokens { get; set; }
         //mentörün ilgilendiği alanları kategorize etmek için
@@ -80,5 +81,6 @@ namespace Fintorly.Domain.Entities
 
 
         public Mentor() => Id = Guid.NewGuid();
+
     }
 }

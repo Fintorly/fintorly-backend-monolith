@@ -12,6 +12,5 @@ public class Message : BaseEntity, IEntity
     public Group Group { get; set; }
     public ICollection<MessagePicture> MessagePictures { get; set; }    
     public ICollection<MessageAndReaction> MessageAndReactions { get; set; }
-
     public Message() => Id = Guid.NewGuid();
 }

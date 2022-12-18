@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Fintorly.Infrastructure.Context.Configurations;
 
-public class ValidateTokenConfiguration:IEntityTypeConfiguration<ValidateToken>
+public class ValidateTokenConfiguration:IEntityTypeConfiguration<AccessToken>
 {
-    public void Configure(EntityTypeBuilder<ValidateToken> builder)
+    public void Configure(EntityTypeBuilder<AccessToken> builder)
     {
         builder.HasKey(a => a.Id);
         builder.Property(a => a.Token).IsRequired();

@@ -12,7 +12,10 @@ namespace Fintorly.Domain.Entities
         public string Title { get; set; }
         public string Content { get; set; }
         public decimal Price { get; set; }
-        public double Point { get; set; }
+        public double PointAverage { get; set; }
+        public int TotalPoint { get; set; }
+        public int TotalVote { get; set; }
+        public bool IsChatable { get; set; }
         public PackageType PackageType { get; set; }
         //Bu pakete sahip olan kullanıcılar
         public ICollection<TierAndUser> TierAndUsers { get; set; }

@@ -3,9 +3,9 @@ using Fintorly.Domain.Common;
 
 namespace Fintorly.Domain.Entities
 {
+    //Şikayet ya da rapor
     public class Report : BaseEntity, IEntity
     {
-     
         public string Title { get; set; }
         public string Content { get; set; }
         public string FileName { get; set; }

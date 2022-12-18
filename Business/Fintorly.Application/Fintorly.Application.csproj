@@ -35,6 +35,24 @@
     <None Remove="Exceptions\" />
     <None Remove="Mapping\" />
     <None Remove="Validations\" />
+    <None Remove="Features\Commands\User\" />
+    <None Remove="Dtos\UserDtos\" />
+    <None Remove="Mapping\UserProfileMapping\" />
+    <None Remove="Microsoft.AspNetCore.Http" />
+    <None Remove="Features\Commands\AuthCommands\" />
+    <None Remove="Dtos\AuthDtos\" />
+    <None Remove="Interfaces\Utils\" />
+    <None Remove="Features\Commands\EmailCommands\" />
+    <None Remove="Microsoft.IdentityModel.Tokens" />
+    <None Remove="System.IdentityModel.Tokens.Jwt" />
+    <None Remove="Microsoft.Extensions.Configuration" />
+    <None Remove="Microsoft.Extensions.Configuration.Abstractions" />
+    <None Remove="Microsoft.Extensions.Configuration.Binder" />
+    <None Remove="MailKit" />
+    <None Remove="MimeKit" />
+    <None Remove="Newtonsoft.Json" />
+    <None Remove="Dtos\OneSignalNotificationDtos\" />
+    <None Remove="OneSignalApi" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Behaviors\" />
@@ -48,6 +66,14 @@
     <Folder Include="Exceptions\" />
     <Folder Include="Mapping\" />
     <Folder Include="Validations\" />
+    <Folder Include="Features\Commands\UserCommands\" />
+    <Folder Include="Dtos\UserDtos\" />
+    <Folder Include="Mapping\UserProfileMapping\" />
+    <Folder Include="Features\Commands\AuthCommands\" />
+    <Folder Include="Dtos\AuthDtos\" />
+    <Folder Include="Interfaces\Utils\" />
+    <Folder Include="Features\Commands\EmailCommands\" />
+    <Folder Include="Dtos\OneSignalNotificationDtos\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MediatR" Version="11.1.0" />
@@ -70,5 +96,15 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.25.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
+    <PackageReference Include="MailKit" Version="3.4.3" />
+    <PackageReference Include="MimeKit" Version="3.4.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="OneSignalApi" Version="1.0.2" />
   </ItemGroup>
 </Project>

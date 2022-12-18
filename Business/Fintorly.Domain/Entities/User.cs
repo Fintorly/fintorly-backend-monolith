@@ -20,6 +20,8 @@ public class User : BaseEntity, IEntity
     public string? IpAddress { get; set; }
     public byte[] PasswordSalt { get; set; }
     public byte[] PasswordHash { get; set; }
+    public Guid ProfilePictureId { get; set; }
+    public ProfilePicture ProfilePicture { get; set; }
     //Kullanıcının ilgilendiği tokenlar
     public ICollection<UserAndToken> InterestedTokens { get; set; }
     //Kullanıcının abonelik aldığı mentörler
@@ -34,11 +36,11 @@ public class User : BaseEntity, IEntity
     public ICollection<Report> Reports { get; set; }
     //Kullanıcının sahip olduğu paketler
     public ICollection<TierAndUser> TierAndUsers { get; set; }
-    //bağlantı
+    //Bağlantı
     public ICollection<Connection> Connections { get; set; }
-    //tokens
-    public ICollection<ValidateToken> ValidateTokens { get; set; }
-//Kullanıcının ilgilendiği alanları kategorize etmek için
+    //Tokens
+    public ICollection<AccessToken> AccessTokens { get; set; }
+    //Kullanıcının ilgilendiği alanları kategorize etmek için
     public ICollection<UserAndCategory> UserAndCategories { get; set; }
 
     public User() => Id = Guid.NewGuid();

@@ -3,7 +3,7 @@ using Fintorly.Domain.Enums;
 
 namespace Fintorly.Domain.Entities;
 
-public class Advertisement:BaseEntity,IEntity
+public class Advertisement : BaseEntity, IEntity
 {
     public string Title { get; set; }
     public string Content { get; set; }
