@@ -47,11 +47,12 @@ namespace Fintorly.Infrastructure.Repositories
                     a.EmailAddress == userEmailActiveCommand.EmailAddress);
             if (verificationCode is null)
                 return Result.Fail("Bu Mail adresi ile daha önce kayıt oluşturma işleminde bulunulmamıştır.");
+            if (verificationCode.MailCode != userEmailActiveCommand.ActivationCode)
+                return Result.Fail("Doğrulamada kodu doğru değildir.");
             if (verificationCode.MailCode == userEmailActiveCommand.ActivationCode &&
                 verificationCode.VerificationCodeValidDate < DateTime.Now)
                 return Result.Fail("Bu kodun geçerlilik süresi sona ermiştir");
-            if (verificationCode.MailCode != userEmailActiveCommand.ActivationCode)
-                return Result.Fail("Doğrulamada kodu doğru değildir.");
+    
             verificationCode.IsMailConfirmed = true;
             _context.VerificationCodes.Update(verificationCode);
             await _context.SaveChangesAsync();

@@ -1,3 +1,5 @@
+using Fintorly.Application.Interfaces.Context;
+
 namespace Fintorly.Application.Features.Commands.AuthCommands;
 
 public class LoginWithMailCommandHandler : IRequestHandler<LoginWithMailCommand,IResult>
