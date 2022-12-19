@@ -1,8 +1,9 @@
 ﻿using System.Net;
 using System.Text;
+using Fintorly.Application.Interfaces.Utils;
 using Microsoft.Extensions.Configuration;
 
-namespace Fintorly.Application.Interfaces.Utils
+namespace Fintorly.Application.Utilities
 {
     public class PhoneManager : IPhoneService
     {

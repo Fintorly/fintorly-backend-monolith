@@ -69,7 +69,7 @@ namespace Fintorly.Domain.Entities
         public ICollection<Connection> Connections { get; set; }
 
         //validate tokens
-        public ICollection<AccessToken> ValidateTokens { get; set; }
+        public ICollection<AccessToken> AccessTokens { get; set; }
 
         //interested tokens
         public ICollection<Token> InterestedTokens { get; set; }

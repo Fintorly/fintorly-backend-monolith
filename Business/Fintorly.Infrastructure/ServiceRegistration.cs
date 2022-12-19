@@ -1,3 +1,4 @@
+using Fintorly.Domain.Entities;
 using Fintorly.Infrastructure.Context;
 using Fintorly.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -17,10 +18,15 @@ public static class ServiceRegistration
         });
 
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IAdvertisement, AdvertisementRepository>();
+        
+        
         var asd = configuration.GetConnectionString(":ConnectionString");
         var optionsBuilder = new DbContextOptionsBuilder<FintorlyContext>()
             .UseSqlServer("Server=localhost;Database=Fintorly;User=sa;Password=bhdKs3WOp7;");
 
+        services.AddScoped<IAuthRepository, AuthRepository>();
+        
         using var dbContext = new FintorlyContext(optionsBuilder.Options, null);
         dbContext.Database.EnsureCreated();
         dbContext.Database.Migrate();

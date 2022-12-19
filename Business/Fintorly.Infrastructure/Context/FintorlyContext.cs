@@ -45,7 +45,6 @@ namespace Fintorly.Infrastructure.Context
         public DbSet<UserAndToken> UserAndTokens{ get; set; }
         public DbSet<ProfilePicture> ProfilePictures{ get; set; }
 
-
         public FintorlyContext()
         {
         }
@@ -81,7 +80,8 @@ namespace Fintorly.Infrastructure.Context
             modelBuilder.ApplyConfiguration(new UserAndOperationClaimConfigurations());
             modelBuilder.ApplyConfiguration(new UserAndTokenConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
-            modelBuilder.ApplyConfiguration(new ValidateTokenConfiguration());
+            modelBuilder.ApplyConfiguration(new AccessTokenConfiguration());
+            modelBuilder.ApplyConfiguration(new VerificationCodeConfiguration());
 
 
             base.OnModelCreating(modelBuilder);

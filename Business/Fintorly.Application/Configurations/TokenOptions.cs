@@ -1,4 +1,5 @@
-﻿namespace Fintorly.Application.Interfaces.Utils
+﻿namespace Fintorly.Application.Configurations
+
 {
     public class TokenOptions
     {

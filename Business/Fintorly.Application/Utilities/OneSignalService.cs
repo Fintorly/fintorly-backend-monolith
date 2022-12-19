@@ -1,9 +1,10 @@
 ﻿using Fintorly.Application.Dtos.OneSignalNotificationDtos;
+using Fintorly.Application.Interfaces.Utils;
 using OneSignalApi.Api;
 using OneSignalApi.Client;
 using OneSignalApi.Model;
 
-namespace Fintorly.Application.Interfaces.Utils
+namespace Fintorly.Application.Utilities
 {
     public class OneSignalService : IOneSignalServiceService
     {

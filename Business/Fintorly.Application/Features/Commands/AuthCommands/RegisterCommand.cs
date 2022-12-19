@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Fintorly.Application.Features.Commands.AuthCommands
 {
-	public class RegisterCommand
+	public class RegisterCommand:IRequest<IResult>
 	{
         public string FirstName { get; set; }
         public string LastName { get; set; }

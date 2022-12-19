@@ -2,7 +2,7 @@
 using Fintorly.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
-namespace Fintorly.Application.Interfaces.Utils
+namespace Fintorly.Application.Utilities
 {
     public class FileUpload
     {

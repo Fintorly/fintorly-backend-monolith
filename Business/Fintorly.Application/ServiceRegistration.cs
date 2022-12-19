@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using Fintorly.Application.Interfaces.Utils;
+using Fintorly.Application.Utilities;
 using Microsoft.AspNetCore.Http;
 
 namespace Fintorly.Application

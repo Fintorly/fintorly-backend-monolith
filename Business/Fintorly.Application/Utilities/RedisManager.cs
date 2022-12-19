@@ -1,8 +1,9 @@
 ﻿using System;
+using Fintorly.Application.Interfaces.Utils;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 
-namespace Fintorly.Application.Interfaces.Utils
+namespace Fintorly.Application.Utilities
 {
     public class RedisManager : IRedisService
     {

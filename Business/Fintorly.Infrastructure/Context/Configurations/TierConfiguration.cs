@@ -12,7 +12,6 @@ public class TierConfiguration:IEntityTypeConfiguration<Tier>
 
         builder.Property(a => a.Content).IsRequired();
         builder.Property(a => a.Title).IsRequired();
-        builder.Property(a => a.Point).IsRequired();
         builder.Property(a => a.Price).IsRequired();
         builder.Property(a => a.PackageType).IsRequired();
 

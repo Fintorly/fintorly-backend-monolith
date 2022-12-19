@@ -1,6 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 
-namespace Fintorly.Application.Interfaces.Utils
+namespace Fintorly.Application.Utilities.Security
 {
     public class SigningCredentialsHelper
     {

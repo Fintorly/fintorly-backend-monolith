@@ -22,7 +22,6 @@
     <None Remove="MediatR" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controllers" />
     <Folder Include="Controllers\" />
     <Folder Include="IntegrationEvents\EventHandlers" />
     <Folder Include="Models" />

@@ -1,4 +1,4 @@
-﻿namespace Fintorly.Application.Interfaces.Utils
+﻿namespace Fintorly.Application.Utilities
 {
     public class PhoneSettings
     {
