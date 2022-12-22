@@ -21,7 +21,6 @@ namespace Fintorly.Application.Interfaces.Repositories
         Task<IResult> ChangePasswordAsync(UserChangePasswordCommand userChangePasswordCommand);
         Task<IResult> ForgotPasswordEmailAsync(UserChangePasswordEmailCommand userChangePasswordEmailCommand);
         Task<IResult> ForgotPasswordPhoneAsync(UserChangePasswordPhoneCommand userChangePasswordPhoneCommand);
-        Task<IResult> UpdatePasswordAsync(UserChangePasswordCommand userChangePasswordCommand);
         Task<IResult> CheckCodeIsTrueByPhoneAsync(CheckCodeIsTrueByPhoneNumberQuery codeIsTrueByPhoneNumberQuery);
         Task<IResult> CheckCodeIsTrueByEmailAsync(CheckCodeIsTrueByEmailAddressQuery codeIsTrueByEmailAddressQuery);
         Task<IResult> VerificationCodeAddAsync(VerificationCodeAddCommand verificationCodeAddCommand);

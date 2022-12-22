@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Fintorly.Application.Utilities
+namespace Fintorly.Infrastructure.Utilities
 {
     public static class Messages
     {

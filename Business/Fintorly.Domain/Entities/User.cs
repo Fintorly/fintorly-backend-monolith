@@ -42,6 +42,9 @@ public class User : BaseEntity, IEntity
     public ICollection<AccessToken> AccessTokens { get; set; }
     //Kullanıcının ilgilendiği alanları kategorize etmek için
     public ICollection<UserAndCategory> UserAndCategories { get; set; }
+    //Portfolio
+    public ICollection<Portfolio> Portfolios { get; set; }
+
 
     public User() => Id = Guid.NewGuid();
 }

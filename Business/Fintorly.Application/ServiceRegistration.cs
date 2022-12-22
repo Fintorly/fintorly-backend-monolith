@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using Fintorly.Application.Interfaces.Utils;
-using Fintorly.Application.Utilities;
 using Microsoft.AspNetCore.Http;
 
 namespace Fintorly.Application
@@ -16,9 +15,7 @@ namespace Fintorly.Application
 
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddScoped<IJwtHelper, JwtHelper>();
-            services.AddScoped<IPhoneService, PhoneManager>();
-            services.AddScoped<IMailService, MailManager>();
+    
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));

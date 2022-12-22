@@ -1,4 +1,4 @@
-namespace Fintorly.Application.Configurations;
+namespace Fintorly.Domain.Options;
 
 public class MailConfiguration
 {

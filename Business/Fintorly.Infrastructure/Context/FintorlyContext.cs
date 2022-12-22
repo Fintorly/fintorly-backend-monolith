@@ -44,7 +44,10 @@ namespace Fintorly.Infrastructure.Context
         public DbSet<UserAndCategory> UserAndCategories{ get; set; }
         public DbSet<UserAndToken> UserAndTokens{ get; set; }
         public DbSet<ProfilePicture> ProfilePictures{ get; set; }
-
+        public DbSet<Portfolio> Portfolios { get; set; }
+        public DbSet<PortfolioChartHistory> PortfolioChartHistories { get; set; }
+        public DbSet<PortfolioToken> PortfolioTokens { get; set; }
+        public DbSet<PortfolioTransaction> PortfolioTransactions { get; set; }
         public FintorlyContext()
         {
         }
@@ -73,8 +76,8 @@ namespace Fintorly.Infrastructure.Context
             modelBuilder.ApplyConfiguration(new ReactionConfiguration());
             modelBuilder.ApplyConfiguration(new ReportConfiguration());
             modelBuilder.ApplyConfiguration(new ReviewCommentConfiguration());
-            modelBuilder.ApplyConfiguration(new TierAndUserConfiguration());
             modelBuilder.ApplyConfiguration(new TierConfiguration());
+            modelBuilder.ApplyConfiguration(new TierAndUserConfiguration());
             modelBuilder.ApplyConfiguration(new TokenConfiguration());
             modelBuilder.ApplyConfiguration(new UserAndCategoryConfiguration());
             modelBuilder.ApplyConfiguration(new UserAndOperationClaimConfigurations());
@@ -82,7 +85,12 @@ namespace Fintorly.Infrastructure.Context
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new AccessTokenConfiguration());
             modelBuilder.ApplyConfiguration(new VerificationCodeConfiguration());
-
+            modelBuilder.ApplyConfiguration(new ProfilePictureConfiguration());
+            modelBuilder.ApplyConfiguration(new PortfolioConfiguration());
+            modelBuilder.ApplyConfiguration(new PortfolioTransactionConfiguration());
+            modelBuilder.ApplyConfiguration(new PortfolioChartHistoryConfiguration());
+            modelBuilder.ApplyConfiguration(new PortfolioTokenConfiguration());
+            
 
             base.OnModelCreating(modelBuilder);
         }

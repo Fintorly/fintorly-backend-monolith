@@ -3,7 +3,7 @@ using Fintorly.Application.Interfaces.Utils;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 
-namespace Fintorly.Application.Utilities
+namespace Fintorly.Infrastructure.Utilities.Cache
 {
     public class RedisManager : IRedisService
     {

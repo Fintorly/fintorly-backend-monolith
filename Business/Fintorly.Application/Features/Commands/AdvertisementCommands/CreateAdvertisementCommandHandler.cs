@@ -4,10 +4,10 @@ namespace Fintorly.Application.Features.Commands.AdvertisementCommands;
 
 public class CreateAdvertisementCommandHandler : IRequestHandler<CreateAdvertisementCommand, IResult>
 {
-    private IAdvertisement _advertisement;
+    private IAdvertisementRepository _advertisement;
     private IMapper _mapper;
 
-    public CreateAdvertisementCommandHandler(IAdvertisement advertisement, IMapper mapper)
+    public CreateAdvertisementCommandHandler(IAdvertisementRepository advertisement, IMapper mapper)
     {
         _advertisement = advertisement;
         _mapper = mapper;

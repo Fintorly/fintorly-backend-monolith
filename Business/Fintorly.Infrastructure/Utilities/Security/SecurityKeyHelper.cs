@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Fintorly.Application.Utilities.Security
+namespace Fintorly.Infrastructure.Utilities.Security
 {
     public class SecurityKeyHelper
     {

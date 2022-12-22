@@ -1,4 +1,4 @@
-﻿namespace Fintorly.Application.Utilities
+﻿namespace Fintorly.Domain.Options
 {
     public class PhoneSettings
     {
@@ -8,4 +8,3 @@
         public string Orginator { get; set; }
     }
 }
-

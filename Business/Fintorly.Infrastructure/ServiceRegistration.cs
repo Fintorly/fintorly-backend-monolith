@@ -1,6 +1,7 @@
-using Fintorly.Domain.Entities;
+using Fintorly.Application.Interfaces.Utils;
 using Fintorly.Infrastructure.Context;
 using Fintorly.Infrastructure.Repositories;
+using Fintorly.Infrastructure.Utilities.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,8 +19,10 @@ public static class ServiceRegistration
         });
 
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IAdvertisement, AdvertisementRepository>();
-        
+        services.AddScoped<IAdvertisementRepository, AdvertisementRepository>();
+        services.AddScoped<IJwtHelper, JwtHelper>();
+        services.AddScoped<IPhoneService, PhoneManager>();
+        services.AddScoped<IMailService, MailManager>();
         
         var asd = configuration.GetConnectionString(":ConnectionString");
         var optionsBuilder = new DbContextOptionsBuilder<FintorlyContext>()

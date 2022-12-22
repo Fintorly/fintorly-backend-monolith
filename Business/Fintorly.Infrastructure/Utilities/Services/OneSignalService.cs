@@ -1,10 +1,13 @@
-﻿using Fintorly.Application.Dtos.OneSignalNotificationDtos;
+﻿using AutoMapper;
+using Fintorly.Application.Dtos.OneSignalNotificationDtos;
 using Fintorly.Application.Interfaces.Utils;
+using Fintorly.Domain.Common;
+using Fintorly.Infrastructure.Utilities.FileManager;
 using OneSignalApi.Api;
 using OneSignalApi.Client;
 using OneSignalApi.Model;
 
-namespace Fintorly.Application.Utilities
+namespace Fintorly.Infrastructure.Utilities.Services
 {
     public class OneSignalService : IOneSignalServiceService
     {

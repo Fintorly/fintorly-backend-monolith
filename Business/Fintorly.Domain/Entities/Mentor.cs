@@ -75,10 +75,11 @@ namespace Fintorly.Domain.Entities
         public ICollection<Token> InterestedTokens { get; set; }
         //mentörün ilgilendiği alanları kategorize etmek için
         public ICollection<MentorAndCategory> MentorAndCategories { get; set; }
+        //Portfolio
+        public ICollection<Portfolio> Portfolios { get; set; }
         //Mentörün aldığı reklamlar
         public Guid AdvertisementId { get; set; }
         public Advertisement Advertisement { get; set; }
-
 
         public Mentor() => Id = Guid.NewGuid();
 

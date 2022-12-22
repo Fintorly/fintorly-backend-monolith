@@ -5,10 +5,10 @@ namespace Fintorly.Application.Features.Queries.AdvertisementQueries;
 
 public class GetAllAdvertisementQueryHandler : IRequestHandler<GetAllAdvertisementQuery, IResult>
 {
-    private IAdvertisement _advertisement;
+    private IAdvertisementRepository _advertisement;
     private IMapper _mapper;
 
-    public GetAllAdvertisementQueryHandler(IAdvertisement advertisement, IMapper mapper)
+    public GetAllAdvertisementQueryHandler(IAdvertisementRepository advertisement, IMapper mapper)
     {
         _advertisement = advertisement;
         _mapper = mapper;

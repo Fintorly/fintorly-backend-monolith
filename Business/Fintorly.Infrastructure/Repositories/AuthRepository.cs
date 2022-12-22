@@ -12,7 +12,7 @@ using Fintorly.Domain.Utils;
 using Fintorly.Application.Dtos.UserDtos;
 using Fintorly.Application.Features.Commands.EmailCommands;
 using Fintorly.Application.Features.Queries.AuthQueries;
-using Fintorly.Application.Utilities;
+using Fintorly.Infrastructure.Utilities;
 
 namespace Fintorly.Infrastructure.Repositories
 {
@@ -59,26 +59,7 @@ namespace Fintorly.Infrastructure.Repositories
             return Result.Success($"{userEmailActiveCommand.EmailAddress} mail adresi başarıyla onaylanmıştır.");
         }
 
-        public async Task<IResult> ChangePasswordAsync(UserChangePasswordCommand userChangePasswordCommand)
-        {
-            var user = await _context.Users.SingleOrDefaultAsync(a => a.Id == userChangePasswordCommand.UserId);
-            if (user is null)
-                return Result.Fail("Böyle bir kullanıcı bulunamadı.");
-
-            var isPasswordTrue = HashingHelper.VerifyPasswordHash(userChangePasswordCommand.Password, user.PasswordHash,
-                user.PasswordSalt);
-            if (!isPasswordTrue)
-                return Result.Fail();
-
-            byte[] passwordHash, passwordSalt;
-            HashingHelper.CreatePasswordHash(userChangePasswordCommand.Password, out passwordHash, out passwordSalt);
-            user.PasswordHash = passwordHash;
-            user.PasswordSalt = passwordSalt;
-            user.ModifiedDate = DateTime.Now;
-            _context.Update(user);
-            await _context.SaveEntitiesAsync();
-            return Result.Success();
-        }
+      
 
         public async Task<IResult> ActivePhoneByActivationCodeAsync(UserPhoneActiveCommand userPhoneActiveCommand)
         {
@@ -154,26 +135,25 @@ namespace Fintorly.Infrastructure.Repositories
             return accessToken;
         }
 
-
-        public async Task<IResult> UpdatePasswordAsync(UserChangePasswordCommand userChangePasswordCommand)
+        public async Task<IResult> ChangePasswordAsync(UserChangePasswordCommand userChangePasswordCommand)
         {
             var user = await _context.Users.SingleOrDefaultAsync(a => a.Id == userChangePasswordCommand.UserId);
             if (user is null)
-                return Result.Fail(Messages.General.NotFoundArgument("kullanıcı"));
+                return Result.Fail("Böyle bir kullanıcı bulunamadı.");
 
-            if (!HashingHelper.VerifyPasswordHash(userChangePasswordCommand.Password, user.PasswordHash,
-                    user.PasswordSalt))
-                return Result.Fail("Girdiğiniz şifre eski şifreniz değil. Lütfen kontrol ediniz.");
-            if (userChangePasswordCommand.NewPassword != userChangePasswordCommand.ReTypePassword)
-                return Result.Fail("Şifreler aynı değil.");
+            var isPasswordTrue = HashingHelper.VerifyPasswordHash(userChangePasswordCommand.Password, user.PasswordHash,
+                user.PasswordSalt);
+            if (!isPasswordTrue)
+                return Result.Fail();
 
             byte[] passwordHash, passwordSalt;
-            HashingHelper.CreatePasswordHash(userChangePasswordCommand.NewPassword, out passwordHash, out passwordSalt);
+            HashingHelper.CreatePasswordHash(userChangePasswordCommand.Password, out passwordHash, out passwordSalt);
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
             user.ModifiedDate = DateTime.Now;
+            _context.Update(user);
             await _context.SaveChangesAsync();
-            return Result.Success("Şifre başarıyla değiştirildi.");
+            return Result.Success();
         }
 
         public async Task<IResult> ForgotPasswordEmailAsync(
@@ -369,8 +349,7 @@ namespace Fintorly.Infrastructure.Repositories
                     return Result.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.");
                 if (!user.IsEmailAddressVerified)
                     return Result.Fail("Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.");
-                //if (!user.IsPhoneNumberVerified)
-                //    return Result.(ResultStatus.Error, "Hesabınızı Aktif Etmek İçin Telefon Numaranızı Doğrulamanız Gerekmektedir.");
+
                 user.LastLogin = DateTime.Now;
                 user.IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
@@ -418,7 +397,7 @@ namespace Fintorly.Infrastructure.Repositories
         public async Task<IResult> RegisterAsync(RegisterCommand registerCommand)
         {
             //ValidationTool.Validate(new RegisterCommandValidator(), registerCommand);
-            //var formattedString = String.Format("dd/MM/yyyy", registerCommand.Birthday);
+            //var formattedString = String.Format("dd/MM/yyyy", registerCommand.Birth);
             if (await _context.Users.SingleOrDefaultAsync(a =>
                     a.PhoneNumber == registerCommand.PhoneNumber || a.UserName == registerCommand.UserName ||
                     a.EmailAddress == registerCommand.EmailAddress) is not null)

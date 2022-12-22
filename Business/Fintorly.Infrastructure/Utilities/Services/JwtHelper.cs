@@ -1,13 +1,14 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Fintorly.Application.Configurations;
+using AutoMapper;
 using Fintorly.Application.Extensions;
 using Fintorly.Application.Interfaces.Utils;
-using Fintorly.Application.Utilities.Security;
 using Fintorly.Domain.Entities;
+using Fintorly.Domain.Options;
+using Fintorly.Infrastructure.Utilities.Security;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-namespace Fintorly.Application.Utilities
+namespace Fintorly.Infrastructure.Utilities.Services
 {
     public class JwtHelper : IJwtHelper
     {
