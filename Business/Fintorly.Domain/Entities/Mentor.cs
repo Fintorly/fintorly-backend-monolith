@@ -28,7 +28,10 @@ namespace Fintorly.Domain.Entities
         public int Rank { get; set; }
         public int TotalEarnedPrice { get; set; }
         public int TotalRefund { get; set; }
+//Mentor Picture
+        public ProfilePicture ProfilePicture { get; set; }
 
+        public Guid ProfilePictureId { get; set; }
         //Mentorün ortalama puanı
         public double PointAverage { get; set; }
 
@@ -77,7 +80,10 @@ namespace Fintorly.Domain.Entities
         public ICollection<MentorAndCategory> MentorAndCategories { get; set; }
         //Portfolio
         public ICollection<Portfolio> Portfolios { get; set; }
+        public Guid CurrentPortfolioId { get; set; }
         //Mentörün aldığı reklamlar
+        //Mentör yetkileri
+        public ICollection<MentorAndOperationClaim> MentorAndOperationClaims { get; set; }
         public Guid AdvertisementId { get; set; }
         public Advertisement Advertisement { get; set; }
 

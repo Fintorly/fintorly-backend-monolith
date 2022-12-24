@@ -1,10 +1,10 @@
 ﻿namespace Fintorly.Application.Features.Commands.AuthCommands
 {
-    public class UserChangePasswordPhoneCommand : IRequest<IResult>
+    public class ChangePasswordCommand : IRequest<IResult>
     {
-        public string PhoneNumber { get; set; }
+        public Guid UserId { get; set; }
         public string Password { get; set; }
+        public string NewPassword { get; set; }
         public string ReTypePassword { get; set; }
     }
 }
-

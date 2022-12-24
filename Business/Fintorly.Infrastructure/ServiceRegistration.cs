@@ -10,7 +10,7 @@ namespace Fintorly.Infrastructure;
 
 public static class ServiceRegistration
 {
-    public static IServiceCollection AddAInfrastructureRegistration(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructureRegistration(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<FintorlyContext>(opt =>
         {
@@ -20,7 +20,9 @@ public static class ServiceRegistration
 
         //services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IAdvertisementRepository, AdvertisementRepository>();
-        services.AddScoped<IAuthRepository, AuthRepository>();
+        services.AddTransient<IUserAuthRepository, UserAuthRepository>();
+        services.AddScoped<IMentorAuthRepository, MentorAuthRepository>();
+        services.AddScoped<IPortfolioRepository,PortfolioRepository>();
         services.AddScoped<IJwtHelper, JwtHelper>();
         services.AddScoped<IPhoneService, PhoneManager>();
         services.AddScoped<IMailService, MailManager>();
@@ -29,7 +31,7 @@ public static class ServiceRegistration
         var optionsBuilder = new DbContextOptionsBuilder<FintorlyContext>()
             .UseSqlServer("Server=localhost;Database=Fintorly;User=sa;Password=bhdKs3WOp7;");
 
-        services.AddScoped<IAuthRepository, AuthRepository>();
+        services.AddScoped<IUserAuthRepository, UserAuthRepository>();
         
         using var dbContext = new FintorlyContext(optionsBuilder.Options, null);
         dbContext.Database.EnsureCreated();

@@ -48,6 +48,7 @@ namespace Fintorly.Infrastructure.Context
         public DbSet<PortfolioChartHistory> PortfolioChartHistories { get; set; }
         public DbSet<PortfolioToken> PortfolioTokens { get; set; }
         public DbSet<PortfolioTransaction> PortfolioTransactions { get; set; }
+        public DbSet<MentorAndOperationClaim> MentorAndOperationClaims { get; set; }
         public FintorlyContext()
         {
         }
@@ -90,7 +91,7 @@ namespace Fintorly.Infrastructure.Context
             modelBuilder.ApplyConfiguration(new PortfolioTransactionConfiguration());
             modelBuilder.ApplyConfiguration(new PortfolioChartHistoryConfiguration());
             modelBuilder.ApplyConfiguration(new PortfolioTokenConfiguration());
-            
+            modelBuilder.ApplyConfiguration(new MentorAndOperationClaimConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }

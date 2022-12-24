@@ -2,9 +2,9 @@ namespace Fintorly.Application.Features.Commands.AuthCommands;
 
 public class VerificationCodeAddCommandHandler : IRequestHandler<VerificationCodeAddCommand, IResult>
 {
-    private IAuthRepository _authRepository;
+    private IUserAuthRepository _authRepository;
 
-    public VerificationCodeAddCommandHandler(IAuthRepository authRepository)
+    public VerificationCodeAddCommandHandler(IUserAuthRepository authRepository)
     {
         _authRepository = authRepository;
     }

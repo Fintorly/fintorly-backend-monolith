@@ -2,9 +2,9 @@ namespace Fintorly.Application.Features.Commands.AuthCommands;
 
 public class RegisterCommandHandler:IRequestHandler<RegisterCommand,IResult>
 {
-    private IAuthRepository _authRepository;
+    private IUserAuthRepository _authRepository;
 
-    public RegisterCommandHandler(IAuthRepository authRepository)
+    public RegisterCommandHandler(IUserAuthRepository authRepository)
     {
         _authRepository = authRepository;
     }

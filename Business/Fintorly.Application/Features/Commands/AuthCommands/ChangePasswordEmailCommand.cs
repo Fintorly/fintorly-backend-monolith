@@ -1,6 +1,6 @@
 ﻿namespace Fintorly.Application.Features.Commands.AuthCommands
 {
-    public class UserChangePasswordEmailCommand : IRequest<IResult>
+    public class ChangePasswordEmailCommand : IRequest<IResult>
     {
         public string EmailAddress { get; set; }
         public string Password { get; set; }

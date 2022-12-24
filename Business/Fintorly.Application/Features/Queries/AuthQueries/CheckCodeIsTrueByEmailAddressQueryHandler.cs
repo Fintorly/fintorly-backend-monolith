@@ -2,9 +2,9 @@ namespace Fintorly.Application.Features.Queries.AuthQueries;
 
 public class CheckCodeIsTrueByEmailAddressQueryHandler : IRequestHandler<CheckCodeIsTrueByEmailAddressQuery, IResult>
 {
-    private IAuthRepository _authRepository;
+    private IUserAuthRepository _authRepository;
 
-    public CheckCodeIsTrueByEmailAddressQueryHandler(IAuthRepository authRepository)
+    public CheckCodeIsTrueByEmailAddressQueryHandler(IUserAuthRepository authRepository)
     {
         _authRepository = authRepository;
     }

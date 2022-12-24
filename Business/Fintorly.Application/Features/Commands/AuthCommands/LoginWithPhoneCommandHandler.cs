@@ -4,9 +4,9 @@ namespace Fintorly.Application.Features.Commands.AuthCommands;
 
 public class LoginWithPhoneCommandHandler : IRequestHandler<LoginWithPhoneCommand,IResult<UserAndTokenDto>>
 {
-    private IAuthRepository _authRepository;
+    private IUserAuthRepository _authRepository;
 
-    public LoginWithPhoneCommandHandler(IAuthRepository authRepository)
+    public LoginWithPhoneCommandHandler(IUserAuthRepository authRepository)
     {
         _authRepository = authRepository;
     }

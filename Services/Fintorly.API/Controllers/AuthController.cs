@@ -17,6 +17,7 @@ public class AuthController : Controller
         _mediator = mediator;
     }
     [HttpPost("loginWithMail")]
+    [ProducesResponseType(typeof(UserAndTokenDto),StatusCodes.Status200OK)]
     public async Task<IActionResult> LoginWithMail(LoginWithMailCommand request)
     {
         var result = await _mediator.Send(request);
@@ -33,7 +34,25 @@ public class AuthController : Controller
             return Ok(result);
         return BadRequest(result);
     }
+    [HttpPost("loginWithUserName")]
+    [ProducesResponseType(typeof(UserAndTokenDto),StatusCodes.Status200OK)]
+    public async Task<IActionResult> LoginWithMail(LoginWithUserNameCommand request)
+    {
+        var result = await _mediator.Send(request);
+        if (result.Succeeded)
+            return Ok(result);
+        return BadRequest(result);
+    }
     
+    [HttpPost("register")]
+    [ProducesResponseType(typeof(UserAndTokenDto),StatusCodes.Status200OK)]
+    public async Task<IActionResult> Register(RegisterCommand request)
+    {
+        var result = await _mediator.Send(request);
+        if (result.Succeeded)
+            return Ok(result);
+        return BadRequest(result);
+    }
  
     [HttpPost("verificationCodeAddAsync")]
     public async Task<IActionResult> verificationCodeAddAsync(VerificationCodeAddCommand request)

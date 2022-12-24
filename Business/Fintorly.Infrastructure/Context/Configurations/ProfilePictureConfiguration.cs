@@ -13,6 +13,8 @@ namespace Fintorly.Infrastructure.Context.Configurations
             builder.Property(c => c.Id).ValueGeneratedOnAdd();
             builder.Property(c => c.Title).IsRequired(false);
             builder.HasMany<User>(a => a.Users).WithOne(a => a.ProfilePicture).HasForeignKey(a => a.ProfilePictureId);
+            builder.HasMany<Mentor>(a => a.Mentors).WithOne(a => a.ProfilePicture)
+                .HasForeignKey(a => a.ProfilePictureId);
             builder.ToTable("ProfilePictures");
         }
     }

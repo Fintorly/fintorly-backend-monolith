@@ -5,9 +5,9 @@ namespace Fintorly.Application.Features.Commands.AuthCommands;
 
 public class LoginWithMailCommandHandler : IRequestHandler<LoginWithMailCommand,IResult<UserAndTokenDto>>
 {
-    private IAuthRepository _authRepository;
+    private IUserAuthRepository _authRepository;
 
-    public LoginWithMailCommandHandler(IAuthRepository authRepository)
+    public LoginWithMailCommandHandler(IUserAuthRepository authRepository)
     {
         _authRepository = authRepository;
     }

@@ -10,7 +10,6 @@ namespace Fintorly.Application.Dtos.UserDtos
         public string Token { get; set; }
         public DateTime CreatedDate { get; set; }
         public string IpAddress { get; set; }
-        
     }
 }
 

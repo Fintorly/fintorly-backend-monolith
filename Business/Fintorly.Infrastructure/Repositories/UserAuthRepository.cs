@@ -16,19 +16,22 @@ using Fintorly.Infrastructure.Utilities;
 
 namespace Fintorly.Infrastructure.Repositories
 {
-    public class AuthRepository : GenericRepository<User>, IAuthRepository
+    public class UserAuthRepository : GenericRepository<User>, IUserAuthRepository
     {
         FintorlyContext _context;
         IJwtHelper _jwtHelper;
         IPhoneService _phoneService;
         IMailService _mailService;
         IHttpContextAccessor _httpContextAccessor;
+
         IMapper _mapper;
+
         //IUserProfilePictureService _userProfilePictureService;
         IPortfolioRepository _portfolioRepository;
         private string _ipAddress;
 
-        public AuthRepository(IMapper mapper, FintorlyContext context, IJwtHelper jwtHelper, IMailService mailService,
+        public UserAuthRepository(IMapper mapper, FintorlyContext context, IJwtHelper jwtHelper,
+            IMailService mailService,
             IPhoneService phoneService, IHttpContextAccessor httpContextAccessor,
             IPortfolioRepository portfolioRepository) : base(context)
         {
@@ -43,7 +46,7 @@ namespace Fintorly.Infrastructure.Repositories
             _ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
         }
 
-        public async Task<IResult> ActiveEmailByActivationCodeAsync(UserEmailActiveCommand userEmailActiveCommand)
+        public async Task<IResult> ActiveEmailByActivationCodeAsync(EmailActiveCommand userEmailActiveCommand)
         {
             var verificationCode =
                 await _context.VerificationCodes.SingleOrDefaultAsync(a =>
@@ -63,7 +66,7 @@ namespace Fintorly.Infrastructure.Repositories
         }
 
 
-        public async Task<IResult> ActivePhoneByActivationCodeAsync(UserPhoneActiveCommand userPhoneActiveCommand)
+        public async Task<IResult> ActivePhoneByActivationCodeAsync(PhoneActiveCommand userPhoneActiveCommand)
         {
             //ValidationTool.Validate(new UserPhoneActiveCommandValidator(), userPhoneActiveCommand);
             var verificationCode =
@@ -131,13 +134,7 @@ namespace Fintorly.Infrastructure.Repositories
             return accessToken;
         }
 
-        public async Task<AccessToken> CreateAccessTokenAsync(Mentor mentor)
-        {
-            var accessToken = await _jwtHelper.CreateTokenAsync(mentor, null);
-            return accessToken;
-        }
-
-        public async Task<IResult> ChangePasswordAsync(UserChangePasswordCommand userChangePasswordCommand)
+        public async Task<IResult> ChangePasswordAsync(ChangePasswordCommand userChangePasswordCommand)
         {
             var user = await _context.Users.SingleOrDefaultAsync(a => a.Id == userChangePasswordCommand.UserId);
             if (user is null)
@@ -159,7 +156,7 @@ namespace Fintorly.Infrastructure.Repositories
         }
 
         public async Task<IResult> ForgotPasswordEmailAsync(
-            UserChangePasswordEmailCommand userChangePasswordEmailCommand)
+            ChangePasswordEmailCommand userChangePasswordEmailCommand)
         {
             var user = await _context.Users.SingleOrDefaultAsync(a =>
                 a.EmailAddress == userChangePasswordEmailCommand.EmailAddress);
@@ -179,7 +176,7 @@ namespace Fintorly.Infrastructure.Repositories
             return Result.Success("Şifre başarıyla değiştirildi.");
         }
 
-        public async Task<IResult> ForgotPasswordPhoneAsync(UserChangePasswordPhoneCommand userChangePasswordCommand)
+        public async Task<IResult> ForgotPasswordPhoneAsync(ChangePasswordPhoneCommand userChangePasswordCommand)
         {
             var user = await _context.Users.SingleOrDefaultAsync(a =>
                 a.PhoneNumber == userChangePasswordCommand.PhoneNumber);
@@ -258,7 +255,8 @@ namespace Fintorly.Infrastructure.Repositories
                     UserId = user.Id,
                     Token = accessToken.Token,
                     CreatedDate = DateTime.Now,
-                    IpAddress = user.IpAddress
+                    IpAddress = user.IpAddress,
+                    User = user
                 };
                 _context.Users.Update(user);
                 await _context.AccessTokens.AddAsync(userToken);
@@ -323,6 +321,7 @@ namespace Fintorly.Infrastructure.Repositories
                 AccessToken userToken = new AccessToken
                 {
                     UserId = user.Id,
+                    User = user,
                     Token = accessToken.Token,
                     CreatedDate = DateTime.Now,
                     IpAddress = user.IpAddress
@@ -392,6 +391,7 @@ namespace Fintorly.Infrastructure.Repositories
                 AccessToken userToken = new AccessToken
                 {
                     UserId = user.Id,
+                    User = user,
                     Token = accessToken.Token,
                     CreatedDate = DateTime.Now,
                     IpAddress = user.IpAddress
@@ -461,10 +461,11 @@ namespace Fintorly.Infrastructure.Repositories
             await _portfolioRepository.AddAsync(portfolio);
             user.Portfolios.Add(portfolio);
             user.CurrentPortfolioId = portfolio.Id;
-            
+
             AccessToken userToken = new AccessToken
             {
                 UserId = user.Id,
+                User = user,
                 Token = accessToken.Token,
                 CreatedDate = DateTime.Now,
                 IpAddress = user.IpAddress
@@ -489,12 +490,19 @@ namespace Fintorly.Infrastructure.Repositories
                 //await _userProfilePictureService.AddAsync(user.Id, randomPic.Id);
             }
 
-            await _context.SaveChangesAsync();
-            return Result.Success($"Hoşgeldiniz Sayın {user.FirstName} {user.LastName}.", new
+            var userAndTokenDto = new UserAndTokenDto
             {
                 User = _mapper.Map<UserDto>(user),
-                Token = _mapper.Map<UserAndTokenDto>(userToken),
-            });
+                Token = userToken.Token,
+                IpAddress = _ipAddress,
+                CreatedDate = DateTime.Now,
+                TokenId = accessToken.Id,
+                UserId = user.Id,
+            };
+            userAndTokenDto.User.Portfolio = portfolio;
+            userAndTokenDto.User.CurrentPortfolioId = portfolio.Id;
+            await _context.SaveChangesAsync();
+            return Result.Success($"Hoşgeldiniz Sayın {user.FirstName} {user.LastName}.", userAndTokenDto);
         }
 
         public async Task<IResult> SendActivationCodeEmailAsync(

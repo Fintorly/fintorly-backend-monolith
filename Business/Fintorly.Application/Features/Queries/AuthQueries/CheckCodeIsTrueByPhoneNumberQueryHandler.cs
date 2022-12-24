@@ -2,9 +2,9 @@ namespace Fintorly.Application.Features.Queries.AuthQueries;
 
 public class CheckCodeIsTrueByPhoneNumberQueryHandler : IRequestHandler<CheckCodeIsTrueByPhoneNumberQuery,IResult>
 {
-    private IAuthRepository _authRepository;
+    private IUserAuthRepository _authRepository;
 
-    public CheckCodeIsTrueByPhoneNumberQueryHandler(IAuthRepository authRepository)
+    public CheckCodeIsTrueByPhoneNumberQueryHandler(IUserAuthRepository authRepository)
     {
         _authRepository = authRepository;
     }

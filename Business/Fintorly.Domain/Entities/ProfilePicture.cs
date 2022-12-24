@@ -9,6 +9,7 @@ namespace Fintorly.Domain.Entities
         public string? FileName { get; set; }
         public string? FilePath { get; set; }
         public ICollection<User> Users { get; set; }
+        public ICollection<Mentor> Mentors { get; set; }
     }
 }
 
