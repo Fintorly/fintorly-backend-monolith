@@ -22,11 +22,11 @@ namespace Fintorly.Infrastructure.Utilities.Services
             _mapper = mapper;
         }
 
-        public Task<AccessToken> CreateTokenAsync(User user, IEnumerable<OperationClaim> operationClaims)
+        public Task<AccessToken> CreateTokenAsync(User user, IEnumerable<OperationClaim> operationClaims,bool isMentor)
         {
             var securityKey = SecurityKeyHelper.CreateSecurityKey(_tokenOptions.SecurityKey);
             var signingCredentials = SigningCredentialsHelper.CreateSigningCredentials(securityKey);
-            var jwt = CreateJwtSecurityToken(user, signingCredentials, operationClaims);
+            var jwt = CreateJwtSecurityToken(user, signingCredentials, operationClaims,isMentor);
             var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             var token = jwtSecurityTokenHandler.WriteToken(jwt);
             var accessToken = new AccessToken()
@@ -38,36 +38,36 @@ namespace Fintorly.Infrastructure.Utilities.Services
             return Task.FromResult(accessToken);
         }
 
-        public Task<AccessToken> CreateTokenAsync(Mentor mentor, IEnumerable<OperationClaim> operationClaims)
+        public Task<AccessToken> CreateTokenAsync(Mentor mentor, IEnumerable<OperationClaim> operationClaims,bool isMentor)
         {
             var user = _mapper.Map<User>(mentor);
             var securityKey = SecurityKeyHelper.CreateSecurityKey(_tokenOptions.SecurityKey);
             var signingCredentials = SigningCredentialsHelper.CreateSigningCredentials(securityKey);
-            var jwt = CreateJwtSecurityToken(user, signingCredentials, operationClaims);
+            var jwt = CreateJwtSecurityToken(user, signingCredentials, operationClaims,isMentor);
             var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             var token = jwtSecurityTokenHandler.WriteToken(jwt);
             var accessToken = new AccessToken()
             {
                 Token = token,
                 Mentor = mentor,
-                UserId = mentor.Id
+                MentorId = mentor.Id
             };
             return Task.FromResult(accessToken);
         }
 
-        public JwtSecurityToken CreateJwtSecurityToken(User user, SigningCredentials signingCredentials, IEnumerable<OperationClaim> operationClaims)
+        public JwtSecurityToken CreateJwtSecurityToken(User user, SigningCredentials signingCredentials, IEnumerable<OperationClaim> operationClaims,bool isMentor)
         {
             var jwt = new JwtSecurityToken
             (
                 issuer: _tokenOptions.Issuer,
                 audience: _tokenOptions.Audience,
                 notBefore: DateTime.Now,
-                claims: SetClaims(user, operationClaims),
+                claims: SetClaims(user, operationClaims,isMentor),
                 signingCredentials: signingCredentials
             );
             return jwt;
         }
-        public IEnumerable<Claim> SetClaims(User user, IEnumerable<OperationClaim> operationClaims)
+        public IEnumerable<Claim> SetClaims(User user, IEnumerable<OperationClaim> operationClaims,bool isMentor)
         {
             var claims = new List<Claim>();
             claims.AddNameIdentifier(user.Id.ToString());
@@ -76,6 +76,7 @@ namespace Fintorly.Infrastructure.Utilities.Services
             claims.AddPhone(user.PhoneNumber);
             claims.AddIpAddress(user.IpAddress!);
             claims.AddIsDeletedStatus(user.IsDeleted);
+            claims.AddIsMentor(isMentor);
             claims.AddRoles(operationClaims.Select(a => a.Name).ToArray());
             return claims;
         }

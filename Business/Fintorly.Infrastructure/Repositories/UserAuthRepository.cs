@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Fintorly.Domain.ConfigureEntities;
 using System.Globalization;
+using Fintorly.Application.Dtos.PortfolioDtos;
 using Fintorly.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using Fintorly.Infrastructure.Context;
 using Fintorly.Application.Interfaces.Utils;
 using Fintorly.Domain.Common;
 using Fintorly.Application.Features.Commands.AuthCommands;
+using Fintorly.Application.Features.Commands.UserCommands;
 using Fintorly.Domain.Utils;
 using Fintorly.Application.Dtos.UserDtos;
 using Fintorly.Application.Features.Commands.EmailCommands;
@@ -130,7 +132,7 @@ namespace Fintorly.Infrastructure.Repositories
         public async Task<AccessToken> CreateAccessTokenAsync(User user)
         {
             var claims = await GetClaimsAsync(user);
-            var accessToken = await _jwtHelper.CreateTokenAsync(user, claims);
+            var accessToken = await _jwtHelper.CreateTokenAsync(user, claims,false);
             return accessToken;
         }
 
@@ -156,7 +158,7 @@ namespace Fintorly.Infrastructure.Repositories
         }
 
         public async Task<IResult> ForgotPasswordEmailAsync(
-            ChangePasswordEmailCommand userChangePasswordEmailCommand)
+            ForgotPasswordEmailCommand userChangePasswordEmailCommand)
         {
             var user = await _context.Users.SingleOrDefaultAsync(a =>
                 a.EmailAddress == userChangePasswordEmailCommand.EmailAddress);
@@ -176,7 +178,7 @@ namespace Fintorly.Infrastructure.Repositories
             return Result.Success("Şifre başarıyla değiştirildi.");
         }
 
-        public async Task<IResult> ForgotPasswordPhoneAsync(ChangePasswordPhoneCommand userChangePasswordCommand)
+        public async Task<IResult> ForgotPasswordPhoneAsync(ForgotPasswordPhoneCommand userChangePasswordCommand)
         {
             var user = await _context.Users.SingleOrDefaultAsync(a =>
                 a.PhoneNumber == userChangePasswordCommand.PhoneNumber);
@@ -209,7 +211,7 @@ namespace Fintorly.Infrastructure.Repositories
             return list;
         }
 
-        public async Task<IResult<UserAndTokenDto>> LoginWithEmailAsync(LoginWithMailCommand loginWithMailCommand)
+        public async Task<IResult<UserAndTokenDto>> LoginWithEmailAsync(UserLoginWithMailCommand loginWithMailCommand)
         {
             //ValidationTool.Validate(new LoginWithMailCommandValidator(), loginWithMailCommand);
             //Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens)
@@ -270,7 +272,7 @@ namespace Fintorly.Infrastructure.Repositories
                     IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString(),
                     CreatedDate = DateTime.Now,
                 };
-                userLoginCommand.User.Portfolio = currentPortfolio;
+                userLoginCommand.User.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
                 userLoginCommand.User.CurrentPortfolioId = user.CurrentPortfolioId;
 
                 return Result<UserAndTokenDto>.Success(userLoginCommand);
@@ -279,7 +281,7 @@ namespace Fintorly.Infrastructure.Repositories
             return Result<UserAndTokenDto>.Fail();
         }
 
-        public async Task<IResult<UserAndTokenDto>> LoginWithPhoneAsync(LoginWithPhoneCommand loginWithPhoneCommand)
+        public async Task<IResult<UserAndTokenDto>> LoginWithPhoneAsync(UserLoginWithPhoneCommand loginWithPhoneCommand)
         {
             //ValidationTool.Validate(new LoginWithPhoneCommandValidator(), loginWithPhoneCommand);
             //Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a => a.PortfolioOrders)
@@ -338,8 +340,7 @@ namespace Fintorly.Infrastructure.Repositories
                     IpAddress = _ipAddress,
                     CreatedDate = DateTime.Now
                 };
-
-                userLoginCommand.User.Portfolio = currentPortfolio;
+                userLoginCommand.User.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
                 userLoginCommand.User.CurrentPortfolioId = user.CurrentPortfolioId;
                 return Result<UserAndTokenDto>.Success(userLoginCommand);
             }
@@ -348,7 +349,7 @@ namespace Fintorly.Infrastructure.Repositories
         }
 
         public async Task<IResult<UserAndTokenDto>> LoginWithUserNameAsync(
-            LoginWithUserNameCommand loginWithUserNameCommand)
+            UserLoginWithUserNameCommand loginWithUserNameCommand)
         {
             //ValidationTool.Validate(new LoginWithUserNameCommandValidator(), loginWithUserNameCommand);
             //.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens)
@@ -409,7 +410,7 @@ namespace Fintorly.Infrastructure.Repositories
                     IpAddress = _ipAddress,
                     CreatedDate = DateTime.Now
                 };
-                userLoginCommand.User.Portfolio = currentPortfolio;
+                userLoginCommand.User.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
                 userLoginCommand.User.CurrentPortfolioId = user.CurrentPortfolioId;
                 return Result<UserAndTokenDto>.Success(userLoginCommand);
             }
@@ -417,7 +418,7 @@ namespace Fintorly.Infrastructure.Repositories
             return Result<UserAndTokenDto>.Fail("Lütfen bilgilerinizi kontrol ediniz.");
         }
 
-        public async Task<IResult> RegisterAsync(RegisterCommand registerCommand)
+        public async Task<IResult> RegisterAsync(UserRegisterCommand registerCommand)
         {
             //ValidationTool.Validate(new RegisterCommandValidator(), registerCommand);
             //var formattedString = String.Format("dd/MM/yyyy", registerCommand.Birth);
@@ -443,7 +444,7 @@ namespace Fintorly.Infrastructure.Repositories
             user.IsPhoneNumberVerified = true;
             user.IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
             user.CreatedDate = DateTime.Now;
-            user.IsActive = false;
+            user.IsActive = true;
             var accessToken = await CreateAccessTokenAsync(user);
 
             await _context.Users.AddAsync(user);
@@ -499,7 +500,7 @@ namespace Fintorly.Infrastructure.Repositories
                 TokenId = accessToken.Id,
                 UserId = user.Id,
             };
-            userAndTokenDto.User.Portfolio = portfolio;
+            userAndTokenDto.User.Portfolio = _mapper.Map<PortfolioDto>(portfolio);
             userAndTokenDto.User.CurrentPortfolioId = portfolio.Id;
             await _context.SaveChangesAsync();
             return Result.Success($"Hoşgeldiniz Sayın {user.FirstName} {user.LastName}.", userAndTokenDto);

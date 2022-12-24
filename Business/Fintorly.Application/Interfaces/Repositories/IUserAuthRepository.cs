@@ -1,8 +1,9 @@
 ﻿using System;
 using Fintorly.Application.Dtos.UserDtos;
 using Fintorly.Domain.Entities;
-using Fintorly.Application.Features.Commands.AuthCommands;
 using Fintorly.Application.Features.Queries.AuthQueries;
+using Fintorly.Application.Features.Commands.UserCommands;
+using Fintorly.Application.Features.Commands.AuthCommands;
 
 namespace Fintorly.Application.Interfaces.Repositories
 {
@@ -19,8 +20,8 @@ namespace Fintorly.Application.Interfaces.Repositories
         Task<IResult> SendActivationCodeEmailAsync(SendActivationCodeEmailAddressCommand activationCodeEmailAddressCommand );
         Task<IResult> SendActivationCodePhoneAsync(SendActivationCodePhoneNumberCommand activationCodePhoneNumberCommand);
         Task<IResult> ChangePasswordAsync(ChangePasswordCommand userChangePasswordCommand);
-        Task<IResult> ForgotPasswordEmailAsync(ChangePasswordEmailCommand userChangePasswordEmailCommand);
-        Task<IResult> ForgotPasswordPhoneAsync(ChangePasswordPhoneCommand userChangePasswordPhoneCommand);
+        Task<IResult> ForgotPasswordEmailAsync(ForgotPasswordEmailCommand userChangePasswordEmailCommand);
+        Task<IResult> ForgotPasswordPhoneAsync(ForgotPasswordPhoneCommand userChangePasswordPhoneCommand);
         Task<IResult> CheckCodeIsTrueByPhoneAsync(CheckCodeIsTrueByPhoneNumberQuery codeIsTrueByPhoneNumberQuery);
         Task<IResult> CheckCodeIsTrueByEmailAsync(CheckCodeIsTrueByEmailAddressQuery codeIsTrueByEmailAddressQuery);
         Task<IResult> VerificationCodeAddAsync(VerificationCodeAddCommand verificationCodeAddCommand);

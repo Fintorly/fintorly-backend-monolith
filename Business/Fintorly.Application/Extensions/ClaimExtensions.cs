@@ -34,6 +34,10 @@ namespace Fintorly.Application.Extensions
         {
             claims.Add(new Claim("IsDeleted", isDeleted.ToString()));
         }
+        public static void AddIsMentor(this ICollection<Claim> claims, bool isMentor)
+        {
+            claims.Add(new Claim("IsMentor", isMentor.ToString()));
+        }
     }
 }
 

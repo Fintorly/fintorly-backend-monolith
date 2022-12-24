@@ -19,8 +19,8 @@ public interface IMentorAuthRepository:IGenericRepository<Mentor>
     Task<IResult> SendActivationCodeEmailAsync(SendActivationCodeEmailAddressCommand activationCodeEmailAddressCommand );
     Task<IResult> SendActivationCodePhoneAsync(SendActivationCodePhoneNumberCommand activationCodePhoneNumberCommand);
     Task<IResult> ChangePasswordAsync(ChangePasswordCommand changePasswordCommand);
-    Task<IResult> ForgotPasswordEmailAsync(ChangePasswordEmailCommand changePasswordEmailCommand);
-    Task<IResult> ForgotPasswordPhoneAsync(ChangePasswordPhoneCommand changePasswordPhoneCommand);
+    Task<IResult> ForgotPasswordEmailAsync(ForgotPasswordEmailCommand changePasswordEmailCommand);
+    Task<IResult> ForgotPasswordPhoneAsync(ForgotPasswordPhoneCommand changePasswordPhoneCommand);
     Task<IResult> CheckCodeIsTrueByPhoneAsync(CheckCodeIsTrueByPhoneNumberQuery codeIsTrueByPhoneNumberQuery);
     Task<IResult> CheckCodeIsTrueByEmailAsync(CheckCodeIsTrueByEmailAddressQuery codeIsTrueByEmailAddressQuery);
     Task<IResult> VerificationCodeAddAsync(VerificationCodeAddCommand verificationCodeAddCommand);

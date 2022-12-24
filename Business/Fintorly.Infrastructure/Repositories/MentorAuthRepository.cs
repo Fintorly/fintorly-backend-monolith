@@ -1,9 +1,11 @@
 using System.Globalization;
 using AutoMapper;
 using Fintorly.Application.Dtos.MentorDtos;
+using Fintorly.Application.Dtos.PortfolioDtos;
 using Fintorly.Application.Dtos.UserDtos;
 using Fintorly.Application.Features.Commands.AuthCommands;
 using Fintorly.Application.Features.Commands.EmailCommands;
+using Fintorly.Application.Features.Commands.MentorAuth;
 using Fintorly.Application.Features.Queries.AuthQueries;
 using Fintorly.Application.Interfaces.Utils;
 using Fintorly.Domain.Common;
@@ -130,7 +132,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
     public async Task<AccessToken> CreateAccessTokenAsync(Mentor mentor)
     {
         var claims = await GetClaimsAsync(mentor);
-        var accessToken = await _jwtHelper.CreateTokenAsync(mentor, claims);
+        var accessToken = await _jwtHelper.CreateTokenAsync(mentor, claims,true);
         return accessToken;
     }
 
@@ -156,7 +158,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
     }
 
     public async Task<IResult> ForgotPasswordEmailAsync(
-        ChangePasswordEmailCommand changePasswordEmailCommand)
+        ForgotPasswordEmailCommand changePasswordEmailCommand)
     {
         var mentor = await _context.Mentors.SingleOrDefaultAsync(a =>
             a.EmailAddress == changePasswordEmailCommand.EmailAddress);
@@ -176,7 +178,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         return Result.Success("Şifre başarıyla değiştirildi.");
     }
 
-    public async Task<IResult> ForgotPasswordPhoneAsync(ChangePasswordPhoneCommand changePasswordCommand)
+    public async Task<IResult> ForgotPasswordPhoneAsync(ForgotPasswordPhoneCommand changePasswordCommand)
     {
         var mentor = await _context.Mentors.SingleOrDefaultAsync(a =>
             a.PhoneNumber == changePasswordCommand.PhoneNumber);
@@ -209,7 +211,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         return list;
     }
 
-    public async Task<IResult<MentorAndTokenDto>> LoginWithEmailAsync(LoginWithMailCommand loginWithMailCommand)
+    public async Task<IResult<MentorAndTokenDto>> LoginWithEmailAsync(MentorLoginWithMailCommand loginWithMailCommand)
     {
         //ValidationTool.Validate(new LoginWithMailCommandValidator(), loginWithMailCommand);
         //Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens)
@@ -270,7 +272,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
                 IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString(),
                 CreatedDate = DateTime.Now,
             };
-            userLoginCommand.Mentor.Portfolio = currentPortfolio;
+            userLoginCommand.Mentor.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
             userLoginCommand.Mentor.CurrentPortfolioId = mentor.CurrentPortfolioId;
 
             return Result<MentorAndTokenDto>.Success(userLoginCommand);
@@ -279,7 +281,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         return Result<MentorAndTokenDto>.Fail();
     }
 
-    public async Task<IResult<MentorAndTokenDto>> LoginWithPhoneAsync(LoginWithPhoneCommand loginWithPhoneCommand)
+    public async Task<IResult<MentorAndTokenDto>> LoginWithPhoneAsync(MentorLoginWithPhoneCommand loginWithPhoneCommand)
     {
         //ValidationTool.Validate(new LoginWithPhoneCommandValidator(), loginWithPhoneCommand);
         
@@ -338,8 +340,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
                 IpAddress = _ipAddress,
                 CreatedDate = DateTime.Now
             };
-
-            userLoginCommand.Mentor.Portfolio = currentPortfolio;
+            userLoginCommand.Mentor.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
             userLoginCommand.Mentor.CurrentPortfolioId = mentor.CurrentPortfolioId;
             return Result<MentorAndTokenDto>.Success(userLoginCommand);
         }
@@ -348,7 +349,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
     }
 
     public async Task<IResult<MentorAndTokenDto>> LoginWithUserNameAsync(
-        LoginWithUserNameCommand loginWithUserNameCommand)
+        MentorLoginWithUserNameCommand loginWithUserNameCommand)
     {
         //ValidationTool.Validate(new LoginWithUserNameCommandValidator(), loginWithUserNameCommand);
         //.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens)
@@ -409,7 +410,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
                 IpAddress = _ipAddress,
                 CreatedDate = DateTime.Now
             };
-            userLoginCommand.Mentor.Portfolio = currentPortfolio;
+            userLoginCommand.Mentor.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
             userLoginCommand.Mentor.CurrentPortfolioId = mentor.CurrentPortfolioId;
             return Result<MentorAndTokenDto>.Success(userLoginCommand);
         }
@@ -417,7 +418,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         return Result<MentorAndTokenDto>.Fail("Lütfen bilgilerinizi kontrol ediniz.");
     }
 
-    public async Task<IResult> RegisterAsync(RegisterCommand registerCommand)
+    public async Task<IResult> RegisterAsync(MentorRegisterCommand registerCommand)
     {
         //ValidationTool.Validate(new RegisterCommandValidator(), registerCommand);
         //var formattedString = String.Format("dd/MM/yyyy", registerCommand.Birth);
@@ -443,7 +444,8 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         mentor.IsPhoneNumberVerified = true;
         mentor.IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
         mentor.CreatedDate = DateTime.Now;
-        mentor.IsActive = false;
+        mentor.IsMentorVerified = false;
+        mentor.IsActive = true;
         var accessToken = await CreateAccessTokenAsync(mentor);
 
         await _context.Mentors.AddAsync(mentor);
@@ -499,7 +501,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
             TokenId = accessToken.Id,
             MentorId = mentor.Id,
         };
-        userAndTokenDto.Mentor.Portfolio = portfolio;
+        userAndTokenDto.Mentor.Portfolio = _mapper.Map<PortfolioDto>(portfolio);
         userAndTokenDto.Mentor.CurrentPortfolioId = portfolio.Id;
         await _context.SaveChangesAsync();
         return Result.Success($"Hoşgeldiniz Sayın {mentor.FirstName} {mentor.LastName}.", userAndTokenDto);

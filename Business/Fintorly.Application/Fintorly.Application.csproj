@@ -60,8 +60,6 @@
     <Folder Include="Extensions\" />
     <Folder Include="Features\" />
     <Folder Include="Features\Commands\" />
-    <Folder Include="Features\Commands\MentorAuth" />
-    <Folder Include="Features\Commands\UserCommands" />
     <Folder Include="Features\Queries\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Interfaces\Context\" />
