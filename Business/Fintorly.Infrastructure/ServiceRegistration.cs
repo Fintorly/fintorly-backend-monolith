@@ -18,8 +18,9 @@ public static class ServiceRegistration
             opt.EnableSensitiveDataLogging();
         });
 
-        services.AddScoped<IUserRepository, UserRepository>();
+        //services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IAdvertisementRepository, AdvertisementRepository>();
+        services.AddScoped<IAuthRepository, AuthRepository>();
         services.AddScoped<IJwtHelper, JwtHelper>();
         services.AddScoped<IPhoneService, PhoneManager>();
         services.AddScoped<IMailService, MailManager>();

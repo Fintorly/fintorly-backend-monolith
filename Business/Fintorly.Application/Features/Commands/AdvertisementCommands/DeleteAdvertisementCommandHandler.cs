@@ -11,6 +11,9 @@ public class DeleteAdvertisementCommandHandler : IRequestHandler<DeleteAdvertise
 
     public async Task<IResult> Handle(DeleteAdvertisementCommand request, CancellationToken cancellationToken)
     {
-        return await _advertisementRepository.DeleteByIdAsync(request.Id);
+        var result =await _advertisementRepository.DeleteByIdAsync(request.Id);
+        if (result)
+            return Result.Success();
+        return Result.Fail();
     }
 }

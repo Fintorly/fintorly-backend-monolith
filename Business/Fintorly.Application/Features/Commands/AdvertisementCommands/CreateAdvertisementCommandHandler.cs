@@ -24,6 +24,6 @@ public class CreateAdvertisementCommandHandler : IRequestHandler<CreateAdvertise
 
         var advertisement = _mapper.Map<Advertisement>(request);
         var result = await _advertisement.AddAsync(advertisement);
-        return result;
+        return Result.Success();
     }
 }

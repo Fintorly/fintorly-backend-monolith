@@ -60,6 +60,7 @@
     <Folder Include="Extensions\" />
     <Folder Include="Features\" />
     <Folder Include="Features\Commands\" />
+    <Folder Include="Features\Commands\UserCommands" />
     <Folder Include="Features\Queries\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Interfaces\Context\" />
@@ -68,7 +69,6 @@
     <Folder Include="Validations\" />
     <Folder Include="Features\Commands\UserCommands\" />
     <Folder Include="Dtos\UserDtos\" />
-    <Folder Include="Mapping\UserProfileMapping\" />
     <Folder Include="Features\Commands\AuthCommands\" />
     <Folder Include="Dtos\AuthDtos\" />
     <Folder Include="Interfaces\Utils\" />

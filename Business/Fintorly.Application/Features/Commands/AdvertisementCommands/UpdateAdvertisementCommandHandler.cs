@@ -16,6 +16,9 @@ public class UpdateAdvertisementCommandHandler : IRequestHandler<UpdateAdvertise
     public async Task<IResult> Handle(UpdateAdvertisementCommand request, CancellationToken cancellationToken)
     {
         var advertisement = _mapper.Map<Advertisement>(request);
-        return await _advertisementRepository.UpdateAsync(advertisement);
+        var result= await _advertisementRepository.UpdateAsync(advertisement);
+        if (result)
+            return Result.Success();
+        return Result.Fail();
     }
 }
