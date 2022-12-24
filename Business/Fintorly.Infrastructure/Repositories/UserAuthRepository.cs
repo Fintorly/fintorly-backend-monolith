@@ -9,7 +9,6 @@ using Fintorly.Infrastructure.Context;
 using Fintorly.Application.Interfaces.Utils;
 using Fintorly.Domain.Common;
 using Fintorly.Application.Features.Commands.AuthCommands;
-using Fintorly.Application.Features.Commands.UserCommands;
 using Fintorly.Domain.Utils;
 using Fintorly.Application.Dtos.UserDtos;
 using Fintorly.Application.Features.Commands.EmailCommands;
@@ -211,7 +210,7 @@ namespace Fintorly.Infrastructure.Repositories
             return list;
         }
 
-        public async Task<IResult<UserAndTokenDto>> LoginWithEmailAsync(UserLoginWithMailCommand loginWithMailCommand)
+        public async Task<IResult<UserAndTokenDto>> LoginWithEmailAsync(LoginWithMailCommand loginWithMailCommand)
         {
             //ValidationTool.Validate(new LoginWithMailCommandValidator(), loginWithMailCommand);
             //Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens)
@@ -281,7 +280,7 @@ namespace Fintorly.Infrastructure.Repositories
             return Result<UserAndTokenDto>.Fail();
         }
 
-        public async Task<IResult<UserAndTokenDto>> LoginWithPhoneAsync(UserLoginWithPhoneCommand loginWithPhoneCommand)
+        public async Task<IResult<UserAndTokenDto>> LoginWithPhoneAsync(LoginWithPhoneCommand loginWithPhoneCommand)
         {
             //ValidationTool.Validate(new LoginWithPhoneCommandValidator(), loginWithPhoneCommand);
             //Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a => a.PortfolioOrders)
@@ -349,7 +348,7 @@ namespace Fintorly.Infrastructure.Repositories
         }
 
         public async Task<IResult<UserAndTokenDto>> LoginWithUserNameAsync(
-            UserLoginWithUserNameCommand loginWithUserNameCommand)
+            LoginWithUserNameCommand loginWithUserNameCommand)
         {
             //ValidationTool.Validate(new LoginWithUserNameCommandValidator(), loginWithUserNameCommand);
             //.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens)
@@ -418,20 +417,20 @@ namespace Fintorly.Infrastructure.Repositories
             return Result<UserAndTokenDto>.Fail("Lütfen bilgilerinizi kontrol ediniz.");
         }
 
-        public async Task<IResult> RegisterAsync(UserRegisterCommand registerCommand)
+        public async Task<IResult<UserAndTokenDto>> RegisterAsync(RegisterCommand registerCommand)
         {
             //ValidationTool.Validate(new RegisterCommandValidator(), registerCommand);
             //var formattedString = String.Format("dd/MM/yyyy", registerCommand.Birth);
             if (await _context.Users.SingleOrDefaultAsync(a =>
                     a.PhoneNumber == registerCommand.PhoneNumber || a.UserName == registerCommand.UserName ||
                     a.EmailAddress == registerCommand.EmailAddress) is not null)
-                return Result.Fail("Bu kullanıcı mevcut");
+                return Result<UserAndTokenDto>.Fail("Bu kullanıcı mevcut");
             //var userVerifyCheck = await _context.VerificationCodes.SingleOrDefaultAsync(a => a.EmailAddress == registerCommand.EmailAddress && a.PhoneNumber == registerCommand.PhoneNumber);
             var userVerifyCheck =
                 await _context.VerificationCodes.SingleOrDefaultAsync(a =>
                     a.EmailAddress == registerCommand.EmailAddress);
             if (userVerifyCheck is null)
-                return Result.Fail("Böyle bir kayıt bulunamadı.");
+                return Result<UserAndTokenDto>.Fail("Böyle bir kayıt bulunamadı.");
 
             byte[] passwordHash, passwordSalt;
             HashingHelper.CreatePasswordHash(registerCommand.Password, out passwordHash, out passwordSalt);
@@ -503,7 +502,7 @@ namespace Fintorly.Infrastructure.Repositories
             userAndTokenDto.User.Portfolio = _mapper.Map<PortfolioDto>(portfolio);
             userAndTokenDto.User.CurrentPortfolioId = portfolio.Id;
             await _context.SaveChangesAsync();
-            return Result.Success($"Hoşgeldiniz Sayın {user.FirstName} {user.LastName}.", userAndTokenDto);
+            return Result<UserAndTokenDto>.Success($"Hoşgeldiniz Sayın {user.FirstName} {user.LastName}.", userAndTokenDto);
         }
 
         public async Task<IResult> SendActivationCodeEmailAsync(

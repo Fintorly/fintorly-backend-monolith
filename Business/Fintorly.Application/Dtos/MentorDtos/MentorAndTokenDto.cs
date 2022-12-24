@@ -1,3 +1,4 @@
+using Fintorly.Application.Dtos.PortfolioDtos;
 using Fintorly.Domain.Entities;
 using Fintorly.Domain.Enums;
 
@@ -26,7 +27,7 @@ public class MentorDto
     public DateTime Birthday { get; set; }
     public bool IsPhoneNumberVerified { get; set; }
     public bool IsEmailAddressVerified { get; set; }
-    public Portfolio Portfolio { get; set; }
+    public PortfolioDto Portfolio { get; set; }
     public Guid CurrentPortfolioId { get; set; }
     public DateTime LastLogin { get; set; }
 }

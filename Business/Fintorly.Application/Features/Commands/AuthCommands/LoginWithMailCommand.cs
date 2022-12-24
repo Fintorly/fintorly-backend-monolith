@@ -8,4 +8,3 @@ namespace Fintorly.Application.Features.Commands.AuthCommands
         public string Password { get; set; }
     }
 }
-

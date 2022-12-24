@@ -5,12 +5,12 @@ using Fintorly.Application.Dtos.PortfolioDtos;
 using Fintorly.Application.Dtos.UserDtos;
 using Fintorly.Application.Features.Commands.AuthCommands;
 using Fintorly.Application.Features.Commands.EmailCommands;
-using Fintorly.Application.Features.Commands.MentorAuth;
 using Fintorly.Application.Features.Queries.AuthQueries;
 using Fintorly.Application.Interfaces.Utils;
 using Fintorly.Domain.Common;
 using Fintorly.Domain.ConfigureEntities;
 using Fintorly.Domain.Entities;
+using Fintorly.Domain.Enums;
 using Fintorly.Domain.Utils;
 using Fintorly.Infrastructure.Context;
 using Fintorly.Infrastructure.Utilities;
@@ -211,7 +211,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         return list;
     }
 
-    public async Task<IResult<MentorAndTokenDto>> LoginWithEmailAsync(MentorLoginWithMailCommand loginWithMailCommand)
+    public async Task<IResult<UserAndTokenDto>> LoginWithEmailAsync(LoginWithMailCommand loginWithMailCommand)
     {
         //ValidationTool.Validate(new LoginWithMailCommandValidator(), loginWithMailCommand);
         //Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens)
@@ -219,17 +219,17 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
             a.EmailAddress == loginWithMailCommand.EmailAddress);
 
         if (mentor is null)
-            return Result<MentorAndTokenDto>.Fail(Messages.General.NotFoundArgument("mentör"));
+            return Result<UserAndTokenDto>.Fail(Messages.General.NotFoundArgument("mentör"));
 
         if (!mentor.IsEmailAddressVerified)
-            return Result<MentorAndTokenDto>.Fail("Mail adresinizi doğrulayın.");
+            return Result<UserAndTokenDto>.Fail("Mail adresinizi doğrulayın.");
 
         if (HashingHelper.VerifyPasswordHash(loginWithMailCommand.Password, mentor.PasswordHash, mentor.PasswordSalt))
         {
             if (!mentor.IsActive)
-                return Result<MentorAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.");
+                return Result<UserAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.");
             if (!mentor.IsEmailAddressVerified)
-                return Result<MentorAndTokenDto>.Fail(
+                return Result<UserAndTokenDto>.Fail(
                     "Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.");
 
             mentor.LastLogin = DateTime.Now;
@@ -263,39 +263,39 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
             _context.Mentors.Update(mentor);
             await _context.AccessTokens.AddAsync(userToken);
             await _context.SaveChangesAsync();
-            var userLoginCommand = new MentorAndTokenDto()
+            var userLoginCommand = new UserAndTokenDto()
             {
                 TokenId = userToken.Id,
                 Token = userToken.Token,
-                MentorId = mentor.Id,
-                Mentor= _mapper.Map<MentorDto>(mentor),
+                UserId = mentor.Id,
+                User= _mapper.Map<UserDto>(mentor),
                 IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString(),
                 CreatedDate = DateTime.Now,
             };
-            userLoginCommand.Mentor.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
-            userLoginCommand.Mentor.CurrentPortfolioId = mentor.CurrentPortfolioId;
+            userLoginCommand.User.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
+            userLoginCommand.User.CurrentPortfolioId = mentor.CurrentPortfolioId;
 
-            return Result<MentorAndTokenDto>.Success(userLoginCommand);
+            return Result<UserAndTokenDto>.Success(userLoginCommand);
         }
 
-        return Result<MentorAndTokenDto>.Fail();
+        return Result<UserAndTokenDto>.Fail();
     }
 
-    public async Task<IResult<MentorAndTokenDto>> LoginWithPhoneAsync(MentorLoginWithPhoneCommand loginWithPhoneCommand)
+    public async Task<IResult<UserAndTokenDto>> LoginWithPhoneAsync(LoginWithPhoneCommand loginWithPhoneCommand)
     {
         //ValidationTool.Validate(new LoginWithPhoneCommandValidator(), loginWithPhoneCommand);
         
         var mentor = await _context.Mentors.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a => a.PortfolioTransactions).SingleOrDefaultAsync(
             a => a.PhoneNumber == loginWithPhoneCommand.PhoneNumber);
         if (mentor is null)
-            return Result<MentorAndTokenDto>.Fail(Messages.General.NotFoundArgument("kullanıcı"));
+            return Result<UserAndTokenDto>.Fail(Messages.General.NotFoundArgument("kullanıcı"));
 
         if (HashingHelper.VerifyPasswordHash(loginWithPhoneCommand.Password, mentor.PasswordHash, mentor.PasswordSalt))
         {
             if (!mentor.IsActive)
-                return Result<MentorAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.");
+                return Result<UserAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.");
             if (!mentor.IsEmailAddressVerified)
-                return Result<MentorAndTokenDto>.Fail(
+                return Result<UserAndTokenDto>.Fail(
                     "Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.");
             if (!mentor.IsPhoneNumberVerified)
                 //return Result.(ResultStatus.Error, "Hesabınızı Aktif Etmek İçin Telefon Numaranızı Doğrulamanız Gerekmektedir.");
@@ -331,40 +331,39 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
             _context.Mentors.Update(mentor);
             await _context.AccessTokens.AddAsync(userToken);
             await _context.SaveChangesAsync();
-            var userLoginCommand = new MentorAndTokenDto()
+            var userLoginCommand = new UserAndTokenDto()
             {
-                Mentor = _mapper.Map<MentorDto>(mentor),
+                User = _mapper.Map<UserDto>(mentor),
                 Token = userToken.Token,
                 TokenId = userToken.Id,
-                MentorId = mentor.Id,
+                UserId = mentor.Id,
                 IpAddress = _ipAddress,
                 CreatedDate = DateTime.Now
             };
-            userLoginCommand.Mentor.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
-            userLoginCommand.Mentor.CurrentPortfolioId = mentor.CurrentPortfolioId;
-            return Result<MentorAndTokenDto>.Success(userLoginCommand);
+            userLoginCommand.User.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
+            userLoginCommand.User.CurrentPortfolioId = mentor.CurrentPortfolioId;
+            return Result<UserAndTokenDto>.Success(userLoginCommand);
         }
-
-        return Result<MentorAndTokenDto>.Fail("Lütfen bilgilerinizi kontrol ediniz.");
+        return Result<UserAndTokenDto>.Fail("Lütfen bilgilerinizi kontrol ediniz.");
     }
 
-    public async Task<IResult<MentorAndTokenDto>> LoginWithUserNameAsync(
-        MentorLoginWithUserNameCommand loginWithUserNameCommand)
+    public async Task<IResult<UserAndTokenDto>> LoginWithUserNameAsync(
+        LoginWithUserNameCommand loginWithUserNameCommand)
     {
         //ValidationTool.Validate(new LoginWithUserNameCommandValidator(), loginWithUserNameCommand);
         //.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens)
 
         var mentor = await _context.Mentors.SingleOrDefaultAsync(a => a.UserName == loginWithUserNameCommand.UserName);
         if (mentor is null)
-            return Result<MentorAndTokenDto>.Fail(Messages.General.NotFoundArgument("kullanıcı"));
+            return Result<UserAndTokenDto>.Fail(Messages.General.NotFoundArgument("kullanıcı"));
 
         if (HashingHelper.VerifyPasswordHash(loginWithUserNameCommand.Password, mentor.PasswordHash,
                 mentor.PasswordSalt))
         {
             if (!mentor.IsActive)
-                return Result<MentorAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.");
+                return Result<UserAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.");
             if (!mentor.IsEmailAddressVerified)
-                return Result<MentorAndTokenDto>.Fail(
+                return Result<UserAndTokenDto>.Fail(
                     "Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.");
 
             mentor.LastLogin = DateTime.Now;
@@ -401,37 +400,37 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
             await _context.AccessTokens.AddAsync(userToken);
             await _context.SaveChangesAsync();
 
-            var userLoginCommand = new MentorAndTokenDto
+            var userLoginCommand = new UserAndTokenDto
             {
-                Mentor = _mapper.Map<MentorDto>(mentor),
+                User = _mapper.Map<UserDto>(mentor),
                 Token = userToken.Token,
                 TokenId = accessToken.Id,
-                MentorId = mentor.Id,
+                UserId = mentor.Id,
                 IpAddress = _ipAddress,
                 CreatedDate = DateTime.Now
             };
-            userLoginCommand.Mentor.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
-            userLoginCommand.Mentor.CurrentPortfolioId = mentor.CurrentPortfolioId;
-            return Result<MentorAndTokenDto>.Success(userLoginCommand);
+            userLoginCommand.User.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
+            userLoginCommand.User.CurrentPortfolioId = mentor.CurrentPortfolioId;
+            return Result<UserAndTokenDto>.Success(userLoginCommand);
         }
 
-        return Result<MentorAndTokenDto>.Fail("Lütfen bilgilerinizi kontrol ediniz.");
+        return Result<UserAndTokenDto>.Fail("Lütfen bilgilerinizi kontrol ediniz.");
     }
 
-    public async Task<IResult> RegisterAsync(MentorRegisterCommand registerCommand)
+    public async Task<IResult<UserAndTokenDto>> RegisterAsync(RegisterCommand registerCommand)
     {
         //ValidationTool.Validate(new RegisterCommandValidator(), registerCommand);
         //var formattedString = String.Format("dd/MM/yyyy", registerCommand.Birth);
         if (await _context.Mentors.SingleOrDefaultAsync(a =>
                 a.PhoneNumber == registerCommand.PhoneNumber || a.UserName == registerCommand.UserName ||
                 a.EmailAddress == registerCommand.EmailAddress) is not null)
-            return Result.Fail("Bu kullanıcı mevcut");
+            return Result<UserAndTokenDto>.Fail("Bu kullanıcı mevcut");
         //var userVerifyCheck = await _context.VerificationCodes.SingleOrDefaultAsync(a => a.EmailAddress == registerCommand.EmailAddress && a.PhoneNumber == registerCommand.PhoneNumber);
         var mentorVerifyCheck =
             await _context.VerificationCodes.SingleOrDefaultAsync(a =>
                 a.EmailAddress == registerCommand.EmailAddress);
         if (mentorVerifyCheck is null)
-            return Result.Fail("Böyle bir kayıt bulunamadı.");
+            return Result<UserAndTokenDto>.Fail("Böyle bir kayıt bulunamadı.");
 
         byte[] passwordHash, passwordSalt;
         HashingHelper.CreatePasswordHash(registerCommand.Password, out passwordHash, out passwordSalt);
@@ -492,19 +491,19 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
             //await _userProfilePictureService.AddAsync(user.Id, randomPic.Id);
         }
 
-        var userAndTokenDto = new MentorAndTokenDto
+        var userAndTokenDto = new UserAndTokenDto
         {
-            Mentor = _mapper.Map<MentorDto>(mentor),
+            User = _mapper.Map<UserDto>(mentor),
             Token = mentorToken.Token,
             IpAddress = _ipAddress,
             CreatedDate = DateTime.Now,
             TokenId = accessToken.Id,
-            MentorId = mentor.Id,
+            UserId = mentor.Id,
         };
-        userAndTokenDto.Mentor.Portfolio = _mapper.Map<PortfolioDto>(portfolio);
-        userAndTokenDto.Mentor.CurrentPortfolioId = portfolio.Id;
+        userAndTokenDto.User.Portfolio = _mapper.Map<PortfolioDto>(portfolio);
+        userAndTokenDto.User.CurrentPortfolioId = portfolio.Id;
         await _context.SaveChangesAsync();
-        return Result.Success($"Hoşgeldiniz Sayın {mentor.FirstName} {mentor.LastName}.", userAndTokenDto);
+        return Result<UserAndTokenDto>.Success($"Hoşgeldiniz Sayın {mentor.FirstName} {mentor.LastName}.", userAndTokenDto);
     }
 
     public async Task<IResult> SendActivationCodeEmailAsync(

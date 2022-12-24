@@ -10,10 +10,10 @@ public interface IMentorAuthRepository:IGenericRepository<Mentor>
 {
     Task<IEnumerable<OperationClaim>> GetClaimsAsync(Mentor mentor);
     Task<AccessToken> CreateAccessTokenAsync(Mentor mentor);
-    Task<IResult> RegisterAsync(RegisterCommand registerCommand);
-    Task<IResult<MentorAndTokenDto>> LoginWithPhoneAsync(LoginWithPhoneCommand loginWithPhoneCommand);
-    Task<IResult<MentorAndTokenDto>> LoginWithEmailAsync(LoginWithMailCommand loginWithMailCommand);
-    Task<IResult<MentorAndTokenDto>> LoginWithUserNameAsync(LoginWithUserNameCommand loginWithUserNameCommand);
+    Task<IResult<UserAndTokenDto>> RegisterAsync(RegisterCommand registerCommand);
+    Task<IResult<UserAndTokenDto>> LoginWithPhoneAsync(LoginWithPhoneCommand loginWithPhoneCommand);
+    Task<IResult<UserAndTokenDto>> LoginWithEmailAsync(LoginWithMailCommand loginWithMailCommand);
+    Task<IResult<UserAndTokenDto>> LoginWithUserNameAsync(LoginWithUserNameCommand loginWithUserNameCommand);
     Task<IResult> ActiveEmailByActivationCodeAsync(EmailActiveCommand emailActiveCommand);
     Task<IResult> ActivePhoneByActivationCodeAsync(PhoneActiveCommand phoneActiveCommand);
     Task<IResult> SendActivationCodeEmailAsync(SendActivationCodeEmailAddressCommand activationCodeEmailAddressCommand );
