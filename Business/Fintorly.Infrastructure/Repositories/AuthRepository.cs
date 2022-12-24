@@ -25,19 +25,22 @@ namespace Fintorly.Infrastructure.Repositories
         IHttpContextAccessor _httpContextAccessor;
         IMapper _mapper;
         //IUserProfilePictureService _userProfilePictureService;
-        //IPortfolioService _portfolioService;
+        IPortfolioRepository _portfolioRepository;
+        private string _ipAddress;
 
         public AuthRepository(IMapper mapper, FintorlyContext context, IJwtHelper jwtHelper, IMailService mailService,
-            IPhoneService phoneService, IHttpContextAccessor httpContextAccessor) : base(context)
+            IPhoneService phoneService, IHttpContextAccessor httpContextAccessor,
+            IPortfolioRepository portfolioRepository) : base(context)
         {
             _jwtHelper = jwtHelper;
             _mailService = mailService;
             _phoneService = phoneService;
             _httpContextAccessor = httpContextAccessor;
+            _portfolioRepository = portfolioRepository;
             _mapper = mapper;
             _context = context;
             // _userProfilePictureService = userProfilePictureService;
-            // _portfolioService = portfolioService;
+            _ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
         }
 
         public async Task<IResult> ActiveEmailByActivationCodeAsync(UserEmailActiveCommand userEmailActiveCommand)
@@ -52,14 +55,13 @@ namespace Fintorly.Infrastructure.Repositories
             if (verificationCode.MailCode == userEmailActiveCommand.ActivationCode &&
                 verificationCode.VerificationCodeValidDate < DateTime.Now)
                 return Result.Fail("Bu kodun geçerlilik süresi sona ermiştir");
-    
+
             verificationCode.IsMailConfirmed = true;
             _context.VerificationCodes.Update(verificationCode);
             await _context.SaveChangesAsync();
             return Result.Success($"{userEmailActiveCommand.EmailAddress} mail adresi başarıyla onaylanmıştır.");
         }
 
-      
 
         public async Task<IResult> ActivePhoneByActivationCodeAsync(UserPhoneActiveCommand userPhoneActiveCommand)
         {
@@ -81,26 +83,6 @@ namespace Fintorly.Infrastructure.Repositories
             return Result.Success($"{userPhoneActiveCommand.PhoneNumber} numaralı hesap başarıyla onaylanmıştır.");
         }
 
-        public async Task<IResult> CheckCodeIsTrueByEmailAsync(
-            CheckCodeIsTrueByEmailAddressQuery codeIsTrueByEmailAddressQuery)
-        {
-            var user = await _context.Users.SingleOrDefaultAsync(a =>
-                a.EmailAddress == codeIsTrueByEmailAddressQuery.EmailAddress);
-            if (user is null)
-                return Result.Fail("Böyle bir kullanıcı bulunamadı");
-
-            var codeVerify = await _context.VerificationCodes.SingleOrDefaultAsync(a =>
-                a.EmailAddress == codeIsTrueByEmailAddressQuery.EmailAddress);
-            if (codeVerify is null)
-                return Result.Fail("Bu Maile ait bir doğrulama bilgisi bulunamadı.");
-            if (codeVerify.MailCode != codeIsTrueByEmailAddressQuery.VerificationCode)
-                return Result.Fail("Doğrulama Kodu Doğru değil..");
-            if (codeVerify.VerificationCodeValidDate < DateTime.Now)
-                return Result.Fail("Doğrulama kodu süresi geçmiştir lütfen tekrar deneyiniz");
-            else
-                return Result.Success("Doğrulama Başarılı.");
-        }
-
         public async Task<IResult> CheckCodeIsTrueByPhoneAsync(
             CheckCodeIsTrueByPhoneNumberQuery codeIsTrueByPhoneNumberQuery)
         {
@@ -115,6 +97,26 @@ namespace Fintorly.Infrastructure.Repositories
             if (codeVerify is null)
                 return Result.Fail("Bu Telefon Numarasına ait bir doğrulama bilgisi bulunamadı.");
             if (codeVerify.PhoneCode != codeIsTrueByPhoneNumberQuery.VerificationCode)
+                return Result.Fail("Doğrulama Kodu Doğru değil..");
+            if (codeVerify.VerificationCodeValidDate < DateTime.Now)
+                return Result.Fail("Doğrulama kodu süresi geçmiştir lütfen tekrar deneyiniz");
+            else
+                return Result.Success("Doğrulama Başarılı.");
+        }
+
+        public async Task<IResult> CheckCodeIsTrueByEmailAsync(
+            CheckCodeIsTrueByEmailAddressQuery codeIsTrueByEmailAddressQuery)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(a =>
+                a.EmailAddress == codeIsTrueByEmailAddressQuery.EmailAddress);
+            if (user is null)
+                return Result.Fail("Böyle bir kullanıcı bulunamadı");
+
+            var codeVerify = await _context.VerificationCodes.SingleOrDefaultAsync(a =>
+                a.EmailAddress == codeIsTrueByEmailAddressQuery.EmailAddress);
+            if (codeVerify is null)
+                return Result.Fail("Bu Maile ait bir doğrulama bilgisi bulunamadı.");
+            if (codeVerify.MailCode != codeIsTrueByEmailAddressQuery.VerificationCode)
                 return Result.Fail("Doğrulama Kodu Doğru değil..");
             if (codeVerify.VerificationCodeValidDate < DateTime.Now)
                 return Result.Fail("Doğrulama kodu süresi geçmiştir lütfen tekrar deneyiniz");
@@ -210,7 +212,7 @@ namespace Fintorly.Infrastructure.Repositories
             return list;
         }
 
-        public async Task<IResult> LoginWithEmailAsync(LoginWithMailCommand loginWithMailCommand)
+        public async Task<IResult<UserAndTokenDto>> LoginWithEmailAsync(LoginWithMailCommand loginWithMailCommand)
         {
             //ValidationTool.Validate(new LoginWithMailCommandValidator(), loginWithMailCommand);
             //Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens)
@@ -218,95 +220,104 @@ namespace Fintorly.Infrastructure.Repositories
                 a.EmailAddress == loginWithMailCommand.EmailAddress);
 
             if (user is null)
-                return Result.Fail(Messages.General.NotFoundArgument("kullanıcı"));
+                return Result<UserAndTokenDto>.Fail(Messages.General.NotFoundArgument("kullanıcı"));
 
             if (!user.IsEmailAddressVerified)
-                return Result.Fail("Mail adresinizi doğrulayın.");
+                return Result<UserAndTokenDto>.Fail("Mail adresinizi doğrulayın.");
 
             if (HashingHelper.VerifyPasswordHash(loginWithMailCommand.Password, user.PasswordHash, user.PasswordSalt))
             {
                 if (!user.IsActive)
-                    return Result.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.");
+                    return Result<UserAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.");
                 if (!user.IsEmailAddressVerified)
-                    return Result.Fail("Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.");
+                    return Result<UserAndTokenDto>.Fail(
+                        "Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.");
 
                 user.LastLogin = DateTime.Now;
-                user.IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+                user.IpAddress = _ipAddress;
 
-                //var currentPortfolio = user.Portfolios.SingleOrDefault(a => a.Id == user.CurrentPortfolioId);
-                //if (user.CurrentPortfolioId is 0 || currentPortfolio is null)
-                //{
-                //    var firstPortfolio = user.Portfolios.FirstOrDefault();
-                //    if (firstPortfolio is not null)
-                //        user.CurrentPortfolioId = firstPortfolio.Id;
-                //    else if (user.CurrentPortfolioId == 0 || user.CurrentPortfolioId == null || currentPortfolio == null)
-                //    {
-                //        var result = (await _portfolioService.CreatePortfolioAsync(user.Id, "My Portfolio")).Data as PortfolioGetCommand;
-                //        user.CurrentPortfolioId = result.Id;
-                //        currentPortfolio = Mapper.Map<Portfolio>(result);
-                //    }
-                //}
+                var currentPortfolio = user.Portfolios.SingleOrDefault(a => a.Id == user.CurrentPortfolioId);
+                if (currentPortfolio is null)
+                {
+                    currentPortfolio = user.Portfolios.FirstOrDefault();
+                    if (currentPortfolio is not null)
+                        user.CurrentPortfolioId = currentPortfolio.Id;
+                    else
+                    {
+                        var result =
+                            (await _portfolioRepository.CreatePortfolioAsync(user.Id, "My Portfolio"))
+                            .Data as Portfolio;
+                        user.CurrentPortfolioId = result.Id;
+                        currentPortfolio = result;
+                    }
+                }
 
                 var accessToken = await CreateAccessTokenAsync(user);
                 AccessToken userToken = new AccessToken
                 {
                     UserId = user.Id,
                     Token = accessToken.Token,
-                    //TokenExpiration = accessToken.TokenExpiration,
                     CreatedDate = DateTime.Now,
                     IpAddress = user.IpAddress
                 };
                 _context.Users.Update(user);
                 await _context.AccessTokens.AddAsync(userToken);
                 await _context.SaveChangesAsync();
-                var userLoginCommand = new
+                var userLoginCommand = new UserAndTokenDto
                 {
+                    TokenId = userToken.Id,
+                    Token = userToken.Token,
+                    UserId = user.Id,
                     User = _mapper.Map<UserDto>(user),
-                    Token = _mapper.Map<UserAndTokenDto>(userToken),
+                    IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString(),
+                    CreatedDate = DateTime.Now,
                 };
-                //userLoginCommand.User.PortfolioGetCommand = Mapper.Map<PortfolioGetCommand>(currentPortfolio);
-                //userLoginCommand.User.CurrentPortfolioId = user.CurrentPortfolioId;
+                userLoginCommand.User.Portfolio = currentPortfolio;
+                userLoginCommand.User.CurrentPortfolioId = user.CurrentPortfolioId;
 
-                return Result.Success(userLoginCommand);
+                return Result<UserAndTokenDto>.Success(userLoginCommand);
             }
 
-            return Result.Success("Lütfen bilgilerinizi kontrol ediniz.");
+            return Result<UserAndTokenDto>.Fail();
         }
 
-        public async Task<IResult> LoginWithPhoneAsync(LoginWithPhoneCommand loginWithPhoneCommand)
+        public async Task<IResult<UserAndTokenDto>> LoginWithPhoneAsync(LoginWithPhoneCommand loginWithPhoneCommand)
         {
             //ValidationTool.Validate(new LoginWithPhoneCommandValidator(), loginWithPhoneCommand);
             //Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a => a.PortfolioOrders)
             var user = await _context.Users.SingleOrDefaultAsync(
                 a => a.PhoneNumber == loginWithPhoneCommand.PhoneNumber);
             if (user is null)
-                return Result.Fail(Messages.General.NotFoundArgument("kullanıcı"));
+                return Result<UserAndTokenDto>.Fail(Messages.General.NotFoundArgument("kullanıcı"));
 
             if (HashingHelper.VerifyPasswordHash(loginWithPhoneCommand.Password, user.PasswordHash, user.PasswordSalt))
             {
                 if (!user.IsActive)
-                    return Result.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.");
+                    return Result<UserAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.");
                 if (!user.IsEmailAddressVerified)
-                    return Result.Fail("Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.");
+                    return Result<UserAndTokenDto>.Fail(
+                        "Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.");
                 if (!user.IsPhoneNumberVerified)
                     //return Result.(ResultStatus.Error, "Hesabınızı Aktif Etmek İçin Telefon Numaranızı Doğrulamanız Gerekmektedir.");
                     user.LastLogin = DateTime.Now;
                 user.IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
-                //var currentPortfolio = user.Portfolios.SingleOrDefault(a => a.Id == user.CurrentPortfolioId);
+                var currentPortfolio = user.Portfolios.SingleOrDefault(a => a.Id == user.CurrentPortfolioId);
 
-                //if (user.CurrentPortfolioId is 0 || currentPortfolio is null)
-                //{
-                //    var firstPortfolio = user.Portfolios.FirstOrDefault();
-                //    if (firstPortfolio is not null)
-                //        user.CurrentPortfolioId = firstPortfolio.Id;
-                //    else if (user.CurrentPortfolioId == 0 || user.CurrentPortfolioId == null || currentPortfolio == null)
-                //    {
-                //        var result = (await _portfolioService.CreatePortfolioAsync(user.Id, "My Portfolio")).Data as PortfolioGetCommand;
-                //        user.CurrentPortfolioId = result.Id;
-                //        currentPortfolio = Mapper.Map<Portfolio>(result);
-                //    }
-                //}
+                if (currentPortfolio is null)
+                {
+                    var firstPortfolio = user.Portfolios.FirstOrDefault();
+                    if (firstPortfolio is not null)
+                        user.CurrentPortfolioId = firstPortfolio.Id;
+                    else
+                    {
+                        var result =
+                            (await _portfolioRepository.CreatePortfolioAsync(user.Id, "My Portfolio"))
+                            .Data as Portfolio;
+                        user.CurrentPortfolioId = result.Id;
+                        currentPortfolio = result;
+                    }
+                }
 
                 var accessToken = await CreateAccessTokenAsync(user);
                 AccessToken userToken = new AccessToken
@@ -319,54 +330,62 @@ namespace Fintorly.Infrastructure.Repositories
                 _context.Users.Update(user);
                 await _context.AccessTokens.AddAsync(userToken);
                 await _context.SaveChangesAsync();
-
-                var userLoginCommand = new
+                var userLoginCommand = new UserAndTokenDto()
                 {
                     User = _mapper.Map<UserDto>(user),
-                    Token = _mapper.Map<UserAndTokenDto>(userToken),
+                    Token = userToken.Token,
+                    TokenId = userToken.Id,
+                    UserId = user.Id,
+                    IpAddress = _ipAddress,
+                    CreatedDate = DateTime.Now
                 };
-                //userLoginCommand.User.PortfolioGetCommand = Mapper.Map<PortfolioGetCommand>(currentPortfolio);
-                //userLoginCommand.User.CurrentPortfolioId = user.CurrentPortfolioId;
-                return Result.Success(userLoginCommand);
+
+                userLoginCommand.User.Portfolio = currentPortfolio;
+                userLoginCommand.User.CurrentPortfolioId = user.CurrentPortfolioId;
+                return Result<UserAndTokenDto>.Success(userLoginCommand);
             }
 
-            return Result.Fail("Lütfen bilgilerinizi kontrol ediniz.");
+            return Result<UserAndTokenDto>.Fail("Lütfen bilgilerinizi kontrol ediniz.");
         }
 
-        public async Task<IResult> LoginWithUserNameAsync(LoginWithUserNameCommand loginWithUserNameCommand)
+        public async Task<IResult<UserAndTokenDto>> LoginWithUserNameAsync(
+            LoginWithUserNameCommand loginWithUserNameCommand)
         {
             //ValidationTool.Validate(new LoginWithUserNameCommandValidator(), loginWithUserNameCommand);
             //.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens)
 
             var user = await _context.Users.SingleOrDefaultAsync(a => a.UserName == loginWithUserNameCommand.UserName);
             if (user is null)
-                return Result.Fail(Messages.General.NotFoundArgument("kullanıcı"));
+                return Result<UserAndTokenDto>.Fail(Messages.General.NotFoundArgument("kullanıcı"));
 
             if (HashingHelper.VerifyPasswordHash(loginWithUserNameCommand.Password, user.PasswordHash,
                     user.PasswordSalt))
             {
                 if (!user.IsActive)
-                    return Result.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.");
+                    return Result<UserAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.");
                 if (!user.IsEmailAddressVerified)
-                    return Result.Fail("Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.");
+                    return Result<UserAndTokenDto>.Fail(
+                        "Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.");
 
                 user.LastLogin = DateTime.Now;
                 user.IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
-                //var currentPortfolio = user.Portfolios.SingleOrDefault(a => a.Id == user.CurrentPortfolioId);
+                var currentPortfolio = user.Portfolios.SingleOrDefault(a => a.Id == user.CurrentPortfolioId);
 
-                //if (user.CurrentPortfolioId is 0 || currentPortfolio is null)
-                //{
-                //    var firstPortfolio = user.Portfolios.FirstOrDefault();
-                //    if (firstPortfolio is not null)
-                //        user.CurrentPortfolioId = firstPortfolio.Id;
-                //    else if (user.CurrentPortfolioId == 0 || user.CurrentPortfolioId == null || currentPortfolio == null)
-                //    {
-                //        var result = (await _portfolioService.CreatePortfolioAsync(user.Id, "My Portfolio")).Data as PortfolioGetCommand;
-                //        user.CurrentPortfolioId = result.Id;
-                //        currentPortfolio = Mapper.Map<Portfolio>(result);
-                //    }
-                //}
+                if (currentPortfolio is null)
+                {
+                    var firstPortfolio = user.Portfolios.FirstOrDefault();
+                    if (firstPortfolio is not null)
+                        user.CurrentPortfolioId = firstPortfolio.Id;
+                    else
+                    {
+                        var result =
+                            (await _portfolioRepository.CreatePortfolioAsync(user.Id, "My Portfolio"))
+                            .Data as Portfolio;
+                        user.CurrentPortfolioId = result.Id;
+                        currentPortfolio = result;
+                    }
+                }
 
 
                 var accessToken = await CreateAccessTokenAsync(user);
@@ -381,17 +400,21 @@ namespace Fintorly.Infrastructure.Repositories
                 await _context.AccessTokens.AddAsync(userToken);
                 await _context.SaveChangesAsync();
 
-                var userLoginCommand = new
+                var userLoginCommand = new UserAndTokenDto
                 {
                     User = _mapper.Map<UserDto>(user),
-                    Token = _mapper.Map<UserAndToken>(userToken),
+                    Token = userToken.Token,
+                    TokenId = accessToken.Id,
+                    UserId = user.Id,
+                    IpAddress = _ipAddress,
+                    CreatedDate = DateTime.Now
                 };
-                //userLoginCommand.User.PortfolioGetCommand = Mapper.Map<PortfolioGetCommand>(currentPortfolio);
-                //userLoginCommand.User.CurrentPortfolioId = user.CurrentPortfolioId;
-                return Result.Success(userLoginCommand);
+                userLoginCommand.User.Portfolio = currentPortfolio;
+                userLoginCommand.User.CurrentPortfolioId = user.CurrentPortfolioId;
+                return Result<UserAndTokenDto>.Success(userLoginCommand);
             }
 
-            return Result.Fail("Lütfen bilgilerinizi kontrol ediniz.");
+            return Result<UserAndTokenDto>.Fail("Lütfen bilgilerinizi kontrol ediniz.");
         }
 
         public async Task<IResult> RegisterAsync(RegisterCommand registerCommand)
@@ -424,21 +447,21 @@ namespace Fintorly.Infrastructure.Repositories
             var accessToken = await CreateAccessTokenAsync(user);
 
             await _context.Users.AddAsync(user);
-            //Portfolio portfolio = new Portfolio()
-            //{
-            //    User = user,
-            //    UserId = user.Id,
-            //    TotalPrice = 0,
-            //    TotalPriceUser24Hour = 0,
-            //    TotalPriceChange = 0,
-            //    TotalPriceChangePercent = 0,
-            //    Name = "My Portfolio",
-            //    PortfolioTokens = new List<PortfolioToken>()
-            //};
-            //await _context.Portfolios.AddAsync(portfolio);
-            //user.Portfolios.Add(portfolio);
-            //await _context.SaveChangesAsync();
-            //user.CurrentPortfolioId = portfolio.Id;
+            Portfolio portfolio = new Portfolio()
+            {
+                User = user,
+                UserId = user.Id,
+                TotalPrice = 0,
+                TotalPriceUser24Hour = 0,
+                TotalPriceChange = 0,
+                TotalPriceChangePercent = 0,
+                Name = "My Portfolio",
+                PortfolioTokens = new List<PortfolioToken>()
+            };
+            await _portfolioRepository.AddAsync(portfolio);
+            user.Portfolios.Add(portfolio);
+            user.CurrentPortfolioId = portfolio.Id;
+            
             AccessToken userToken = new AccessToken
             {
                 UserId = user.Id,

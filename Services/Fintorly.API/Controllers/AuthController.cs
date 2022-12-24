@@ -1,6 +1,10 @@
+using System.Net;
+using Fintorly.Application.Dtos.UserDtos;
 using Fintorly.Application.Features.Commands.AuthCommands;
+using Fintorly.Domain.Common;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using IResult = Fintorly.Domain.Common.IResult;
 
 namespace Fintorly.API.Controllers;
 
@@ -12,16 +16,40 @@ public class AuthController : Controller
     {
         _mediator = mediator;
     }
-
-    [HttpPost("verificationCodeAddAsync")]
-    public async Task<IActionResult> Generate(VerificationCodeAddCommand request)
+    [HttpPost("loginWithMail")]
+    public async Task<IActionResult> LoginWithMail(LoginWithMailCommand request)
     {
-      return Ok(await _mediator.Send(request));
+        var result = await _mediator.Send(request);
+        if (result.Succeeded)
+            return Ok(result);
+        return BadRequest(result);
+    }
+    [ProducesResponseType(typeof(IResult<UserAndTokenDto>),StatusCodes.Status200OK)]
+    [HttpPost("loginWithPhone")]
+    public async Task<IActionResult> LoginWithPhone(LoginWithPhoneCommand request)
+    {
+        var result = await _mediator.Send(request);
+        if (result.Succeeded)
+            return Ok(result);
+        return BadRequest(result);
     }
     
-    [HttpPost("sendActivationCodeEmailAddress")]
-    public async Task<IActionResult> Generate(SendActivationCodeEmailAddressCommand request)
+ 
+    [HttpPost("verificationCodeAddAsync")]
+    public async Task<IActionResult> verificationCodeAddAsync(VerificationCodeAddCommand request)
     {
-        return Ok(await _mediator.Send(request));
+        var result = await _mediator.Send(request);
+        if (result.Succeeded)
+            return Ok(result);
+        return BadRequest(result);
+    }
+
+    [HttpPost("sendActivationCodeEmailAddress")]
+    public async Task<IActionResult> sendActivationCodeEmailAddress(SendActivationCodeEmailAddressCommand request)
+    {
+        var result = await _mediator.Send(request);
+        if (result.Succeeded)
+            return Ok(result);
+        return BadRequest(result);
     }
 }

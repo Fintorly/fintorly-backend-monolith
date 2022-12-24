@@ -1,4 +1,5 @@
 ﻿using System;
+using Fintorly.Application.Dtos.UserDtos;
 using Fintorly.Domain.Entities;
 using Fintorly.Application.Features.Commands.AuthCommands;
 using Fintorly.Application.Features.Queries.AuthQueries;
@@ -11,9 +12,9 @@ namespace Fintorly.Application.Interfaces.Repositories
         Task<AccessToken> CreateAccessTokenAsync(User user);
         Task<AccessToken> CreateAccessTokenAsync(Mentor mentor);
         Task<IResult> RegisterAsync(RegisterCommand registerCommand);
-        Task<IResult> LoginWithPhoneAsync(LoginWithPhoneCommand loginWithPhoneCommand);
-        Task<IResult> LoginWithEmailAsync(LoginWithMailCommand loginWithMailCommand);
-        Task<IResult> LoginWithUserNameAsync(LoginWithUserNameCommand loginWithUserNameCommand);
+        Task<IResult<UserAndTokenDto>> LoginWithPhoneAsync(LoginWithPhoneCommand loginWithPhoneCommand);
+        Task<IResult<UserAndTokenDto>> LoginWithEmailAsync(LoginWithMailCommand loginWithMailCommand);
+        Task<IResult<UserAndTokenDto>> LoginWithUserNameAsync(LoginWithUserNameCommand loginWithUserNameCommand);
         Task<IResult> ActiveEmailByActivationCodeAsync(UserEmailActiveCommand userEmailActiveCommand);
         Task<IResult> ActivePhoneByActivationCodeAsync(UserPhoneActiveCommand userPhoneActiveCommand);
         Task<IResult> SendActivationCodeEmailAsync(SendActivationCodeEmailAddressCommand activationCodeEmailAddressCommand );

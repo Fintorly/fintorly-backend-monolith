@@ -7,5 +7,11 @@ namespace Fintorly.Domain.Common
         public bool Succeeded { get; set; }
         public object Data { get; set; }
     }
+    public interface IResult<T>
+    {
+        public string Message { get; set; }
+        public bool Succeeded { get; set; }
+        public object Data { get; set; }
+    }
 }
 

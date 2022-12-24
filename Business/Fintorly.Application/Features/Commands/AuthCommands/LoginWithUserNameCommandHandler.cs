@@ -1,6 +1,8 @@
+using Fintorly.Application.Dtos.UserDtos;
+
 namespace Fintorly.Application.Features.Commands.AuthCommands;
 
-public class LoginWithUserNameCommandHandler : IRequestHandler<LoginWithUserNameCommand,IResult>
+public class LoginWithUserNameCommandHandler : IRequestHandler<LoginWithUserNameCommand,IResult<UserAndTokenDto>>
 {
     private IAuthRepository _authRepository;
 
@@ -9,7 +11,7 @@ public class LoginWithUserNameCommandHandler : IRequestHandler<LoginWithUserName
         _authRepository = authRepository;
     }
 
-    public async Task<IResult> Handle(LoginWithUserNameCommand request, CancellationToken cancellationToken)
+    public async Task<IResult<UserAndTokenDto>> Handle(LoginWithUserNameCommand request, CancellationToken cancellationToken)
     {
         return await _authRepository.LoginWithUserNameAsync(request);
     }

@@ -21,6 +21,7 @@ public class User : BaseEntity, IEntity
     public byte[] PasswordSalt { get; set; }
     public byte[] PasswordHash { get; set; }
     public Guid ProfilePictureId { get; set; }
+    public Guid CurrentPortfolioId { get; set; }
     public ProfilePicture ProfilePicture { get; set; }
     //Kullanıcının ilgilendiği tokenlar
     public ICollection<UserAndToken> InterestedTokens { get; set; }
