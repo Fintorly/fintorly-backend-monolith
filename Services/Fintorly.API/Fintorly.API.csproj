@@ -17,15 +17,11 @@
 
   <ItemGroup>
     <None Remove="Controllers\" />
-    <None Remove="Models\" />
-    <None Remove="Models\UserResponseModels\" />
     <None Remove="MediatR" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="IntegrationEvents\EventHandlers" />
-    <Folder Include="Models" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Business\Fintorly.Application\Fintorly.Application.csproj" />
