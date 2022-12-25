@@ -208,8 +208,7 @@ namespace Fintorly.Infrastructure.Migrations
                         name: "FK_Mentors_ProfilePictures_ProfilePictureId",
                         column: x => x.ProfilePictureId,
                         principalTable: "ProfilePictures",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -224,14 +223,14 @@ namespace Fintorly.Infrastructure.Migrations
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Gender = table.Column<int>(type: "int", nullable: false),
                     Birthday = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PaymentChannel = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentChannel = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsPhoneNumberVerified = table.Column<bool>(type: "bit", nullable: false),
                     IsEmailAddressVerified = table.Column<bool>(type: "bit", nullable: false),
                     LastLogin = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    ProfilePictureId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfilePictureId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CurrentPortfolioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -249,6 +248,34 @@ namespace Fintorly.Infrastructure.Migrations
                         name: "FK_Users_ProfilePictures_ProfilePictureId",
                         column: x => x.ProfilePictureId,
                         principalTable: "ProfilePictures",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Choices",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Key = table.Column<int>(type: "int", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OsType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Choices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Choices_Questions_QuestionId",
+                        column: x => x.QuestionId,
+                        principalTable: "Questions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -406,15 +433,15 @@ namespace Fintorly.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsValid = table.Column<bool>(type: "bit", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OsType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -438,6 +465,7 @@ namespace Fintorly.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Choice = table.Column<int>(type: "int", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -534,8 +562,8 @@ namespace Fintorly.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TotalPriceChange = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TotalPriceChangePercent = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -1026,6 +1054,11 @@ namespace Fintorly.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Choices_QuestionId",
+                table: "Choices",
+                column: "QuestionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Comments_MentorId",
                 table: "Comments",
                 column: "MentorId");
@@ -1198,6 +1231,9 @@ namespace Fintorly.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Answers");
+
+            migrationBuilder.DropTable(
+                name: "Choices");
 
             migrationBuilder.DropTable(
                 name: "Connections");

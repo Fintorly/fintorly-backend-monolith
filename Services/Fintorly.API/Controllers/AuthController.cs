@@ -8,6 +8,8 @@ using IResult = Fintorly.Domain.Common.IResult;
 
 namespace Fintorly.API.Controllers;
 
+[Route("api/[controller]")]
+[ApiController]
 public class AuthController : Controller
 {
     private IMediator _mediator;

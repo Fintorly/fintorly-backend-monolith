@@ -1,4 +1,5 @@
 ﻿using System;
+using AutoMapper;
 using Fintorly.Application.Features.Commands.QuestionCommands;
 using Fintorly.Domain.Common;
 using Fintorly.Domain.Entities;
@@ -10,32 +11,55 @@ namespace Fintorly.Infrastructure.Repositories
     public class QuestionRepository : GenericRepository<Question>, IQuestionRepository
     {
         private FintorlyContext _context;
-        public QuestionRepository(FintorlyContext context) : base(context)
+        private IMapper _mapper;
+
+        public QuestionRepository(FintorlyContext context, IMapper mapper) : base(context)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<IResult> UpdateQuestionAsync(UpdateQuestionCommand request)
+        public async Task<IResult> AddOrUpdateQuestionAsync(AddOrUpdateQuestionCommand request)
         {
             var question = await _context.Questions.SingleOrDefaultAsync(a => a.Id == request.QuestionId);
             if (question is null)
-                return Result.Fail();
-            foreach (var choice in request.Choices)
             {
-                if (question.Choices.TryGetValue(choice.Key, out var value))
+                var newQuestion = _mapper.Map<Question>(request);
+                var newChoice = new Choice()
                 {
-                    value = choice.Value;
+                    Key = request.Key,
+                    Value = request.Value,
+                    Question = newQuestion,
+                    QuestionId = newQuestion.Id
+                };
+                newQuestion.Choices.Add(newChoice);
+                await _context.Choices.AddAsync(newChoice);
+                await _context.Questions.AddAsync(newQuestion);
+                await _context.SaveChangesAsync();
+                return Result.Success();
+            }
+            else
+            {
+                var choiceExist = question.Choices.SingleOrDefault(a => a.Key == request.Key);
+                if (choiceExist is not null)
+                {
+                    choiceExist.Value = request.Value;
                 }
                 else
                 {
-                    question.Choices.Add(choice.Key,choice.Value);
+                    var choice = new Choice()
+                    {
+                        Key = request.Key,
+                        Value = request.Value,
+                        Question = question,
+                        QuestionId = question.Id
+                    };
+                    question.Choices.Add(choice);
                 }
-
+                _context.Update(question);
+                await _context.SaveChangesAsync();
+                return Result.Success();
             }
-            _context.Update(question);
-            await _context.SaveEntitiesAsync();
-            return Result.Success();
         }
     }
 }
-

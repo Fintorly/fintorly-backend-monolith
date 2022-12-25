@@ -4,9 +4,11 @@ using Fintorly.Domain.Enums;
 
 namespace Fintorly.Application.Features.Commands.QuestionCommands
 {
-    public class UpdateQuestionCommand : IRequest<IResult>
+    public class AddOrUpdateQuestionCommand : IRequest<IResult>
     {
         public Guid QuestionId { get; set; }
-        public Dictionary<QuestionChoice, string> Choices { get; set; }
+        public string? Content { get; set; }
+        public QuestionChoice Key { get; set; }
+        public string Value { get; set; }
     }
 }

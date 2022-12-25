@@ -1,4 +1,5 @@
-﻿using Fintorly.Domain.Common;
+﻿using Fintorly.Application.Features.Commands.AnswerCommands;
+using Fintorly.Domain.Common;
 using Fintorly.Domain.Entities;
 using Fintorly.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
@@ -26,18 +27,24 @@ namespace Fintorly.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<bool> AddMultipleAnswer(List<Answer> answers)
+        public async Task<bool> AddMultipleAnswer(CreateAnswerMultipleCommand command)
         {
-            foreach (var answer in answers)
+            foreach (var answer in command.Answers)
             {
                 var question = await _context.Questions.SingleOrDefaultAsync(a => a.Id == answer.QuestionId);
                 if (question is null)
                     continue;
-                answer.Question = question;
-                question.Answers.Add(answer);
-                await _context.Answers.AddAsync(answer);
+                var newAnswer = new Answer()
+                {
+                    Choice = answer.Choice,
+                    Content = answer.Content,
+                    Question = question,
+                    QuestionId = question.Id,
+                };
+                question.Answers.Add(newAnswer);
+                await _context.Answers.AddAsync(newAnswer);
+                _context.Update(question);
             }
-
             await _context.SaveChangesAsync();
 
             return true;

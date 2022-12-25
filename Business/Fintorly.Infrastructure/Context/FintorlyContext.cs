@@ -26,6 +26,7 @@ namespace Fintorly.Infrastructure.Context
         public DbSet<MessagePicture> MessagePictures{ get; set; }
         public DbSet<OperationClaim> OperationClaims{ get; set; }
         public DbSet<Question> Questions{ get; set; }
+        public DbSet<Choice> Choices { get; set; }
         public DbSet<Reaction> Reactions{ get; set; }
         public DbSet<Report> Reports{ get; set; }
         public DbSet<ReviewComment> ReviewComments{ get; set; }
@@ -92,6 +93,7 @@ namespace Fintorly.Infrastructure.Context
             modelBuilder.ApplyConfiguration(new PortfolioChartHistoryConfiguration());
             modelBuilder.ApplyConfiguration(new PortfolioTokenConfiguration());
             modelBuilder.ApplyConfiguration(new MentorAndOperationClaimConfiguration());
+            modelBuilder.ApplyConfiguration(new ChoiceConfiguration());
 
             base.OnModelCreating(modelBuilder);
         }

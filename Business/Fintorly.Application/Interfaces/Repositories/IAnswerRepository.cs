@@ -1,10 +1,11 @@
-﻿using Fintorly.Domain.Entities;
+﻿using Fintorly.Application.Features.Commands.AnswerCommands;
+using Fintorly.Domain.Entities;
 
 namespace Fintorly.Application.Interfaces.Repositories
 {
     public interface IAnswerRepository : IGenericRepository<Answer>
     {
-	    Task<bool> AddMultipleAnswer(List<Answer> answers);
+	    Task<bool> AddMultipleAnswer(CreateAnswerMultipleCommand command);
     }
 }
 

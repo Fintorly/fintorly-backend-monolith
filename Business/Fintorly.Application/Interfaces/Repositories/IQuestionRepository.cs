@@ -6,7 +6,7 @@ namespace Fintorly.Application.Interfaces.Repositories
 {
     public interface IQuestionRepository:IGenericRepository<Question>
     {
-	    Task<IResult> UpdateQuestionAsync(UpdateQuestionCommand request);
+	    Task<IResult> AddOrUpdateQuestionAsync(AddOrUpdateQuestionCommand request);
     }
 }
 

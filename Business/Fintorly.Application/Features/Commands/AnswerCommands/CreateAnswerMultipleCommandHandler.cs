@@ -15,8 +15,8 @@ public class CreateAnswerMultipleCommandHandler : IRequestHandler<CreateAnswerMu
 
     public async Task<IResult> Handle(CreateAnswerMultipleCommand request, CancellationToken cancellationToken)
     {
-        var answers = _mapper.Map<List<Answer>>(request.Answers);
-        var result=await _answerRepository.AddMultipleAnswer(answers);
+        
+        var result=await _answerRepository.AddMultipleAnswer(request);
         if (result)
             return Result.Success();
         return Result.Fail();

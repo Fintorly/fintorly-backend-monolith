@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fintorly.Infrastructure.Migrations
 {
     [DbContext(typeof(FintorlyContext))]
-    [Migration("20221225161052_InitalCreate5")]
-    partial class InitalCreate5
+    [Migration("20221225185638_InitalCreate")]
+    partial class InitalCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -231,7 +231,7 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Property<bool>("IsValid")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("MentorId")
+                    b.Property<Guid?>("MentorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ModifiedBy")
@@ -250,7 +250,7 @@ namespace Fintorly.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -310,6 +310,9 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Choice")
+                        .HasColumnType("int");
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -393,6 +396,59 @@ namespace Fintorly.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories", (string)null);
+                });
+
+            modelBuilder.Entity("Fintorly.Domain.Entities.Choice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Key")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OsType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneModel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("Choices", (string)null);
                 });
 
             modelBuilder.Entity("Fintorly.Domain.Entities.Comment", b =>
@@ -841,7 +897,7 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("MentorId")
+                    b.Property<Guid?>("MentorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ModifiedBy")
@@ -872,7 +928,7 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Property<decimal>("TotalPriceUser24Hour")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -1762,14 +1818,12 @@ namespace Fintorly.Infrastructure.Migrations
                     b.HasOne("Fintorly.Domain.Entities.Mentor", "Mentor")
                         .WithMany("AccessTokens")
                         .HasForeignKey("MentorId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Fintorly.Domain.Entities.User", "User")
                         .WithMany("AccessTokens")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Mentor");
 
@@ -1801,6 +1855,17 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Navigation("Question");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Fintorly.Domain.Entities.Choice", b =>
+                {
+                    b.HasOne("Fintorly.Domain.Entities.Question", "Question")
+                        .WithMany("Choices")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Question");
                 });
 
             modelBuilder.Entity("Fintorly.Domain.Entities.Comment", b =>
@@ -1862,7 +1927,7 @@ namespace Fintorly.Infrastructure.Migrations
                     b.HasOne("Fintorly.Domain.Entities.ProfilePicture", "ProfilePicture")
                         .WithMany("Mentors")
                         .HasForeignKey("ProfilePictureId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Advertisement");
@@ -1905,14 +1970,12 @@ namespace Fintorly.Infrastructure.Migrations
                     b.HasOne("Fintorly.Domain.Entities.Mentor", "Mentor")
                         .WithMany("Portfolios")
                         .HasForeignKey("MentorId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Fintorly.Domain.Entities.User", "User")
                         .WithMany("Portfolios")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Mentor");
 
@@ -2020,7 +2083,8 @@ namespace Fintorly.Infrastructure.Migrations
                 {
                     b.HasOne("Fintorly.Domain.Entities.ProfilePicture", "ProfilePicture")
                         .WithMany("Users")
-                        .HasForeignKey("ProfilePictureId");
+                        .HasForeignKey("ProfilePictureId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("ProfilePicture");
                 });
@@ -2118,6 +2182,8 @@ namespace Fintorly.Infrastructure.Migrations
             modelBuilder.Entity("Fintorly.Domain.Entities.Question", b =>
                 {
                     b.Navigation("Answers");
+
+                    b.Navigation("Choices");
                 });
 
             modelBuilder.Entity("Fintorly.Domain.Entities.Reaction", b =>

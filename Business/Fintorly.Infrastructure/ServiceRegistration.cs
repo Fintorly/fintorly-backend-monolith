@@ -28,7 +28,8 @@ public static class ServiceRegistration
         services.AddScoped<IUserAuthRepository, UserAuthRepository>();
         services.AddScoped<IMentorAuthRepository, MentorAuthRepository>();
         services.AddScoped<IPortfolioRepository,PortfolioRepository>();
-    
+        services.AddScoped<IQuestionRepository, QuestionRepository>();
+        services.AddScoped<IAnswerRepository, AnswerRepository>();
         
         var asd = configuration.GetConnectionString(":ConnectionString");
         var optionsBuilder = new DbContextOptionsBuilder<FintorlyContext>()
