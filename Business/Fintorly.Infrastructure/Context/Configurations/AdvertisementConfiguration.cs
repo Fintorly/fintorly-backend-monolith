@@ -14,6 +14,9 @@ public class AdvertisementConfiguration:IEntityTypeConfiguration<Advertisement>
         builder.Property(a => a.Content).IsRequired();
         builder.Property(a => a.Price).IsRequired();
         builder.Property(a => a.PackageType).IsRequired();
+        builder.Ignore(a => a.IpAddress);
+        builder.Ignore(a => a.OsType);
+        builder.Ignore(a => a.PhoneModel);
 
         builder.ToTable("Advertisements");
     }

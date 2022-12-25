@@ -12,6 +12,9 @@ public class GroupConfiguration:IEntityTypeConfiguration<Group>
         builder.Property(a => a.Title).IsRequired();
         builder.Property(a => a.FilePath).IsRequired();
         builder.Property(a => a.FileName).IsRequired();
+        builder.Ignore(a => a.IpAddress);
+        builder.Ignore(a => a.OsType);
+        builder.Ignore(a => a.PhoneModel);
         builder.HasOne<Mentor>(a => a.Mentor).WithMany(a => a.Groups).HasForeignKey(a => a.MentorId);
       
         // builder.HasMany<User>(a => a.Users).WithMany(a => a.Groups);

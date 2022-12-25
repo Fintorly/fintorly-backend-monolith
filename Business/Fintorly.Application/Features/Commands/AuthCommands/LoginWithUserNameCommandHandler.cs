@@ -1,4 +1,5 @@
 using Fintorly.Application.Dtos.UserDtos;
+using Fintorly.Domain.Enums;
 
 namespace Fintorly.Application.Features.Commands.AuthCommands;
 
@@ -13,9 +14,9 @@ public class LoginWithUserNameCommandHandler:IRequestHandler<LoginWithUserNameCo
     }
 
     public async Task<IResult<UserAndTokenDto>> Handle(LoginWithUserNameCommand request, CancellationToken cancellationToken)
-    {
-        var result = await _userAuthRepository.LoginWithUserNameAsync(request);
-        if (result.Succeeded)
+    { 
+        var result = await _mentorAuthRepository.LoginWithUserNameAsync(request);
+        if (result.Succeeded || result.ResultStatus == ResultStatus.Warning)
             return result;
         return await _mentorAuthRepository.LoginWithUserNameAsync(request);
     }

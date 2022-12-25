@@ -17,6 +17,10 @@ namespace Fintorly.Infrastructure.Context.Configurations
 
 			builder.Property(a => a.MailCode).IsRequired(false);
 			builder.Property(a => a.PhoneCode).IsRequired(false);
+			builder.Property(a => a.IpAddress).IsRequired(false);
+			builder.Property(a => a.OsType).IsRequired(false);
+			builder.Property(a => a.PhoneModel).IsRequired(false);
+			
 			builder.ToTable("VerificationCodes");
 		}
     }

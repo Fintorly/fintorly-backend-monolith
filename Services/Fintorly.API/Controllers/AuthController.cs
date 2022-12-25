@@ -17,7 +17,8 @@ public class AuthController : Controller
         _mediator = mediator;
     }
     [HttpPost("loginWithMail")]
-    [ProducesResponseType(typeof(UserAndTokenDto),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IResult<UserAndTokenDto>),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> LoginWithMail(LoginWithMailCommand request)
     {
         var result = await _mediator.Send(request);
@@ -25,8 +26,10 @@ public class AuthController : Controller
             return Ok(result);
         return BadRequest(result);
     }
-    [ProducesResponseType(typeof(IResult<UserAndTokenDto>),StatusCodes.Status200OK)]
+
     [HttpPost("loginWithPhone")]
+    [ProducesResponseType(typeof(IResult<UserAndTokenDto>),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> LoginWithPhone(LoginWithPhoneCommand request)
     {
         var result = await _mediator.Send(request);
@@ -36,6 +39,7 @@ public class AuthController : Controller
     }
     [HttpPost("loginWithUserName")]
     [ProducesResponseType(typeof(UserAndTokenDto),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> LoginWithMail(LoginWithUserNameCommand request)
     {
         var result = await _mediator.Send(request);
@@ -46,7 +50,85 @@ public class AuthController : Controller
     
     [HttpPost("register")]
     [ProducesResponseType(typeof(UserAndTokenDto),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register(RegisterCommand request)
+    {
+        var result = await _mediator.Send(request);
+        if (result.Succeeded)
+            return Ok(result);
+        return BadRequest(result);
+    }
+    
+    [HttpPost("changePassword")]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Register(ChangePasswordCommand request)
+    {
+        var result = await _mediator.Send(request);
+        if (result.Succeeded)
+            return Ok(result);
+        return BadRequest(result);
+    }
+    
+    [HttpPost("emailActive")]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Register(EmailActiveCommand request)
+    {
+        var result = await _mediator.Send(request);
+        if (result.Succeeded)
+            return Ok(result);
+        return BadRequest(result);
+    }
+    
+    [HttpPost("phoneActive")]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Register(PhoneActiveCommand request)
+    {
+        var result = await _mediator.Send(request);
+        if (result.Succeeded)
+            return Ok(result);
+        return BadRequest(result);
+    }
+    
+    [HttpPost("forgotPasswordEmail")]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Register(ForgotPasswordEmailCommand request)
+    {
+        var result = await _mediator.Send(request);
+        if (result.Succeeded)
+            return Ok(result);
+        return BadRequest(result);
+    }
+    
+    [HttpPost("forgotPasswordPhone")]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Register(ForgotPasswordPhoneCommand request)
+    {
+        var result = await _mediator.Send(request);
+        if (result.Succeeded)
+            return Ok(result);
+        return BadRequest(result);
+    }
+    
+    [HttpPost("sendActivationCodeEmailAddress")]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Register(SendActivationCodeEmailAddressCommand request)
+    {
+        var result = await _mediator.Send(request);
+        if (result.Succeeded)
+            return Ok(result);
+        return BadRequest(result);
+    }
+    
+    [HttpPost("sendActivationCodePhoneNumber")]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Register(SendActivationCodePhoneNumberCommand request)
     {
         var result = await _mediator.Send(request);
         if (result.Succeeded)
@@ -55,16 +137,9 @@ public class AuthController : Controller
     }
  
     [HttpPost("verificationCodeAddAsync")]
-    public async Task<IActionResult> verificationCodeAddAsync(VerificationCodeAddCommand request)
-    {
-        var result = await _mediator.Send(request);
-        if (result.Succeeded)
-            return Ok(result);
-        return BadRequest(result);
-    }
-
-    [HttpPost("sendActivationCodeEmailAddress")]
-    public async Task<IActionResult> sendActivationCodeEmailAddress(SendActivationCodeEmailAddressCommand request)
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IResult),StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> VerificationCodeAddAsync(VerificationCodeAddCommand request)
     {
         var result = await _mediator.Send(request);
         if (result.Succeeded)

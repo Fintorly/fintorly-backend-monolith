@@ -5,11 +5,11 @@ namespace Fintorly.Domain.Entities;
 public class Portfolio : BaseEntity, IEntity
 {
     public string Name { get; set; }
-    public Guid UserId { get; set; }
-    public User User { get; set; }
-    public Guid MentorId { get; set; }
+    public Guid? UserId { get; set; }
+    public User? User { get; set; }
+    public Guid? MentorId { get; set; }
 
-    public Mentor Mentor { get; set; }
+    public Mentor? Mentor { get; set; }
 
     //Ana Fiyat Güncel 
     public decimal TotalPrice { get; set; }

@@ -18,15 +18,17 @@ public static class ServiceRegistration
             opt.EnableSensitiveDataLogging();
         });
 
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IAdvertisementRepository, AdvertisementRepository>();
-        services.AddTransient<IUserAuthRepository, UserAuthRepository>();
-        services.AddScoped<IMentorAuthRepository, MentorAuthRepository>();
-        services.AddScoped<IPortfolioRepository,PortfolioRepository>();
         services.AddScoped<IJwtHelper, JwtHelper>();
         services.AddScoped<IPhoneService, PhoneManager>();
         services.AddScoped<IMailService, MailManager>();
         services.AddScoped<ITokenResolver, TokenResolver>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IAdvertisementRepository, AdvertisementRepository>();
+        services.AddScoped<IAuthRepository, AuthRepository>();
+        services.AddScoped<IUserAuthRepository, UserAuthRepository>();
+        services.AddScoped<IMentorAuthRepository, MentorAuthRepository>();
+        services.AddScoped<IPortfolioRepository,PortfolioRepository>();
+    
         
         var asd = configuration.GetConnectionString(":ConnectionString");
         var optionsBuilder = new DbContextOptionsBuilder<FintorlyContext>()

@@ -14,7 +14,9 @@ public class TierConfiguration:IEntityTypeConfiguration<Tier>
         builder.Property(a => a.Title).IsRequired();
         builder.Property(a => a.Price).IsRequired();
         builder.Property(a => a.PackageType).IsRequired();
-
+        builder.Property(a => a.IpAddress).IsRequired(false);
+        builder.Property(a => a.OsType).IsRequired(false);
+        builder.Property(a => a.PhoneModel).IsRequired(false);
         builder.HasOne<Mentor>(a => a.Mentor).WithMany(a => a.Tiers).HasForeignKey(a => a.MentorId);
         
         builder.ToTable("Tiers");

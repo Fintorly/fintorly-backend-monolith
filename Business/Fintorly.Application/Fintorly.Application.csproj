@@ -60,7 +60,7 @@
     <Folder Include="Extensions\" />
     <Folder Include="Features\" />
     <Folder Include="Features\Commands\" />
-    <Folder Include="Features\Commands\MentorAuth" />
+    <Folder Include="Features\Commands\MentorCommands" />
     <Folder Include="Features\Queries\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Interfaces\Context\" />
@@ -74,6 +74,7 @@
     <Folder Include="Interfaces\Utils\" />
     <Folder Include="Features\Commands\EmailCommands\" />
     <Folder Include="Dtos\OneSignalNotificationDtos\" />
+    <Folder Include="Mapping\UserProfileMapping\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MediatR" Version="11.1.0" />

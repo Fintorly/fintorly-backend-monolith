@@ -11,8 +11,8 @@ public class TierAndUserConfiguration:IEntityTypeConfiguration<TierAndUser>
     {
         builder.HasKey(a => new { a.TierId, a.UserId });
 
-        builder.HasOne<User>(a => a.User).WithMany(a => a.TierAndUsers).HasForeignKey(a=>a.UserId);
-        builder.HasOne<Tier>(a => a.Tier).WithMany(a => a.TierAndUsers).HasForeignKey(a => a.TierId);
+        builder.HasOne<User>(a => a.User).WithMany(a => a.TierAndUsers).HasForeignKey(a=>a.UserId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne<Tier>(a => a.Tier).WithMany(a => a.TierAndUsers).HasForeignKey(a => a.TierId).OnDelete(DeleteBehavior.NoAction);
         
         builder.ToTable("TierAndUsers");
     }

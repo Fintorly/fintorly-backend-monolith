@@ -1,4 +1,5 @@
 using Fintorly.Application.Interfaces.Utils;
+using Fintorly.Domain.Enums;
 
 namespace Fintorly.Application.Features.Commands.AuthCommands;
 
@@ -20,7 +21,12 @@ public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordComman
     {
         var isMentor = await _tokenResolver.GetIsMentorAsync();
         if (isMentor)
-            return await _mentorAuthRepository.ChangePasswordAsync(request);
+        {
+            var result = await _mentorAuthRepository.ChangePasswordAsync(request);
+            if (result.Succeeded || result.ResultStatus == ResultStatus.Warning)
+                return result;
+        }
+
         return await _userAuthRepository.ChangePasswordAsync(request);
     }
 }

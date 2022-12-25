@@ -1,9 +1,10 @@
 ﻿using System;
+using Fintorly.Application.Dtos.PortfolioDtos;
 using Fintorly.Application.Dtos.UserDtos;
 using Fintorly.Application.Features.Commands.AuthCommands;
 using Fintorly.Domain.Entities;
 
-namespace Fintorly.Application.Mapping.UserProfileMapping
+namespace Fintorly.Application.Mapping
 {
 	public class UserProfile : Profile
 	{
@@ -15,6 +16,14 @@ namespace Fintorly.Application.Mapping.UserProfileMapping
             CreateMap<UserDto, User>().ReverseMap();
             CreateMap<AccessToken, UserAndTokenDto>().ReverseMap();
         }
+	}
+
+	public class PortfolioProfile : Profile
+	{
+		public PortfolioProfile()
+		{
+			CreateMap<Portfolio, PortfolioDto>();
+		}
 	}
 }
 

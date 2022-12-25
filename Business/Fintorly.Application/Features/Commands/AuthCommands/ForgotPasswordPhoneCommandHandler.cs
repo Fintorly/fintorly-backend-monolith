@@ -1,4 +1,5 @@
 using Fintorly.Application.Interfaces.Utils;
+using Fintorly.Domain.Enums;
 
 namespace Fintorly.Application.Features.Commands.AuthCommands;
 
@@ -18,7 +19,11 @@ public class ForgotPasswordPhoneCommandHandler:IRequestHandler<ForgotPasswordPho
     {
         var isMentor = await _tokenResolver.GetIsMentorAsync();
         if (isMentor)
-            return await _mentorAuthRepository.ForgotPasswordPhoneAsync(request);
+        {
+            var result = await _mentorAuthRepository.ForgotPasswordPhoneAsync(request);
+            if (result.Succeeded || result.ResultStatus == ResultStatus.Warning)
+                return result;
+        }
         return await _userAuthRepository.ForgotPasswordPhoneAsync(request);
     }
 }

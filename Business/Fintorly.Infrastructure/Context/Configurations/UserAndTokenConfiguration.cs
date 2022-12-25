@@ -13,7 +13,6 @@ public class UserAndTokenConfiguration:IEntityTypeConfiguration<UserAndToken>
 
         builder.HasOne<User>(a => a.User).WithMany(a => a.InterestedTokens).HasForeignKey(a => a.UserId);
         builder.HasOne<Token>(a => a.Token).WithMany(a => a.InterestedTokens).HasForeignKey(a => a.TokenId);
-
         builder.ToTable("UserAndTokens");
     }
 }

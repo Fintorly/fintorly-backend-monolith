@@ -2,9 +2,10 @@ namespace Fintorly.Application.Features.Commands.AuthCommands;
 
 public class PhoneActiveCommandHandler : IRequestHandler<PhoneActiveCommand, IResult>
 {
-    private IUserAuthRepository _authRepository;
+    private readonly IAuthRepository _authRepository;
 
-    public PhoneActiveCommandHandler(IUserAuthRepository authRepository)
+
+    public PhoneActiveCommandHandler(IAuthRepository authRepository)
     {
         _authRepository = authRepository;
     }
