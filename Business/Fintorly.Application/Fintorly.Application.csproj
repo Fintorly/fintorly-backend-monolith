@@ -37,7 +37,6 @@
     <None Remove="Validations\" />
     <None Remove="Features\Commands\User\" />
     <None Remove="Dtos\UserDtos\" />
-    <None Remove="Mapping\UserProfileMapping\" />
     <None Remove="Microsoft.AspNetCore.Http" />
     <None Remove="Features\Commands\AuthCommands\" />
     <None Remove="Dtos\AuthDtos\" />
@@ -53,6 +52,7 @@
     <None Remove="Newtonsoft.Json" />
     <None Remove="Dtos\OneSignalNotificationDtos\" />
     <None Remove="OneSignalApi" />
+    <None Remove="Features\Commands\QuestionCommands\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Behaviors\" />
@@ -74,7 +74,7 @@
     <Folder Include="Interfaces\Utils\" />
     <Folder Include="Features\Commands\EmailCommands\" />
     <Folder Include="Dtos\OneSignalNotificationDtos\" />
-    <Folder Include="Mapping\UserProfileMapping\" />
+    <Folder Include="Features\Commands\QuestionCommands\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MediatR" Version="11.1.0" />

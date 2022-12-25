@@ -1,10 +1,13 @@
 using Fintorly.Domain.Common;
+using Fintorly.Domain.Enums;
 
 namespace Fintorly.Domain.Entities;
 
 public class Answer : BaseEntity, IEntity
 {
-    //Cevap içeriği
+    //Sorunun Şıklı cevapları
+    public QuestionChoice Choice { get; set; }
+    //Kullanıcı QuestionChoice olarak 5'i seçerse girmesi gereken content
     public string Content { get; set; }
 
     //Cevabın bağlı olduğu QuestionId

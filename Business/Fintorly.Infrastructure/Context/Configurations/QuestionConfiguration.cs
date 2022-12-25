@@ -9,7 +9,8 @@ public class QuestionConfiguration:IEntityTypeConfiguration<Question>
     public void Configure(EntityTypeBuilder<Question> builder)
     {
         builder.HasKey(a => a.Id);
-        builder.Property(a => a.Content).IsRequired();
+
+        builder.Property(a => a.Choices).IsRequired(true);
         builder.Property(a => a.IpAddress).IsRequired(false);
         builder.Property(a => a.OsType).IsRequired(false);
         builder.Property(a => a.PhoneModel).IsRequired(false);
