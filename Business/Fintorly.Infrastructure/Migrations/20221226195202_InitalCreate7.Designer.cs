@@ -4,6 +4,7 @@ using Fintorly.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fintorly.Infrastructure.Migrations
 {
     [DbContext(typeof(FintorlyContext))]
-    partial class FintorlyContextModelSnapshot : ModelSnapshot
+    [Migration("20221226195202_InitalCreate7")]
+    partial class InitalCreate7
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

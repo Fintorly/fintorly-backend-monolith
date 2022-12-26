@@ -21,6 +21,7 @@ public class AnswerController : Controller
     [HttpPost("add")]
     [ProducesResponseType(typeof(IResult), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(IResult), StatusCodes.Status400BadRequest)]
+    [Authorize]
     public async Task<IActionResult> AddAsync(CreateAnswerMultipleCommand command)
     {
         var result = await _mediator.Send(command);

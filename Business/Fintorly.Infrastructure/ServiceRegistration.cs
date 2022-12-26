@@ -30,6 +30,7 @@ public static class ServiceRegistration
         services.AddScoped<IPortfolioRepository,PortfolioRepository>();
         services.AddScoped<IQuestionRepository, QuestionRepository>();
         services.AddScoped<IAnswerRepository, AnswerRepository>();
+        services.AddScoped<IProfilePictureRepository, ProfilePictureRepository>();
         
         var asd = configuration.GetConnectionString(":ConnectionString");
         var optionsBuilder = new DbContextOptionsBuilder<FintorlyContext>()

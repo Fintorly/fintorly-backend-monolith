@@ -23,9 +23,6 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
 {
     FintorlyContext _context;
     IJwtHelper _jwtHelper;
-    IPhoneService _phoneService;
-    IMailService _mailService;
-    IHttpContextAccessor _httpContextAccessor;
 
     IMapper _mapper;
 
@@ -33,19 +30,16 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
     IPortfolioRepository _portfolioRepository;
     private string _ipAddress;
 
-    public MentorAuthRepository(IMapper mapper, FintorlyContext context, IJwtHelper jwtHelper, IMailService mailService,
-        IPhoneService phoneService, IHttpContextAccessor httpContextAccessor,
+    public MentorAuthRepository(IMapper mapper, FintorlyContext context, IJwtHelper jwtHelper,
+        IHttpContextAccessor httpContextAccessor,
         IPortfolioRepository portfolioRepository) : base(context)
     {
         _jwtHelper = jwtHelper;
-        _mailService = mailService;
-        _phoneService = phoneService;
-        _httpContextAccessor = httpContextAccessor;
         _portfolioRepository = portfolioRepository;
         _mapper = mapper;
         _context = context;
         // _userProfilePictureService = userProfilePictureService;
-        _ipAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+        _ipAddress = httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
     }
 
     public async Task<IResult> CheckCodeIsTrueByPhoneAsync(
@@ -89,12 +83,6 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         return Result.Success("Doğrulama Başarılı.");
     }
 
-    public async Task<AccessToken> CreateAccessTokenAsync(Mentor mentor)
-    {
-        var claims = await GetClaimsAsync(mentor);
-        var accessToken = await _jwtHelper.CreateTokenAsync(mentor, claims, true);
-        return accessToken;
-    }
 
     public async Task<IResult> ChangePasswordAsync(ChangePasswordCommand changePasswordCommand)
     {
@@ -177,7 +165,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
     {
         //ValidationTool.Validate(new LoginWithMailCommandValidator(), loginWithMailCommand);
         //Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens)
-        var mentor = await _context.Mentors.SingleOrDefaultAsync(a =>
+        var mentor = await _context.Mentors.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a=>a.PortfolioTransactions).SingleOrDefaultAsync(a =>
             a.EmailAddress == loginWithMailCommand.EmailAddress);
 
         if (mentor is null)
@@ -206,30 +194,22 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
                     mentor.CurrentPortfolioId = currentPortfolio.Id;
                 else
                 {
-                    var result =
-                        (await _portfolioRepository.CreatePortfolioAsync(mentor.Id, "My Portfolio"))
-                        .Data as Portfolio;
+                    var result = (await _portfolioRepository.CreatePortfolioAsync(mentor)).Data as Portfolio;
+
                     mentor.CurrentPortfolioId = result.Id;
                     currentPortfolio = result;
                 }
             }
 
-            var accessToken = await CreateAccessTokenAsync(mentor);
-            AccessToken userToken = new AccessToken
-            {
-                MentorId = mentor.Id,
-                Token = accessToken.Token,
-                CreatedDate = DateTime.Now,
-                IpAddress = mentor.IpAddress,
-                Mentor = mentor
-            };
+            var accessToken = await AccessTokenAddAsync(mentor);
+
             _context.Mentors.Update(mentor);
-            await _context.AccessTokens.AddAsync(userToken);
+            await _context.AccessTokens.AddAsync(accessToken);
             await _context.SaveChangesAsync();
             var userLoginCommand = new UserAndTokenDto()
             {
-                TokenId = userToken.Id,
-                Token = userToken.Token,
+                TokenId = accessToken.Id,
+                Token = accessToken.Token,
                 UserId = mentor.Id,
                 User = _mapper.Map<UserDto>(mentor),
                 UserType = UserType.Mentor,
@@ -248,8 +228,8 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
     {
         //ValidationTool.Validate(new LoginWithPhoneCommandValidator(), loginWithPhoneCommand);
 
-        var mentor = await _context.Mentors.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens)
-            .ThenInclude(a => a.PortfolioTransactions).SingleOrDefaultAsync(
+        var mentor = await _context.Mentors.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a=>a.PortfolioTransactions)
+            .SingleOrDefaultAsync(
                 a => a.PhoneNumber == loginWithPhoneCommand.PhoneNumber);
         if (mentor is null)
             return Result<UserAndTokenDto>.Fail(Messages.General.NotFoundArgument("kullanıcı"));
@@ -265,7 +245,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
             if (!mentor.IsPhoneNumberVerified)
                 //return Result.(ResultStatus.Error, "Hesabınızı Aktif Etmek İçin Telefon Numaranızı Doğrulamanız Gerekmektedir.");
                 mentor.LastLogin = DateTime.Now;
-            mentor.IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            mentor.IpAddress = _ipAddress;
 
             var currentPortfolio = mentor.Portfolios.SingleOrDefault(a => a.Id == mentor.CurrentPortfolioId);
 
@@ -276,31 +256,22 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
                     mentor.CurrentPortfolioId = firstPortfolio.Id;
                 else
                 {
-                    var result =
-                        (await _portfolioRepository.CreatePortfolioAsync(mentor.Id, "My Portfolio"))
-                        .Data as Portfolio;
+                    var result = (await _portfolioRepository.CreatePortfolioAsync(mentor)).Data as Portfolio;
+
                     mentor.CurrentPortfolioId = result.Id;
                     currentPortfolio = result;
                 }
             }
 
-            var accessToken = await CreateAccessTokenAsync(mentor);
-            AccessToken userToken = new AccessToken
-            {
-                MentorId = mentor.Id,
-                Mentor = mentor,
-                Token = accessToken.Token,
-                CreatedDate = DateTime.Now,
-                IpAddress = mentor.IpAddress
-            };
+            var accessToken = await AccessTokenAddAsync(mentor);
             _context.Mentors.Update(mentor);
-            await _context.AccessTokens.AddAsync(userToken);
+            await _context.AccessTokens.AddAsync(accessToken);
             await _context.SaveChangesAsync();
             var userLoginCommand = new UserAndTokenDto()
             {
                 User = _mapper.Map<UserDto>(mentor),
-                Token = userToken.Token,
-                TokenId = userToken.Id,
+                Token = accessToken.Token,
+                TokenId = accessToken.Id,
                 UserId = mentor.Id,
                 UserType = UserType.Mentor,
                 CreatedDate = DateTime.Now
@@ -317,9 +288,8 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         LoginWithUserNameCommand loginWithUserNameCommand)
     {
         //ValidationTool.Validate(new LoginWithUserNameCommandValidator(), loginWithUserNameCommand);
-        //.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens)
-
-        var mentor = await _context.Mentors.SingleOrDefaultAsync(a => a.UserName == loginWithUserNameCommand.UserName);
+        //.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a=>a.PortfolioTransactions)
+        var mentor = await _context.Mentors.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a=>a.PortfolioTransactions).SingleOrDefaultAsync(a => a.UserName == loginWithUserNameCommand.UserName);
         if (mentor is null)
             return Result<UserAndTokenDto>.Fail(Messages.General.NotFoundArgument("kullanıcı"));
 
@@ -334,7 +304,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
                     "Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.", ResultStatus.Warning);
 
             mentor.LastLogin = DateTime.Now;
-            mentor.IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            mentor.IpAddress = _ipAddress;
 
             var currentPortfolio = mentor.Portfolios.SingleOrDefault(a => a.Id == mentor.CurrentPortfolioId);
 
@@ -345,32 +315,21 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
                     mentor.CurrentPortfolioId = firstPortfolio.Id;
                 else
                 {
-                    var result =
-                        (await _portfolioRepository.CreatePortfolioAsync(mentor.Id, "My Portfolio"))
-                        .Data as Portfolio;
+                    var result = (await _portfolioRepository.CreatePortfolioAsync(mentor)).Data as Portfolio;
                     mentor.CurrentPortfolioId = result.Id;
                     currentPortfolio = result;
                 }
             }
 
-
-            var accessToken = await CreateAccessTokenAsync(mentor);
-            AccessToken userToken = new AccessToken
-            {
-                MentorId = mentor.Id,
-                Mentor = mentor,
-                Token = accessToken.Token,
-                CreatedDate = DateTime.Now,
-                IpAddress = mentor.IpAddress
-            };
+            var accessToken = await AccessTokenAddAsync(mentor);
             _context.Mentors.Update(mentor);
-            await _context.AccessTokens.AddAsync(userToken);
+            await _context.AccessTokens.AddAsync(accessToken);
             await _context.SaveChangesAsync();
 
             var userLoginCommand = new UserAndTokenDto
             {
                 User = _mapper.Map<UserDto>(mentor),
-                Token = userToken.Token,
+                Token = accessToken.Token,
                 TokenId = accessToken.Id,
                 UserId = mentor.Id,
                 UserType = UserType.Mentor,
@@ -408,13 +367,63 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         mentor.PasswordSalt = passwordSalt;
         mentor.IsEmailAddressVerified = true;
         mentor.IsPhoneNumberVerified = true;
-        mentor.IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+        mentor.IpAddress = _ipAddress;
         mentor.CreatedDate = DateTime.Now;
         mentor.IsMentorVerified = false;
         mentor.IsActive = true;
-        var accessToken = await CreateAccessTokenAsync(mentor);
-
         await _context.Mentors.AddAsync(mentor);
+        
+        var accessToken = await AccessTokenAddAsync(mentor);
+
+        await OperationClaimAddAsync(mentor);
+        mentor = await PictureAddAsync(mentor);
+        var portfolio = await PortfolioAddAsync(mentor);
+        mentor.Portfolios.Add(portfolio);
+        mentor.CurrentPortfolioId = portfolio.Id;
+        mentor = await ApplicationRequestAddAsync(mentor);
+
+
+        var userAndTokenDto = new UserAndTokenDto
+        {
+            User = _mapper.Map<UserDto>(mentor),
+            Token = accessToken.Token,
+            UserType = UserType.Mentor,
+            CreatedDate = DateTime.Now,
+            TokenId = accessToken.Id,
+            UserId = mentor.Id,
+        };
+
+        userAndTokenDto.User.Portfolio = _mapper.Map<PortfolioDto>(portfolio);
+        userAndTokenDto.User.CurrentPortfolioId = portfolio.Id;
+        await _context.SaveChangesAsync();
+        return Result<UserAndTokenDto>.Success($"Hoşgeldiniz Sayın {mentor.FirstName} {mentor.LastName}.",
+            userAndTokenDto);
+    }
+
+    public async Task<AccessToken> CreateAccessTokenAsync(Mentor mentor)
+    {
+        var claims = await GetClaimsAsync(mentor);
+        var accessToken = await _jwtHelper.CreateTokenAsync(mentor, claims, true);
+        return accessToken;
+    }
+
+    private async Task<AccessToken> AccessTokenAddAsync(Mentor mentor)
+    {
+        var accessToken = await CreateAccessTokenAsync(mentor);
+        AccessToken userToken = new AccessToken
+        {
+            MentorId = mentor.Id,
+            Mentor = mentor,
+            Token = accessToken.Token,
+            CreatedDate = DateTime.Now,
+            IpAddress = mentor.IpAddress
+        };
+        await _context.AccessTokens.AddAsync(userToken);
+        return userToken;
+    }
+
+    private async Task<Portfolio> PortfolioAddAsync(Mentor mentor)
+    {
         Portfolio portfolio = new Portfolio()
         {
             Mentor = mentor,
@@ -427,26 +436,23 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
             PortfolioTokens = new List<PortfolioToken>()
         };
         await _portfolioRepository.AddAsync(portfolio);
-        mentor.Portfolios.Add(portfolio);
-        mentor.CurrentPortfolioId = portfolio.Id;
+        return portfolio;
+    }
 
-        AccessToken mentorToken = new AccessToken
+    private async Task OperationClaimAddAsync(Mentor mentor)
+    {
+        var operationClaims = await _context.OperationClaims.ToListAsync();
+        MentorAndOperationClaim mentorAndOperationClaim = new MentorAndOperationClaim()
         {
             MentorId = mentor.Id,
-            Mentor = mentor,
-            Token = accessToken.Token,
-            CreatedDate = DateTime.Now,
-            IpAddress = mentor.IpAddress
+            OperationClaimId = operationClaims.SingleOrDefault(a => a.Name == "Mentor")!.Id
         };
-        await _context.AccessTokens.AddAsync(mentorToken);
-        UserAndOperationClaim userOperationClaim = new UserAndOperationClaim
-        {
-            UserId = mentor.Id,
-            //Burası statik verilecek!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            OperationClaimId = Guid.NewGuid()
-        };
-        await _context.UserAndOperationClaims.AddAsync(userOperationClaim);
-        var pictures = await _context.ProfilePictures.ToListAsync();
+        await _context.MentorAndOperationClaims.AddAsync(mentorAndOperationClaim);
+    }
+
+    private async Task<Mentor> PictureAddAsync(Mentor mentor)
+    {
+        var pictures = await _context.ProfilePictures.Where(a => a.UserType == UserType.Mentor).ToListAsync();
         if (pictures.Count > 0)
         {
             var randomPicId = pictures[0].Id;
@@ -455,23 +461,31 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
             var randomPic = pictures.SingleOrDefault(a => a.Id == randomPicId);
             mentor.ProfilePicture = randomPic;
             mentor.ProfilePictureId = randomPicId;
-            //await _userProfilePictureService.AddAsync(user.Id, randomPic.Id);
         }
 
-        var userAndTokenDto = new UserAndTokenDto
-        {
-            User = _mapper.Map<UserDto>(mentor),
-            Token = mentorToken.Token,
-            UserType = UserType.Mentor,
-            CreatedDate = DateTime.Now,
-            TokenId = accessToken.Id,
-            UserId = mentor.Id,
-        };
+        return mentor;
+    }
 
-        userAndTokenDto.User.Portfolio = _mapper.Map<PortfolioDto>(portfolio);
-        userAndTokenDto.User.CurrentPortfolioId = portfolio.Id;
-        await _context.SaveChangesAsync();
-        return Result<UserAndTokenDto>.Success($"Hoşgeldiniz Sayın {mentor.FirstName} {mentor.LastName}.",
-            userAndTokenDto);
+    private async Task<Mentor> ApplicationRequestAddAsync(Mentor mentor)
+    {
+        var application = await _context.ApplicationRequests.SingleOrDefaultAsync(a => a.MentorId == mentor.Id);
+        if (application == null)
+        {
+            ApplicationRequest newApplication = new ApplicationRequest()
+            {
+                Mentor = mentor,
+                MentorId = mentor.Id,
+                IpAddress = _ipAddress,
+                CreatedDate = DateTime.Now,
+                IsAccepted =false
+            };
+            mentor.ApplicationRequest = newApplication;
+            mentor.ApplicationRequestId = newApplication.Id;
+            await _context.ApplicationRequests.AddAsync(newApplication);
+        }
+        else
+            application.ModifiedDate = DateTime.Now;
+
+        return mentor;
     }
 }

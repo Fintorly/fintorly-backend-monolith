@@ -18,5 +18,27 @@ public class OperationClaimConfiguration:IEntityTypeConfiguration<OperationClaim
         builder.Property(a => a.Name).IsRequired();
         
         builder.ToTable("OperationClaims");
+
+        builder.HasData(
+            new OperationClaim()
+            {
+                Name = "User",
+                CreatedDate = DateTime.Now
+            },
+            new OperationClaim()
+            {
+                Name = "Mentor",
+                CreatedDate = DateTime.Now
+            },
+            new OperationClaim()
+            {
+                Name = "Admin",
+                CreatedDate = DateTime.Now
+            },
+            new OperationClaim()
+            {
+                Name = "Guest",
+                CreatedDate = DateTime.Now
+            });
     }
 }

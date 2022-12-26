@@ -4,6 +4,7 @@ using Fintorly.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fintorly.Infrastructure.Migrations
 {
     [DbContext(typeof(FintorlyContext))]
-    partial class FintorlyContextModelSnapshot : ModelSnapshot
+    [Migration("20221226193615_InitalCreate4")]
+    partial class InitalCreate4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,6 +72,7 @@ namespace Fintorly.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("IpAddress")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
@@ -85,9 +88,11 @@ namespace Fintorly.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("OsType")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneModel")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("MentorId", "OperationClaimId");
@@ -369,7 +374,7 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Property<DateTime>("AcceptedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("AdminId")
+                    b.Property<Guid>("AdminId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CreatedBy")
@@ -379,6 +384,7 @@ namespace Fintorly.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("IpAddress")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAccepted")
@@ -400,9 +406,11 @@ namespace Fintorly.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("OsType")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneModel")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RejectionReason")
@@ -670,7 +678,7 @@ namespace Fintorly.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AdvertisementId")
+                    b.Property<Guid>("AdvertisementId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ApplicationRequestId")
@@ -756,7 +764,7 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Property<double>("PointAverage")
                         .HasColumnType("float");
 
-                    b.Property<Guid?>("ProfilePictureId")
+                    b.Property<Guid>("ProfilePictureId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Rank")
@@ -930,9 +938,9 @@ namespace Fintorly.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("4c54c2c6-757a-4389-8ceb-11d373b460f2"),
+                            Id = new Guid("cd70ee9e-af65-403a-b72b-83f644824525"),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
-                            CreatedDate = new DateTime(2022, 12, 26, 22, 52, 2, 677, DateTimeKind.Local).AddTicks(8050),
+                            CreatedDate = new DateTime(2022, 12, 26, 22, 36, 15, 398, DateTimeKind.Local).AddTicks(3460),
                             IsActive = true,
                             IsDeleted = false,
                             ModifiedBy = new Guid("00000000-0000-0000-0000-000000000000"),
@@ -941,9 +949,9 @@ namespace Fintorly.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("ffafddde-1250-461a-9d68-229f15ce61f5"),
+                            Id = new Guid("3448a641-44ca-41ff-bb63-965d03960cd2"),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
-                            CreatedDate = new DateTime(2022, 12, 26, 22, 52, 2, 677, DateTimeKind.Local).AddTicks(8060),
+                            CreatedDate = new DateTime(2022, 12, 26, 22, 36, 15, 398, DateTimeKind.Local).AddTicks(3470),
                             IsActive = true,
                             IsDeleted = false,
                             ModifiedBy = new Guid("00000000-0000-0000-0000-000000000000"),
@@ -952,9 +960,9 @@ namespace Fintorly.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("57fa6ffb-b565-49a2-b527-3d47b740f5d3"),
+                            Id = new Guid("96f40fe8-818b-494b-9215-bb677a440823"),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
-                            CreatedDate = new DateTime(2022, 12, 26, 22, 52, 2, 677, DateTimeKind.Local).AddTicks(8070),
+                            CreatedDate = new DateTime(2022, 12, 26, 22, 36, 15, 398, DateTimeKind.Local).AddTicks(3480),
                             IsActive = true,
                             IsDeleted = false,
                             ModifiedBy = new Guid("00000000-0000-0000-0000-000000000000"),
@@ -963,9 +971,9 @@ namespace Fintorly.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("e588ac3c-c289-4ae2-940d-779860834b48"),
+                            Id = new Guid("6aa676a1-d06d-47ae-ab38-2aeed3234146"),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
-                            CreatedDate = new DateTime(2022, 12, 26, 22, 52, 2, 677, DateTimeKind.Local).AddTicks(8080),
+                            CreatedDate = new DateTime(2022, 12, 26, 22, 36, 15, 398, DateTimeKind.Local).AddTicks(3490),
                             IsActive = true,
                             IsDeleted = false,
                             ModifiedBy = new Guid("00000000-0000-0000-0000-000000000000"),
@@ -2030,12 +2038,15 @@ namespace Fintorly.Infrastructure.Migrations
                 {
                     b.HasOne("Fintorly.Domain.Entities.Advertisement", "Advertisement")
                         .WithMany("Mentors")
-                        .HasForeignKey("AdvertisementId");
+                        .HasForeignKey("AdvertisementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Fintorly.Domain.Entities.ProfilePicture", "ProfilePicture")
                         .WithMany("Mentors")
                         .HasForeignKey("ProfilePictureId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Advertisement");
 

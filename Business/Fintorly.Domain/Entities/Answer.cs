@@ -16,13 +16,13 @@ public class Answer : BaseEntity, IEntity
     public Question Question { get; set; }
 
     //Cevaplayan kullanıcı Id
-    public Guid UserId { get; set; }
+    public Guid? UserId { get; set; }
 
-    public User User { get; set; }
+    public User? User { get; set; }
 
     //Cevaplayan mentor Id
-    public Guid MentorId { get; set; }
-    public Mentor Mentor { get; set; }
+    public Guid? MentorId { get; set; }
+    public Mentor? Mentor { get; set; }
 
     public Answer() => Id = Guid.NewGuid();
 }

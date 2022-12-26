@@ -138,7 +138,7 @@ public class AuthController : Controller
         return BadRequest(result);
     }
  
-    [HttpPost("verificationCodeAddAsync")]
+    [HttpPost("verificationCodeAdd")]
     [ProducesResponseType(typeof(IResult),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(IResult),StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> VerificationCodeAddAsync(VerificationCodeAddCommand request)

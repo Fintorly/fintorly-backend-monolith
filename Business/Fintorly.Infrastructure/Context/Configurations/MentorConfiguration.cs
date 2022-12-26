@@ -18,8 +18,9 @@ public class MentorConfiguration:IEntityTypeConfiguration<Mentor>
         builder.Property(a => a.LastName).IsRequired();
         builder.Property(a => a.UserName).IsRequired();
         builder.Property(a => a.PhoneNumber).IsRequired(false);
+        builder.Property(a => a.PaymentChannel).IsRequired(false);
         builder.Property(a => a.EmailAddress).IsRequired();
-        builder.Property(a => a.Iban).IsRequired();
+        builder.Property(a => a.Iban).IsRequired(false);
         builder.Property(a => a.Birthday).IsRequired();
         builder.Property(a => a.Gender).IsRequired();
         builder.Property(a => a.IsMentorVerified).IsRequired();

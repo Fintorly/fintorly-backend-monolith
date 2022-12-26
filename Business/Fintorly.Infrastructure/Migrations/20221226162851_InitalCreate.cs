@@ -181,6 +181,7 @@ namespace Fintorly.Infrastructure.Migrations
                     TotalEarnedPrice = table.Column<int>(type: "int", nullable: false),
                     TotalRefund = table.Column<int>(type: "int", nullable: false),
                     ProfilePictureId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ApplicationRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PointAverage = table.Column<double>(type: "float", nullable: false),
                     TotalPoint = table.Column<double>(type: "float", nullable: false),
                     TotalVote = table.Column<int>(type: "int", nullable: false),
@@ -276,6 +277,37 @@ namespace Fintorly.Infrastructure.Migrations
                         name: "FK_Choices_Questions_QuestionId",
                         column: x => x.QuestionId,
                         principalTable: "Questions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ApplicationRequests",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RejectionReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsAccepted = table.Column<bool>(type: "bit", nullable: false),
+                    AcceptedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AdminId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OsType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApplicationRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ApplicationRequests_Mentors_MentorId",
+                        column: x => x.MentorId,
+                        principalTable: "Mentors",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1054,6 +1086,12 @@ namespace Fintorly.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ApplicationRequests_MentorId",
+                table: "ApplicationRequests",
+                column: "MentorId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Choices_QuestionId",
                 table: "Choices",
                 column: "QuestionId");
@@ -1231,6 +1269,9 @@ namespace Fintorly.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Answers");
+
+            migrationBuilder.DropTable(
+                name: "ApplicationRequests");
 
             migrationBuilder.DropTable(
                 name: "Choices");

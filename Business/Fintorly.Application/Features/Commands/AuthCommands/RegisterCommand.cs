@@ -1,4 +1,5 @@
 ﻿using System;
+using Fintorly.Application.Dtos.AnswerDtos;
 using Fintorly.Application.Dtos.UserDtos;
 using Fintorly.Domain.Entities;
 
@@ -14,6 +15,6 @@ namespace Fintorly.Application.Features.Commands.AuthCommands
         public string UserName { get; set; }
         public string EmailAddress { get; set; }
         public bool IsMentor { get; set; }
-        public ICollection<Answer> Answers { get; set; }
+        public ICollection<AnswerDto> Answers { get; set; }
     }
 }

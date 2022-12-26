@@ -20,28 +20,25 @@ namespace Fintorly.Infrastructure.Repositories
 {
     public class UserAuthRepository : GenericRepository<User>, IUserAuthRepository
     {
-        FintorlyContext _context;
-        IJwtHelper _jwtHelper;
-        IPhoneService _phoneService;
-        IMailService _mailService;
-        IHttpContextAccessor _httpContextAccessor;
-
-        IMapper _mapper;
+        private readonly FintorlyContext _context;
+        private readonly IJwtHelper _jwtHelper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IProfilePictureRepository _profilePictureRepository;
+        private readonly IMapper _mapper;
 
         //IUserProfilePictureService _userProfilePictureService;
         IPortfolioRepository _portfolioRepository;
         private string _ipAddress;
 
         public UserAuthRepository(IMapper mapper, FintorlyContext context, IJwtHelper jwtHelper,
-            IMailService mailService,
-            IPhoneService phoneService, IHttpContextAccessor httpContextAccessor,
-            IPortfolioRepository portfolioRepository) : base(context)
+            IHttpContextAccessor httpContextAccessor,
+            IPortfolioRepository portfolioRepository, IProfilePictureRepository profilePictureRepository) : base(
+            context)
         {
             _jwtHelper = jwtHelper;
-            _mailService = mailService;
-            _phoneService = phoneService;
             _httpContextAccessor = httpContextAccessor;
             _portfolioRepository = portfolioRepository;
+            _profilePictureRepository = profilePictureRepository;
             _mapper = mapper;
             _context = context;
             // _userProfilePictureService = userProfilePictureService;
@@ -173,9 +170,8 @@ namespace Fintorly.Infrastructure.Repositories
 
         public async Task<IResult<UserAndTokenDto>> LoginWithEmailAsync(LoginWithMailCommand loginWithMailCommand)
         {
-            //ValidationTool.Validate(new LoginWithMailCommandValidator(), loginWithMailCommand);
-            //Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens)
-            var user = await _context.Users.SingleOrDefaultAsync(a =>
+            //.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a=>a.PortfolioTransactions)
+            var user = await _context.Users.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a=>a.PortfolioTransactions).SingleOrDefaultAsync(a =>
                 a.EmailAddress == loginWithMailCommand.EmailAddress);
 
             if (user is null)
@@ -184,7 +180,8 @@ namespace Fintorly.Infrastructure.Repositories
             if (HashingHelper.VerifyPasswordHash(loginWithMailCommand.Password, user.PasswordHash, user.PasswordSalt))
             {
                 if (!user.IsActive)
-                    return Result<UserAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.", ResultStatus.Warning);
+                    return Result<UserAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.",
+                        ResultStatus.Warning);
                 if (!user.IsEmailAddressVerified)
                     return Result<UserAndTokenDto>.Fail(
                         "Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.", ResultStatus.Warning);
@@ -192,45 +189,37 @@ namespace Fintorly.Infrastructure.Repositories
                 user.LastLogin = DateTime.Now;
                 user.IpAddress = _ipAddress;
 
-                //var currentPortfolio = user.Portfolios.SingleOrDefault(a => a.Id == user.CurrentPortfolioId);
-                //if (currentPortfolio is null)
-                //{
-                //    currentPortfolio = user.Portfolios.FirstOrDefault();
-                //    if (currentPortfolio is not null)
-                //        user.CurrentPortfolioId = currentPortfolio.Id;
-                //    else
-                //    {
-                //        var result =
-                //            (await _portfolioRepository.CreatePortfolioAsync(user.Id, "My Portfolio"))
-                //            .Data as Portfolio;
-                //        user.CurrentPortfolioId = result.Id;
-                //        currentPortfolio = result;
-                //    }
-                //}
-
-                var accessToken = await CreateAccessTokenAsync(user);
-                AccessToken userToken = new AccessToken
+                var currentPortfolio = user.Portfolios.SingleOrDefault(a => a.Id == user.CurrentPortfolioId);
+                if (currentPortfolio is null)
                 {
-                    UserId = user.Id,
-                    Token = accessToken.Token,
-                    CreatedDate = DateTime.Now,
-                    IpAddress = user.IpAddress,
-                    User = user
-                };
+                    currentPortfolio = user.Portfolios.FirstOrDefault();
+                    if (currentPortfolio is not null)
+                        user.CurrentPortfolioId = currentPortfolio.Id;
+                    else
+                    {
+                        var result = (await _portfolioRepository.CreatePortfolioAsync(user)).Data as Portfolio;
+                        
+                        user.CurrentPortfolioId = result.Id;
+                        currentPortfolio = result;
+                    }
+                }
+
+                var accessToken =await AccessTokenAddAsync(user);
+
                 _context.Users.Update(user);
-                await _context.AccessTokens.AddAsync(userToken);
+                await _context.AccessTokens.AddAsync(accessToken);
                 await _context.SaveChangesAsync();
                 var userLoginCommand = new UserAndTokenDto
                 {
-                    TokenId = userToken.Id,
-                    Token = userToken.Token,
+                    TokenId = accessToken.Id,
+                    Token = accessToken.Token,
                     UserId = user.Id,
                     User = _mapper.Map<UserDto>(user),
                     UserType = UserType.User,
                     CreatedDate = DateTime.Now,
                 };
-                //userLoginCommand.User.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
-                //userLoginCommand.User.CurrentPortfolioId = user.CurrentPortfolioId;
+                userLoginCommand.User.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
+                userLoginCommand.User.CurrentPortfolioId = user.CurrentPortfolioId;
 
                 return Result<UserAndTokenDto>.Success(userLoginCommand);
             }
@@ -241,8 +230,8 @@ namespace Fintorly.Infrastructure.Repositories
         public async Task<IResult<UserAndTokenDto>> LoginWithPhoneAsync(LoginWithPhoneCommand loginWithPhoneCommand)
         {
             //ValidationTool.Validate(new LoginWithPhoneCommandValidator(), loginWithPhoneCommand);
-            //Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a => a.PortfolioOrders)
-            var user = await _context.Users.SingleOrDefaultAsync(
+            //.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a=>a.PortfolioTransactions)
+            var user = await _context.Users.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a=>a.PortfolioTransactions).SingleOrDefaultAsync(
                 a => a.PhoneNumber == loginWithPhoneCommand.PhoneNumber);
             if (user is null)
                 return Result<UserAndTokenDto>.Fail(Messages.General.NotFoundArgument("kullanıcı"));
@@ -250,7 +239,8 @@ namespace Fintorly.Infrastructure.Repositories
             if (HashingHelper.VerifyPasswordHash(loginWithPhoneCommand.Password, user.PasswordHash, user.PasswordSalt))
             {
                 if (!user.IsActive)
-                    return Result<UserAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.", ResultStatus.Warning);
+                    return Result<UserAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.",
+                        ResultStatus.Warning);
                 if (!user.IsEmailAddressVerified)
                     return Result<UserAndTokenDto>.Fail(
                         "Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.", ResultStatus.Warning);
@@ -267,31 +257,23 @@ namespace Fintorly.Infrastructure.Repositories
                         user.CurrentPortfolioId = firstPortfolio.Id;
                     else
                     {
-                        var result =
-                            (await _portfolioRepository.CreatePortfolioAsync(user.Id, "My Portfolio"))
-                            .Data as Portfolio;
+                        var result = (await _portfolioRepository.CreatePortfolioAsync(user)).Data as Portfolio;
+                        
                         user.CurrentPortfolioId = result.Id;
                         currentPortfolio = result;
                     }
                 }
 
-                var accessToken = await CreateAccessTokenAsync(user);
-                AccessToken userToken = new AccessToken
-                {
-                    UserId = user.Id,
-                    User = user,
-                    Token = accessToken.Token,
-                    CreatedDate = DateTime.Now,
-                    IpAddress = user.IpAddress
-                };
+                var accessToken =await AccessTokenAddAsync(user);
+
                 _context.Users.Update(user);
-                await _context.AccessTokens.AddAsync(userToken);
+                await _context.AccessTokens.AddAsync(accessToken);
                 await _context.SaveChangesAsync();
                 var userLoginCommand = new UserAndTokenDto()
                 {
                     User = _mapper.Map<UserDto>(user),
-                    Token = userToken.Token,
-                    TokenId = userToken.Id,
+                    Token = accessToken.Token,
+                    TokenId = accessToken.Id,
                     UserId = user.Id,
                     UserType = UserType.User,
                     CreatedDate = DateTime.Now
@@ -308,18 +290,18 @@ namespace Fintorly.Infrastructure.Repositories
             LoginWithUserNameCommand loginWithUserNameCommand)
         {
             //ValidationTool.Validate(new LoginWithUserNameCommandValidator(), loginWithUserNameCommand);
-            //.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens)
+            //.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a=>a.PortfolioTransactions)
 
-            var user = await _context.Users.SingleOrDefaultAsync(a => a.UserName == loginWithUserNameCommand.UserName);
+            var user = await _context.Users.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a=>a.PortfolioTransactions).SingleOrDefaultAsync(a => a.UserName == loginWithUserNameCommand.UserName);
             if (user is null)
                 return Result<UserAndTokenDto>.Fail(Messages.General.NotFoundArgument("kullanıcı"));
-
 
             if (HashingHelper.VerifyPasswordHash(loginWithUserNameCommand.Password, user.PasswordHash,
                     user.PasswordSalt))
             {
                 if (!user.IsActive)
-                    return Result<UserAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.", ResultStatus.Warning);
+                    return Result<UserAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.",
+                        ResultStatus.Warning);
                 if (!user.IsEmailAddressVerified)
                     return Result<UserAndTokenDto>.Fail(
                         "Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.", ResultStatus.Warning);
@@ -336,32 +318,22 @@ namespace Fintorly.Infrastructure.Repositories
                         user.CurrentPortfolioId = firstPortfolio.Id;
                     else
                     {
-                        var result =
-                            (await _portfolioRepository.CreatePortfolioAsync(user.Id, "My Portfolio"))
-                            .Data as Portfolio;
+                        var result = (await _portfolioRepository.CreatePortfolioAsync(user)).Data as Portfolio;
+
                         user.CurrentPortfolioId = result.Id;
                         currentPortfolio = result;
                     }
                 }
 
-
-                var accessToken = await CreateAccessTokenAsync(user);
-                AccessToken userToken = new AccessToken
-                {
-                    UserId = user.Id,
-                    User = user,
-                    Token = accessToken.Token,
-                    CreatedDate = DateTime.Now,
-                    IpAddress = user.IpAddress
-                };
+                var accessToken =await AccessTokenAddAsync(user);
                 _context.Users.Update(user);
-                await _context.AccessTokens.AddAsync(userToken);
+                await _context.AccessTokens.AddAsync(accessToken);
                 await _context.SaveChangesAsync();
 
                 var userLoginCommand = new UserAndTokenDto
                 {
                     User = _mapper.Map<UserDto>(user),
-                    Token = userToken.Token,
+                    Token = accessToken.Token,
                     TokenId = accessToken.Id,
                     UserId = user.Id,
                     UserType = UserType.User,
@@ -379,9 +351,9 @@ namespace Fintorly.Infrastructure.Repositories
         {
             //ValidationTool.Validate(new RegisterCommandValidator(), registerCommand);
             //var formattedString = String.Format("dd/MM/yyyy", registerCommand.Birth);
-            if (await _context.Users.SingleOrDefaultAsync(a =>
+            if (await _context.Users.AnyAsync(a =>
                     a.PhoneNumber == registerCommand.PhoneNumber || a.UserName == registerCommand.UserName ||
-                    a.EmailAddress == registerCommand.EmailAddress) is not null)
+                    a.EmailAddress == registerCommand.EmailAddress))
                 return Result<UserAndTokenDto>.Fail("Bu kullanıcı mevcut");
             //var userVerifyCheck = await _context.VerificationCodes.SingleOrDefaultAsync(a => a.EmailAddress == registerCommand.EmailAddress && a.PhoneNumber == registerCommand.PhoneNumber);
             var userVerifyCheck =
@@ -402,10 +374,62 @@ namespace Fintorly.Infrastructure.Repositories
             user.IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
             user.CreatedDate = DateTime.Now;
             user.IsActive = true;
-            var accessToken = await CreateAccessTokenAsync(user);
-            user.Answers.ToList().AddRange(registerCommand.Answers);
-            _context.Answers.AddRange(registerCommand.Answers);
             await _context.Users.AddAsync(user);
+
+            var accessToken = await AccessTokenAddAsync(user);
+            if (registerCommand.Answers.Count > 0)
+            {
+                var answers = _mapper.Map<List<Answer>>(registerCommand.Answers);
+                foreach (var answer in answers)
+                {
+                    answer.User = user;
+                    answer.UserId = user.Id;
+                }
+
+                user.Answers.ToList().AddRange(answers);
+                _context.Answers.AddRange(answers);
+            }
+
+            await OperationClaimAddAsync(user);
+            user = await PictureAddAsync(user);
+            var portfolio = await PortfolioAddAsync(user);
+            user.Portfolios.Add(portfolio);
+            user.CurrentPortfolioId = portfolio.Id;
+
+            await _context.SaveChangesAsync();
+            var userAndTokenDto = new UserAndTokenDto
+            {
+                User = _mapper.Map<UserDto>(user),
+                Token = accessToken.Token,
+                UserType = UserType.User,
+                CreatedDate = DateTime.Now,
+                TokenId = accessToken.Id,
+                UserId = user.Id,
+            };
+            userAndTokenDto.User.Portfolio = _mapper.Map<PortfolioDto>(portfolio);
+            userAndTokenDto.User.CurrentPortfolioId = portfolio.Id;
+
+            return Result<UserAndTokenDto>.Success($"Hoşgeldiniz Sayın {user.FirstName} {user.LastName}.",
+                userAndTokenDto);
+        }
+
+        private async Task<AccessToken> AccessTokenAddAsync(User user)
+        {
+            var accessToken = await CreateAccessTokenAsync(user);
+            AccessToken userToken = new AccessToken
+            {
+                UserId = user.Id,
+                User = user,
+                Token = accessToken.Token,
+                CreatedDate = DateTime.Now,
+                IpAddress = user.IpAddress
+            };
+            await _context.AccessTokens.AddAsync(userToken);
+            return userToken;
+        }
+
+        private async Task<Portfolio> PortfolioAddAsync(User user)
+        {
             Portfolio portfolio = new Portfolio()
             {
                 User = user,
@@ -418,25 +442,22 @@ namespace Fintorly.Infrastructure.Repositories
                 PortfolioTokens = new List<PortfolioToken>()
             };
             await _portfolioRepository.AddAsync(portfolio);
-            user.Portfolios.Add(portfolio);
-            user.CurrentPortfolioId = portfolio.Id;
+            return portfolio;
+        }
 
-            AccessToken userToken = new AccessToken
-            {
-                UserId = user.Id,
-                User = user,
-                Token = accessToken.Token,
-                CreatedDate = DateTime.Now,
-                IpAddress = user.IpAddress
-            };
-            await _context.AccessTokens.AddAsync(userToken);
+        private async Task OperationClaimAddAsync(User user)
+        {
+            var operationClaims = await _context.OperationClaims.ToListAsync();
             UserAndOperationClaim userOperationClaim = new UserAndOperationClaim
             {
                 UserId = user.Id,
-                //Burası statik verilecek!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                OperationClaimId = Guid.NewGuid()
+                OperationClaimId = operationClaims.SingleOrDefault(a => a.Name == "User")!.Id
             };
             await _context.UserAndOperationClaims.AddAsync(userOperationClaim);
+        }
+
+        private async Task<User> PictureAddAsync(User user)
+        {
             var pictures = await _context.ProfilePictures.ToListAsync();
             if (pictures.Count > 0)
             {
@@ -446,22 +467,8 @@ namespace Fintorly.Infrastructure.Repositories
                 var randomPic = pictures.SingleOrDefault(a => a.Id == randomPicId);
                 user.ProfilePicture = randomPic;
                 user.ProfilePictureId = randomPicId;
-                //await _userProfilePictureService.AddAsync(user.Id, randomPic.Id);
             }
-
-            var userAndTokenDto = new UserAndTokenDto
-            {
-                User = _mapper.Map<UserDto>(user),
-                Token = userToken.Token,
-                UserType = UserType.User,
-                CreatedDate = DateTime.Now,
-                TokenId = accessToken.Id,
-                UserId = user.Id,
-            };
-            userAndTokenDto.User.Portfolio = _mapper.Map<PortfolioDto>(portfolio);
-            userAndTokenDto.User.CurrentPortfolioId = portfolio.Id;
-            await _context.SaveChangesAsync();
-            return Result<UserAndTokenDto>.Success($"Hoşgeldiniz Sayın {user.FirstName} {user.LastName}.", userAndTokenDto);
+            return user;
         }
     }
 }
