@@ -2,7 +2,7 @@ namespace Fintorly.Application.Features.Commands.AuthCommands;
 
 public class SendActivationCodeEmailAddressCommandHandler : IRequestHandler<SendActivationCodeEmailAddressCommand, IResult>
 {
-    private IAuthRepository _authRepository;
+    private readonly IAuthRepository _authRepository;
 
     public SendActivationCodeEmailAddressCommandHandler(IAuthRepository authRepository)
     {

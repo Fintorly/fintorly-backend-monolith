@@ -12,6 +12,10 @@ public class PortfolioTokenConfiguration : IEntityTypeConfiguration<PortfolioTok
         builder.Property(a => a.Symbol).IsRequired();
         builder.Property(a => a.BaseAsset).IsRequired(false);
         builder.Property(a => a.BaseAssetName).IsRequired();
+        builder.Ignore(a => a.IpAddress);
+        builder.Ignore(a => a.OsType);
+        builder.Ignore(a => a.PhoneModel);
+        
         builder.HasOne<Portfolio>(a => a.Portfolio).WithMany(a => a.PortfolioTokens).HasForeignKey(a => a.PortfolioId);
         builder.ToTable("PortfolioTokens");
     }

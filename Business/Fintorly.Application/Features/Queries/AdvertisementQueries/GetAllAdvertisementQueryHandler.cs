@@ -3,7 +3,7 @@ using Fintorly.Domain.Entities;
 
 namespace Fintorly.Application.Features.Queries.AdvertisementQueries;
 
-public class GetAllAdvertisementQueryHandler : IRequestHandler<GetAllAdvertisementQuery, IResult>
+public class GetAllAdvertisementQueryHandler : IRequestHandler<GetAllAdvertisementQuery, IResult<List<AdvertisementDto>>>
 {
     private IAdvertisementRepository _advertisement;
     private IMapper _mapper;
@@ -14,12 +14,10 @@ public class GetAllAdvertisementQueryHandler : IRequestHandler<GetAllAdvertiseme
         _mapper = mapper;
     }
 
-    public async Task<IResult> Handle(GetAllAdvertisementQuery request, CancellationToken cancellationToken)
+    public async Task<IResult<List<AdvertisementDto>>> Handle(GetAllAdvertisementQuery request, CancellationToken cancellationToken)
     {
         var result=await _advertisement.GetAllAsync();
-        var advertisements =result.Data as List<Advertisement>;
-        var advertisementsDto = _mapper.Map<List<AdvertisementDto>>(advertisements);
-        result.Data = advertisementsDto;
-        return result;
+        var advertisementsDtos = _mapper.Map<List<AdvertisementDto>>(result);
+        return Result<List<AdvertisementDto>>.Success(advertisementsDtos);
     }
 }

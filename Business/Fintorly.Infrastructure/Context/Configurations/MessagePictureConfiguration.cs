@@ -12,7 +12,9 @@ public class MessagePictureConfiguration:IEntityTypeConfiguration<MessagePicture
         builder.Property(a => a.FileName).IsRequired();
         builder.Property(a => a.FilePath).IsRequired();
         builder.Property(a => a.PictureType).IsRequired();
-
+        builder.Property(a => a.IpAddress).IsRequired(false);
+        builder.Property(a => a.OsType).IsRequired(false);
+        builder.Property(a => a.PhoneModel).IsRequired(false);
         
         builder.HasOne<Message>(a => a.Message).WithMany(a => a.MessagePictures).HasForeignKey(a => a.MessageId);
         builder.ToTable("MessagePictures");

@@ -9,7 +9,7 @@ namespace Fintorly.Domain.Entities
     {
         public string Name { get; set; }
         public ICollection<UserAndOperationClaim> UserAndOperationClaims { get; set; }
-
+        public ICollection<MentorAndOperationClaim> MentorAndOperationClaims { get; set; }
         public OperationClaim() => Id = Guid.NewGuid();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Fintorly.Domain.Entities;
+using Fintorly.Domain.Enums;
 
 namespace Fintorly.Application.Dtos.UserDtos
 {
@@ -9,8 +10,8 @@ namespace Fintorly.Application.Dtos.UserDtos
         public UserDto User { get; set; }
         public string Token { get; set; }
         public DateTime CreatedDate { get; set; }
-        public string IpAddress { get; set; }
         
+        public UserType UserType { get; set; }
     }
 }
 

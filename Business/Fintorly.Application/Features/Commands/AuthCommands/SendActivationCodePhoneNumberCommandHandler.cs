@@ -2,7 +2,8 @@ namespace Fintorly.Application.Features.Commands.AuthCommands;
 
 public class SendActivationCodePhoneNumberCommandHandler : IRequestHandler<SendActivationCodePhoneNumberCommand, IResult>
 {
-    private IAuthRepository _authRepository;
+    private readonly IAuthRepository _authRepository;
+
 
     public SendActivationCodePhoneNumberCommandHandler(IAuthRepository authRepository)
     {

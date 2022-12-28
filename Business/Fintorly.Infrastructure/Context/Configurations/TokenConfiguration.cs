@@ -11,7 +11,9 @@ public class TokenConfiguration:IEntityTypeConfiguration<Token>
         builder.HasKey(a => a.Id);
         builder.Property(a => a.Name).IsRequired();
         builder.Property(a => a.Url).IsRequired();
-
+        builder.Property(a => a.IpAddress).IsRequired(false);
+        builder.Property(a => a.OsType).IsRequired(false);
+        builder.Property(a => a.PhoneModel).IsRequired(false);
         builder.ToTable("Tokens");
     }
 }

@@ -10,7 +10,7 @@ namespace Fintorly.Infrastructure;
 
 public static class ServiceRegistration
 {
-    public static IServiceCollection AddAInfrastructureRegistration(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructureRegistration(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<FintorlyContext>(opt =>
         {
@@ -18,17 +18,26 @@ public static class ServiceRegistration
             opt.EnableSensitiveDataLogging();
         });
 
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IAdvertisementRepository, AdvertisementRepository>();
         services.AddScoped<IJwtHelper, JwtHelper>();
         services.AddScoped<IPhoneService, PhoneManager>();
         services.AddScoped<IMailService, MailManager>();
+        services.AddScoped<ITokenResolver, TokenResolver>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IAdvertisementRepository, AdvertisementRepository>();
+        services.AddScoped<IAuthRepository, AuthRepository>();
+        services.AddScoped<IUserAuthRepository, UserAuthRepository>();
+        services.AddScoped<IMentorAuthRepository, MentorAuthRepository>();
+        services.AddScoped<IPortfolioRepository,PortfolioRepository>();
+        services.AddScoped<IQuestionRepository, QuestionRepository>();
+        services.AddScoped<IAnswerRepository, AnswerRepository>();
+        services.AddScoped<IProfilePictureRepository, ProfilePictureRepository>();
+        services.AddScoped<IMessageRepository, MessageRepository>();
         
         var asd = configuration.GetConnectionString(":ConnectionString");
         var optionsBuilder = new DbContextOptionsBuilder<FintorlyContext>()
             .UseSqlServer("Server=localhost;Database=Fintorly;User=sa;Password=bhdKs3WOp7;");
 
-        services.AddScoped<IAuthRepository, AuthRepository>();
+        services.AddScoped<IUserAuthRepository, UserAuthRepository>();
         
         using var dbContext = new FintorlyContext(optionsBuilder.Options, null);
         dbContext.Database.EnsureCreated();

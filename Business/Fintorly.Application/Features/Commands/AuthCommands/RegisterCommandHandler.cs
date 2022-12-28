@@ -1,16 +1,24 @@
+using Fintorly.Application.Dtos.UserDtos;
+using Fintorly.Application.Interfaces.Utils;
+
 namespace Fintorly.Application.Features.Commands.AuthCommands;
 
-public class RegisterCommandHandler:IRequestHandler<RegisterCommand,IResult>
+public class RegisterCommandHandler : IRequestHandler<RegisterCommand, IResult<UserAndTokenDto>>
 {
-    private IAuthRepository _authRepository;
+    private readonly IUserAuthRepository _userAuthRepository;
+    private readonly IMentorAuthRepository _mentorAuthRepository;
 
-    public RegisterCommandHandler(IAuthRepository authRepository)
+    public RegisterCommandHandler(IUserAuthRepository userAuthRepository,
+        IMentorAuthRepository mentorAuthRepository)
     {
-        _authRepository = authRepository;
+        _userAuthRepository = userAuthRepository;
+        _mentorAuthRepository = mentorAuthRepository;
     }
 
-    public async Task<IResult> Handle(RegisterCommand request, CancellationToken cancellationToken)
+    public async Task<IResult<UserAndTokenDto>> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        return await _authRepository.RegisterAsync(request);
+        if (request.IsMentor)
+            return await _mentorAuthRepository.RegisterAsync(request);
+        return await _userAuthRepository.RegisterAsync(request);
     }
 }
