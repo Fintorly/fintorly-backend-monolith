@@ -16,7 +16,7 @@ namespace Fintorly.Application.Mapping
         {
             CreateMap<CreateCategoryCommand, Category>();
             CreateMap<Category, CategoryDto>().ReverseMap();
-
+            CreateMap<UpdateCategoryCommand, Category>();
         }
 
     }

@@ -58,7 +58,6 @@
     <Folder Include="Behaviors\" />
     <Folder Include="Dtos\" />
     <Folder Include="Extensions\" />
-    <Folder Include="Features\Queries\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Interfaces\Context\" />
     <Folder Include="Exceptions\" />

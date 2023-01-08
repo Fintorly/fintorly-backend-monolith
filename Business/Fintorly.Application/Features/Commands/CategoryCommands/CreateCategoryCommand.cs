@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Fintorly.Domain.Enums;
+using System;
 
-public class CreateCategoryCommand
+public class CreateCategoryCommand : IRequest<IResult>
 {
 	public string Title { get; set; }
 	public string Description { get; set; }
