@@ -23,7 +23,7 @@ public class ReportConfiguration:IEntityTypeConfiguration<Report>
         builder.HasOne<User>(a => a.User).WithMany(a => a.Reports).HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.NoAction);
         builder.HasOne<Comment>(a => a.Comment).WithMany(a => a.Reports).HasForeignKey(a => a.CommentId);
         builder.HasOne<Mentor>(a => a.Mentor).WithMany(a => a.Reports).HasForeignKey(a => a.MentorId).OnDelete(DeleteBehavior.NoAction); ;
-        
+        builder.HasOne<Post>(a => a.Post).WithMany(a => a.Reports).HasForeignKey(a => a.PostId);
         builder.ToTable("Reports");
     }
 }

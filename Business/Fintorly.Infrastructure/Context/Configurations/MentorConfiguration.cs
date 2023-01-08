@@ -23,13 +23,15 @@ public class MentorConfiguration:IEntityTypeConfiguration<Mentor>
         builder.Property(a => a.Iban).IsRequired(false);
         builder.Property(a => a.Birthday).IsRequired();
         builder.Property(a => a.Gender).IsRequired();
+        builder.Property(a => a.Language).HasDefaultValue("0");
         builder.Property(a => a.IsMentorVerified).IsRequired();
         builder.Property(a => a.IpAddress).IsRequired(false);
         builder.Property(a => a.OsType).IsRequired(false);
         builder.Property(a => a.PhoneModel).IsRequired(false);
+        
+        
         //builder.HasMany<Group>(a => a.Groups).WithOne(a => a.Mentor).HasForeignKey(a => a.MentorId);
         builder.HasOne<Advertisement>(a => a.Advertisement).WithMany(a => a.Mentors).HasForeignKey(a => a.AdvertisementId);
-
         builder.ToTable("Mentors");
     }
     

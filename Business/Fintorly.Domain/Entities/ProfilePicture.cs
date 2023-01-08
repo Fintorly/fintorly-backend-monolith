@@ -14,4 +14,3 @@ namespace Fintorly.Domain.Entities
         public ICollection<Mentor>? Mentors { get; set; }
     }
 }
-

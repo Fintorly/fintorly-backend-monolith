@@ -13,6 +13,7 @@ namespace Fintorly.Domain.Entities
         public string EmailAddress { get; set; }
         public string PhoneNumber { get; set; }
         public Gender Gender { get; set; }
+        public Language Language { get; set; }
         public DateTime Birthday { get; set; }
         public string Iban { get; set; }
         public string PaymentChannel { get; set; }
@@ -29,7 +30,7 @@ namespace Fintorly.Domain.Entities
 
         public int TotalRefund { get; set; }
 
-//Mentor Picture
+        //Mentor Picture
         public Guid? ProfilePictureId { get; set; }
         public ProfilePicture? ProfilePicture { get; set; }
         public Guid ApplicationRequestId { get; set; }
@@ -94,7 +95,14 @@ namespace Fintorly.Domain.Entities
         public ICollection<MentorAndOperationClaim> MentorAndOperationClaims { get; set; }
         public Guid? AdvertisementId { get; set; }
         public Advertisement? Advertisement { get; set; }
+        public Guid AnalysisId { get; set; }
+        public Analysis Analysis { get; set; }
 
+        public Guid StepId { get; set; }
+
+        public Step Step { get; set; }
+        //Mentor'un postları
+        public ICollection<Post> Posts { get; set; }
         public Mentor() => Id = Guid.NewGuid();
     }
 }

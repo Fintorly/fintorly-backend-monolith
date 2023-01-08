@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Fintorly.Infrastructure.Context.Configurations;
 
-public class AdvertisementConfiguration:IEntityTypeConfiguration<Advertisement>
+public class AdvertisementConfiguration : IEntityTypeConfiguration<Advertisement>
 {
     public void Configure(EntityTypeBuilder<Advertisement> builder)
     {
