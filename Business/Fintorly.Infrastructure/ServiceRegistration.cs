@@ -21,6 +21,7 @@ public static class ServiceRegistration
         services.AddScoped<IJwtHelper, JwtHelper>();
         services.AddScoped<IPhoneService, PhoneManager>();
         services.AddScoped<IMailService, MailManager>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<ITokenResolver, TokenResolver>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IAdvertisementRepository, AdvertisementRepository>();
