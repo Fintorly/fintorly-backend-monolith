@@ -3,7 +3,7 @@ using Fintorly.Domain.Entities;
 
 namespace Fintorly.Application.Features.Commands.AdvertisementCommands;
 
-public class CreateAdvertisementCommandHandler : IRequestHandler<CreateAdvertisementCommandHandler, IResult>
+public class CreateAdvertisementCommandHandler : IRequestHandler<CreateAdvertisementCommand, IResult>
 {
     private IAdvertisementRepository _advertisement;
     private IMapper _mapper;
@@ -27,5 +27,6 @@ public class CreateAdvertisementCommandHandler : IRequestHandler<CreateAdvertise
         var result = await _advertisement.AddAsync(advertisement);
         return Result.Success();
     }
+
 
 }
