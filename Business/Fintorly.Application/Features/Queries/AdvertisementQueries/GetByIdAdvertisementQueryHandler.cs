@@ -1,16 +1,22 @@
+using Fintorly.Application.Dtos.AdvertisementDto;
+using Fintorly.Domain.Entities;
+
 namespace Fintorly.Application.Features.Queries.AdvertisementQueries;
 
-public class GetByIdAdvertisementQueryHandler : IRequestHandler<GetByIdAdvertisementQuery, IResult>
+public class GetByIdAdvertisementQueryHandler : IRequestHandler<GetByIdAdvertisementQuery, IResult<AdvertisementDto>>
 {
     private readonly IAdvertisementRepository _advertisementRepository;
-
-    public GetByIdAdvertisementQueryHandler(IAdvertisementRepository advertisementRepository)
+    private IMapper _mapper;
+    public GetByIdAdvertisementQueryHandler(IAdvertisementRepository advertisementRepository, IMapper mapper)
     {
         _advertisementRepository = advertisementRepository;
+        _mapper = mapper;
     }
 
-    public async Task<IResult> Handle(GetByIdAdvertisementQuery request, CancellationToken cancellationToken)
+    public async Task<IResult<AdvertisementDto>> Handle(GetByIdAdvertisementQuery request, CancellationToken cancellationToken)
     {
-        return await _advertisementRepository.GetByIdAsync(request.Id);
+        var advertisement= await _advertisementRepository.GetByIdAsync(request.Id);
+        var dto = _mapper.Map<AdvertisementDto>(advertisement);
+        return Result<AdvertisementDto>.Success(dto);
     }
 }

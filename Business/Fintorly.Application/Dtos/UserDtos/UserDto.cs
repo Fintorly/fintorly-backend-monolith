@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Fintorly.Application.Dtos.PortfolioDtos;
 using Fintorly.Domain.Enums;
 
 namespace Fintorly.Application.Dtos.UserDtos
@@ -15,7 +15,10 @@ namespace Fintorly.Application.Dtos.UserDtos
         public DateTime Birthday { get; set; }
         public bool IsPhoneNumberVerified { get; set; }
         public bool IsEmailAddressVerified { get; set; }
+        public PortfolioDto Portfolio { get; set; }
+        public Guid CurrentPortfolioId { get; set; }
         public DateTime LastLogin { get; set; }
+        public UserType UserType { get; set; } = UserType.User;
     }
 }
 

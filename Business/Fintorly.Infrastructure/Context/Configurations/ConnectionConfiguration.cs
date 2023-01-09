@@ -14,9 +14,12 @@ public class ConnectionConfiguration:IEntityTypeConfiguration<Connection>
         builder.Property(a => a.IsConnected).IsRequired();
         builder.Property(a => a.ConnectionStartDate).IsRequired();
         builder.Property(a => a.ConnectionEndDate).IsRequired();
-
-        builder.HasOne<User>(a => a.User).WithMany(a => a.Connections).HasForeignKey(a => a.UserId);
-        builder.HasOne<Mentor>(a => a.Mentor).WithMany(a => a.Connections).HasForeignKey(a => a.MentorId);
+        builder.Ignore(a => a.IpAddress);
+        builder.Ignore(a => a.OsType);
+        builder.Ignore(a => a.PhoneModel);
+        
+        builder.HasOne<User>(a => a.User).WithMany(a => a.Connections).HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne<Mentor>(a => a.Mentor).WithMany(a => a.Connections).HasForeignKey(a => a.MentorId).OnDelete(DeleteBehavior.NoAction);
 
         builder.ToTable("Connections");
     }

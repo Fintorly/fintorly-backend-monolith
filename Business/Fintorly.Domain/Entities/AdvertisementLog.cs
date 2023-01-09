@@ -2,7 +2,7 @@ using Fintorly.Domain.Common;
 
 namespace Fintorly.Domain.Entities;
 
-public class AdvertisementLog:BaseEntity,IEntity
+public class AdvertisementLog : BaseEntity, IEntity
 {
     public Guid AdvertisementId { get; set; }
     public Advertisement Advertisement { get; set; }

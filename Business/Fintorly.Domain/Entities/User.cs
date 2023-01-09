@@ -12,6 +12,7 @@ public class User : BaseEntity, IEntity
     public string EmailAddress { get; set; }
     public string PhoneNumber { get; set; }
     public Gender Gender { get; set; }
+    public Language Language { get; set; }
     public DateTime Birthday { get; set; }
     public string PaymentChannel { get; set; }
     public bool IsPhoneNumberVerified { get; set; }
@@ -20,8 +21,10 @@ public class User : BaseEntity, IEntity
     public string? IpAddress { get; set; }
     public byte[] PasswordSalt { get; set; }
     public byte[] PasswordHash { get; set; }
-    public Guid ProfilePictureId { get; set; }
-    public ProfilePicture ProfilePicture { get; set; }
+    public Guid? ProfilePictureId { get; set; }
+    public ProfilePicture? ProfilePicture { get; set; }
+    public Guid CurrentPortfolioId { get; set; }
+
     //Kullanıcının ilgilendiği tokenlar
     public ICollection<UserAndToken> InterestedTokens { get; set; }
     //Kullanıcının abonelik aldığı mentörler

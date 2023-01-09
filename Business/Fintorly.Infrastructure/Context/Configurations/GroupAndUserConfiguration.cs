@@ -12,8 +12,8 @@ public class GroupAndUserConfiguration:IEntityTypeConfiguration<GroupAndUser>
         builder.HasKey(a => new { a.GroupId, a.UserId });
         
         
-        builder.HasOne<Group>(a => a.Group).WithMany(a => a.GroupAndUsers).HasForeignKey(a => a.GroupId);
-        builder.HasOne<User>(a => a.User).WithMany(a => a.GroupAndUsers).HasForeignKey(a => a.UserId);
+        builder.HasOne<Group>(a => a.Group).WithMany(a => a.GroupAndUsers).HasForeignKey(a => a.GroupId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne<User>(a => a.User).WithMany(a => a.GroupAndUsers).HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.NoAction);
 
         builder.ToTable("GroupAndUsers");
     }

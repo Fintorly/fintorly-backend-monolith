@@ -7,13 +7,13 @@ namespace Fintorly.Domain.Entities
 {
     public class Mentor : BaseEntity, IEntity
     {
-
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string UserName { get; set; }
         public string EmailAddress { get; set; }
         public string PhoneNumber { get; set; }
         public Gender Gender { get; set; }
+        public Language Language { get; set; }
         public DateTime Birthday { get; set; }
         public string Iban { get; set; }
         public string PaymentChannel { get; set; }
@@ -27,7 +27,15 @@ namespace Fintorly.Domain.Entities
 
         public int Rank { get; set; }
         public int TotalEarnedPrice { get; set; }
+
         public int TotalRefund { get; set; }
+
+        //Mentor Picture
+        public Guid? ProfilePictureId { get; set; }
+        public ProfilePicture? ProfilePicture { get; set; }
+        public Guid ApplicationRequestId { get; set; }
+
+        public ApplicationRequest ApplicationRequest { get; set; }
 
         //Mentorün ortalama puanı
         public double PointAverage { get; set; }
@@ -73,15 +81,28 @@ namespace Fintorly.Domain.Entities
 
         //interested tokens
         public ICollection<Token> InterestedTokens { get; set; }
+
         //mentörün ilgilendiği alanları kategorize etmek için
         public ICollection<MentorAndCategory> MentorAndCategories { get; set; }
+
         //Portfolio
         public ICollection<Portfolio> Portfolios { get; set; }
+
+        public Guid CurrentPortfolioId { get; set; }
+
         //Mentörün aldığı reklamlar
-        public Guid AdvertisementId { get; set; }
-        public Advertisement Advertisement { get; set; }
+        //Mentör yetkileri
+        public ICollection<MentorAndOperationClaim> MentorAndOperationClaims { get; set; }
+        public Guid? AdvertisementId { get; set; }
+        public Advertisement? Advertisement { get; set; }
+        public Guid AnalysisId { get; set; }
+        public Analysis Analysis { get; set; }
 
+        public Guid StepId { get; set; }
+
+        public Step Step { get; set; }
+        //Mentor'un postları
+        public ICollection<Post> Posts { get; set; }
         public Mentor() => Id = Guid.NewGuid();
-
     }
 }

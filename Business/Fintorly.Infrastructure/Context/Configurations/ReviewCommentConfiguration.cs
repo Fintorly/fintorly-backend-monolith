@@ -11,9 +11,11 @@ public class ReviewCommentConfiguration:IEntityTypeConfiguration<ReviewComment>
         builder.HasKey(a => a.Id);
         builder.Property(a => a.Content).IsRequired(false);
         builder.Property(a => a.Point).IsRequired();
-        
-        builder.HasOne<Mentor>(a => a.Mentor).WithMany(a => a.ReviewComments).HasForeignKey(a => a.MentorId);
-        builder.HasOne<User>(a => a.User).WithMany(a => a.ReviewComments).HasForeignKey(a => a.UserId);
+        builder.Property(a => a.IpAddress).IsRequired(false);
+        builder.Property(a => a.OsType).IsRequired(false);
+        builder.Property(a => a.PhoneModel).IsRequired(false);
+        builder.HasOne<Mentor>(a => a.Mentor).WithMany(a => a.ReviewComments).HasForeignKey(a => a.MentorId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne<User>(a => a.User).WithMany(a => a.ReviewComments).HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.NoAction);
         builder.ToTable("ReviewComments");
     }
 }

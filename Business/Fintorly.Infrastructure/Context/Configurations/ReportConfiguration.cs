@@ -16,11 +16,14 @@ public class ReportConfiguration:IEntityTypeConfiguration<Report>
         builder.Property(a => a.FileName).IsRequired(false);
         builder.Property(a => a.FilePath).IsRequired(false);
         builder.Property(a => a.IsSolved).IsRequired();
+        builder.Property(a => a.IpAddress).IsRequired(false);
+        builder.Property(a => a.OsType).IsRequired(false);
+        builder.Property(a => a.PhoneModel).IsRequired(false);
         
-        builder.HasOne<User>(a => a.User).WithMany(a => a.Reports).HasForeignKey(a => a.UserId);
+        builder.HasOne<User>(a => a.User).WithMany(a => a.Reports).HasForeignKey(a => a.UserId).OnDelete(DeleteBehavior.NoAction);
         builder.HasOne<Comment>(a => a.Comment).WithMany(a => a.Reports).HasForeignKey(a => a.CommentId);
         builder.HasOne<Mentor>(a => a.Mentor).WithMany(a => a.Reports).HasForeignKey(a => a.MentorId).OnDelete(DeleteBehavior.NoAction); ;
-        
+        builder.HasOne<Post>(a => a.Post).WithMany(a => a.Reports).HasForeignKey(a => a.PostId);
         builder.ToTable("Reports");
     }
 }

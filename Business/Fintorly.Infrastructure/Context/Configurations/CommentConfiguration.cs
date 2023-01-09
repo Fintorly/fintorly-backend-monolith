@@ -13,6 +13,9 @@ public class CommentConfiguration : IEntityTypeConfiguration<Comment>
         builder.Property(a => a.Content).IsRequired();
         builder.Property(a => a.FileName).IsRequired(false);
         builder.Property(a => a.FilePath).IsRequired(false);
+        builder.Property(a => a.IpAddress).IsRequired(false);
+        builder.Property(a => a.OsType).IsRequired(false);
+        builder.Property(a => a.PhoneModel).IsRequired(false);
         
         builder.HasOne<Token>(a => a.Token)
             .WithMany(a => a.Comments).HasForeignKey(a => a.TokenId).OnDelete(DeleteBehavior.Cascade);

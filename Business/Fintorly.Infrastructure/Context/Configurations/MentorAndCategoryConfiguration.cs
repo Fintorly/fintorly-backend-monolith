@@ -11,8 +11,8 @@ public class MentorAndCategoryConfiguration:IEntityTypeConfiguration<MentorAndCa
     {
         builder.HasKey(a=>new {a.MentorId,a.CategoryId});
 
-        builder.HasOne<Mentor>(a => a.Mentor).WithMany(a => a.MentorAndCategories).HasForeignKey(a => a.MentorId);
-        builder.HasOne<Category>(a => a.Category).WithMany(a => a.MentorAndCategories).HasForeignKey(a => a.CategoryId);
+        builder.HasOne<Mentor>(a => a.Mentor).WithMany(a => a.MentorAndCategories).HasForeignKey(a => a.MentorId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne<Category>(a => a.Category).WithMany(a => a.MentorAndCategories).HasForeignKey(a => a.CategoryId).OnDelete(DeleteBehavior.NoAction);
 
         builder.ToTable("MentorAndCategories");
     }

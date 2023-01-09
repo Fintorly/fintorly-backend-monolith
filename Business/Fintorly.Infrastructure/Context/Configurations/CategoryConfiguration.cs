@@ -11,7 +11,10 @@ public class CategoryConfiguration:IEntityTypeConfiguration<Category>
         builder.HasKey(a => a.Id);
         
         builder.Property(a => a.Name).IsRequired();
-
+        builder.Ignore(a => a.IpAddress);
+        builder.Ignore(a => a.OsType);
+        builder.Ignore(a => a.PhoneModel);
+        
         builder.ToTable("Categories");
     }
 }
