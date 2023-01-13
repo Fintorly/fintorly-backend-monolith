@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Fintorly.Persistence\Fintorly.Persistence.csproj" />
     <ProjectReference Include="..\Fintorly.Domain\Fintorly.Domain.csproj" />
     <ProjectReference Include="..\Fintorly.Application\Fintorly.Application.csproj" />
   </ItemGroup>

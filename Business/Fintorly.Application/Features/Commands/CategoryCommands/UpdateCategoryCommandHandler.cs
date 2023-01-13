@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Fintorly.Application.Dtos.CategoryDto;
 using Fintorly.Application.Interfaces.Repositories;
 using Fintorly.Domain.Entities;
 using System;
@@ -11,7 +12,7 @@ namespace Fintorly.Application.Features.Commands.CategoryCommands
 {
     
 
-    public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand, IResult>
+    public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand, IResult<CategoryDto>>
     {
         private ICategoryRepository _categoryRepository;
         private IMapper _mapper;
@@ -22,10 +23,11 @@ namespace Fintorly.Application.Features.Commands.CategoryCommands
             _mapper = mapper;
         }
 
-        public async Task<IResult> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<IResult<CategoryDto>> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
-            var category = _mapper.Map<Category>(request);
-            return await _categoryRepository.UpdateAsync(category);
+            var result = await _categoryRepository.GetByIdAsync(request.Id);
+            var dto = _mapper.Map<CategoryDto>(result);
+            return Result<CategoryDto>.Success(dto);
         }
     }
 }

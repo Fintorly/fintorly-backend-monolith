@@ -1,4 +1,5 @@
-﻿using Fintorly.Domain.Enums;
+﻿using Fintorly.Application.Dtos.CategoryDto;
+using Fintorly.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Fintorly.Application.Features.Commands.CategoryCommands
 {
-    public class UpdateCategoryCommand : IRequest<IResult>
+    public class UpdateCategoryCommand : IRequest<IResult<CategoryDto>>
     {
         public Guid Id { get; set; }
         public string Title { get; set; }
