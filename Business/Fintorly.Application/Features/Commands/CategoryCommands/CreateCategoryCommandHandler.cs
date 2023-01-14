@@ -3,9 +3,9 @@ using Fintorly.Domain.Entities;
 
 namespace Fintorly.Application.Features.Commands.CategoriesCommands;
 
-public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommandHandler, IResult>
+public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, IResult>
 {
-	private ICategoryRepository category;
+	private ICategoryRepository _category;
 	private IMapper _mapper;
 
 	public CreateCategoryCommandHandler(ICategoryRepository category, IMapper mapper)
@@ -26,11 +26,8 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
 
 		var category = _mapper.Map<Category>(request);
 		var result = await _category.AddAsync(category);
-        return result;
+        return Result.Success();
     }
 
-    public Task<IResult> Handle(CreateCategoryCommandHandler request, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+
 }

@@ -10,6 +10,9 @@ public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryComman
 	}
 	public async Task<IResult> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
 	{
-		return await _categoryRepository.DeleteByIdAsync(request.Id);
+		var result = await _categoryRepository.DeleteByIdAsync(request.Id);
+		if (result)
+			return Result.Success();
+		return Result.Fail();
 	}
 }
