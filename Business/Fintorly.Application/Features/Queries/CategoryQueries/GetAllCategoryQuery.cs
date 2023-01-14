@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace Fintorly.Application.Features.Queries.CategoryQueries
 {
-    public class GetAllCategoryQuery : IRequest<IResult<CategoryDto>>
+    public class GetAllCategoryQuery : IRequest<IResult<IList<CategoryDto>>>
     {
-        internal readonly Guid Id;
     }
 }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Fintorly.Application.Features.Queries.CategoryQueries
 {
-    public class GetAllCategoryQueryHandler : IRequestHandler<GetAllCategoryQuery, IResult<CategoryDto>>
+    public class GetAllCategoryQueryHandler : IRequestHandler<GetAllCategoryQuery, IResult<IList<CategoryDto>>>
     {
         private ICategoryRepository _category;
         private IMapper _mapper;
@@ -22,13 +22,11 @@ namespace Fintorly.Application.Features.Queries.CategoryQueries
         }
 
 
-        public async Task<IResult<CategoryDto>> Handle(GetAllCategoryQuery request, CancellationToken cancellationToken)
+        public async Task<IResult<IList<CategoryDto>>> Handle(GetAllCategoryQuery request, CancellationToken cancellationToken)
         {
-            var result = await _category.GetByIdAsync(request.Id);
-            var dto = _mapper.Map<CategoryDto>(result);
-            return Result<CategoryDto>.Success(dto);
-
-
+            var result = await _category.GetAllAsync();
+            var dto = _mapper.Map<IList<CategoryDto>>(result);
+            return Result<IList<CategoryDto>>.Success(dto);
         }
     }
 }
