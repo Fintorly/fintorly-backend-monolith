@@ -14,8 +14,8 @@ namespace Fintorly.Application.Features.Commands.CategoryCommands
 
     public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand, IResult<CategoryDto>>
     {
-        private ICategoryRepository _categoryRepository;
-        private IMapper _mapper;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly IMapper _mapper;
 
         public UpdateCategoryCommandHandler(ICategoryRepository categoryRepository, IMapper mapper)
         {
