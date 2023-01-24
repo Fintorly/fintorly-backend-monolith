@@ -1,17 +1,7 @@
-﻿using AutoMapper;
-using Fintorly.Application.Dtos.CategoryDto;
-using Fintorly.Application.Interfaces.Repositories;
-using Fintorly.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Fintorly.Application.Dtos.CategoryDto;
 
 namespace Fintorly.Application.Features.Commands.CategoryCommands
 {
-    
-
     public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand, IResult<CategoryDto>>
     {
         private readonly ICategoryRepository _categoryRepository;

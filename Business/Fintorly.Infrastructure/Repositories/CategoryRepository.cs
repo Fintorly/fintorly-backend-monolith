@@ -15,6 +15,6 @@ namespace Fintorly.Infrastructure.Repositories
 
         }
 
-
+        
     }
 }
