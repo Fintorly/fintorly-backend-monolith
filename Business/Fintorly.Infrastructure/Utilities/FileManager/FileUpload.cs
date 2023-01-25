@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Fintorly.Infrastructure.Utilities.FileManager
 {
-    public class FileUpload
+    public static class FileUpload
     {
         private static string _currentDirectory = Environment.CurrentDirectory + @"\wwwroot\Uploads\";
 

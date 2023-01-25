@@ -1,5 +1,5 @@
 ﻿using System;
-
+namespace Fintorly.Application.Features.Commands.CategoryCommands;
 public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, IResult>
 {
 	private ICategoryRepository _categoryRepository;
