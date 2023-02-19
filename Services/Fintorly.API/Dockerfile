@@ -9,7 +9,7 @@ COPY *.csproj .
 COPY ["Services/Fintorly.API/Fintorly.API.csproj", "Fintorly.API/"]
 COPY ["Business/Fintorly.Application/Fintorly.Application.csproj", "Fintorly.Application/"]
 COPY ["Business/Fintorly.Domain/Fintorly.Domain.csproj", "Fintorly.Domain/"]
-COPY ["Business/Fintorly.Infrastructure/Fintorly.Infrastructure.csproj", "Fintorly.Infrastructure/"]
+COPY ["/Business/Fintorly.Infrastructure/Fintorly.Infrastructure.csproj", "Fintorly.Infrastructure/"]
 
 RUN dotnet restore "Services/Fintorly.API/Fintorly.API.csproj"
 COPY . .
