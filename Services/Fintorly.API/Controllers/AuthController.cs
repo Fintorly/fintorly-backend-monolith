@@ -18,6 +18,12 @@ public class AuthController : Controller
     {
         _mediator = mediator;
     }
+
+    [HttpGet("deneme")]
+    public async Task<string> Zink()
+    {
+        return "Ben çalışıyorum.";
+    }
     [HttpPost("loginWithMail")]
     [ProducesResponseType(typeof(IResult<UserAndTokenDto>),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(IResult),StatusCodes.Status400BadRequest)]

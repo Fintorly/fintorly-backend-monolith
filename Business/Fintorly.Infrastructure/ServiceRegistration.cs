@@ -10,7 +10,8 @@ namespace Fintorly.Infrastructure;
 
 public static class ServiceRegistration
 {
-    public static IServiceCollection AddInfrastructureRegistration(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructureRegistration(this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.AddDbContext<FintorlyContext>(opt =>
         {
@@ -28,21 +29,21 @@ public static class ServiceRegistration
         services.AddScoped<IAuthRepository, AuthRepository>();
         services.AddScoped<IUserAuthRepository, UserAuthRepository>();
         services.AddScoped<IMentorAuthRepository, MentorAuthRepository>();
-        services.AddScoped<IPortfolioRepository,PortfolioRepository>();
+        services.AddScoped<IPortfolioRepository, PortfolioRepository>();
         services.AddScoped<IQuestionRepository, QuestionRepository>();
         services.AddScoped<IAnswerRepository, AnswerRepository>();
         services.AddScoped<IProfilePictureRepository, ProfilePictureRepository>();
         services.AddScoped<IMessageRepository, MessageRepository>();
-        
+
         var asd = configuration.GetConnectionString(":ConnectionString");
-        var optionsBuilder = new DbContextOptionsBuilder<FintorlyContext>()
-            .UseSqlServer("Server=localhost;Database=Fintorly;User=sa;Password=bhdKs3WOp7;");
+        // var optionsBuilder = new DbContextOptionsBuilder<FintorlyContext>()
+        //     .UseSqlServer("Server=localhost;Database=Fintorly;User=sa;Password=bhdKs3WOp7;");
 
         services.AddScoped<IUserAuthRepository, UserAuthRepository>();
-        
-        using var dbContext = new FintorlyContext(optionsBuilder.Options, null);
-        dbContext.Database.EnsureCreated();
-        dbContext.Database.Migrate();
+
+        //using var dbContext = new FintorlyContext(optionsBuilder.Options, null);
+        //dbContext.Database.EnsureCreated();
+        //dbContext.Database.Migrate();
 
         return services;
     }

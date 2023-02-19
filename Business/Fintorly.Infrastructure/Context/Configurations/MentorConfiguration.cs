@@ -1,4 +1,5 @@
 using Fintorly.Domain.Entities;
+using Fintorly.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -23,7 +24,7 @@ public class MentorConfiguration:IEntityTypeConfiguration<Mentor>
         builder.Property(a => a.Iban).IsRequired(false);
         builder.Property(a => a.Birthday).IsRequired();
         builder.Property(a => a.Gender).IsRequired();
-        builder.Property(a => a.Language).HasDefaultValue("0");
+       // builder.Property(a => a.Language).HasDefaultValue(Language.Turkish);
         builder.Property(a => a.IsMentorVerified).IsRequired();
         builder.Property(a => a.IpAddress).IsRequired(false);
         builder.Property(a => a.OsType).IsRequired(false);

@@ -22,7 +22,7 @@ namespace Fintorly.Infrastructure.Context.Configurations
             builder.Property(a => a.EmailAddress).IsRequired(true);
             builder.Property(a => a.Birthday).IsRequired(true);
             builder.Property(a => a.Gender).IsRequired(true);
-            builder.Property(a => a.Language).HasDefaultValue("0");
+            //builder.Property(a => a.Language).HasDefaultValue("0");
             builder.Property(a => a.IpAddress).IsRequired(false);
             builder.Property(a => a.OsType).IsRequired(false);
             builder.Property(a => a.PhoneModel).IsRequired(false);
