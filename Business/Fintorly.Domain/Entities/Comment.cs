@@ -1,4 +1,6 @@
-﻿using Fintorly.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using Fintorly.Domain.Entities;
 using Fintorly.Domain.Common;
 
 namespace Fintorly.Domain.Entities

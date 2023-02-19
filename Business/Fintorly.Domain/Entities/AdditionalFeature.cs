@@ -1,3 +1,4 @@
+using System;
 using Fintorly.Domain.Common;
 
 namespace Fintorly.Domain.Entities;

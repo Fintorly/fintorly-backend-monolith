@@ -1,4 +1,7 @@
-﻿namespace Fintorly.Domain.Common
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Fintorly.Domain.Common
 {
     public abstract class ValueObject
     {

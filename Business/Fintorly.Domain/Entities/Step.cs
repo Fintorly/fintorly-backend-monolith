@@ -1,3 +1,4 @@
+using System;
 using Fintorly.Domain.Common;
 using Fintorly.Domain.Enums;
 

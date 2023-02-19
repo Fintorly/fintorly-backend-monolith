@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace Fintorly.Domain.Common
 {
     public class PaginatedResult<T> : Result

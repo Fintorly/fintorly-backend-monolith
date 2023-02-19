@@ -1,4 +1,5 @@
-﻿using Fintorly.Domain.Common;
+﻿using System;
+using Fintorly.Domain.Common;
 using Fintorly.Domain.Entities;
 
 namespace Fintorly.Domain.ConfigureEntities

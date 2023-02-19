@@ -1,4 +1,8 @@
-﻿namespace Fintorly.Domain.Common
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Fintorly.Domain.Common
 {
     public interface IUnitOfWork : IDisposable
     {
