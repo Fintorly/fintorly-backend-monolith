@@ -68,7 +68,7 @@ namespace Fintorly.Infrastructure.Context
         {
             optionsBuilder.UseSqlServer(
                 connectionString:
-                @"Server=localhost;Database=Fintorly;User=sa;Password=bhdKs3WOp7;");
+                @"Server=3.71.4.2;Database=Fintorly;User=sa;Password=bhdKs3WOp7;");
 
             base.OnConfiguring(optionsBuilder);
         }
