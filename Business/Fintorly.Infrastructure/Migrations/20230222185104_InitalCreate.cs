@@ -31,11 +31,62 @@ namespace Fintorly.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Analyzes",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TotalNorth = table.Column<int>(type: "int", nullable: false),
+                    TotalSouth = table.Column<int>(type: "int", nullable: false),
+                    AveragePoint = table.Column<double>(type: "float", nullable: false),
+                    TotalPost = table.Column<int>(type: "int", nullable: false),
+                    TotalReports = table.Column<int>(type: "int", nullable: false),
+                    MentorSuccessScore = table.Column<double>(type: "float", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Analyzes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ApplicationRequests",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RejectionReason = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    IsAccepted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    AcceptedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AdminId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OsType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApplicationRequests", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -74,6 +125,7 @@ namespace Fintorly.Infrastructure.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FilePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserType = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -92,6 +144,7 @@ namespace Fintorly.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    QuestionType = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -130,6 +183,31 @@ namespace Fintorly.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Steps",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    NextSegmentRequiredPoint = table.Column<double>(type: "float", nullable: false),
+                    CurrentPoint = table.Column<double>(type: "float", nullable: false),
+                    TotalPost = table.Column<int>(type: "int", nullable: false),
+                    Segment = table.Column<int>(type: "int", nullable: false),
+                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OsType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Steps", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "VerificationCodes",
                 columns: table => new
                 {
@@ -157,62 +235,6 @@ namespace Fintorly.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Mentors",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EmailAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Gender = table.Column<int>(type: "int", nullable: false),
-                    Birthday = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Iban = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PaymentChannel = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsPhoneNumberVerified = table.Column<bool>(type: "bit", nullable: false),
-                    IsEmailAddressVerified = table.Column<bool>(type: "bit", nullable: false),
-                    LastLogin = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    IsMentorVerified = table.Column<bool>(type: "bit", nullable: false),
-                    Rank = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    TotalEarnedPrice = table.Column<int>(type: "int", nullable: false),
-                    TotalRefund = table.Column<int>(type: "int", nullable: false),
-                    ProfilePictureId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ApplicationRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PointAverage = table.Column<double>(type: "float", nullable: false),
-                    TotalPoint = table.Column<double>(type: "float", nullable: false),
-                    TotalVote = table.Column<int>(type: "int", nullable: false),
-                    CurrentPortfolioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AdvertisementId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    OsType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Mentors", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Mentors_Advertisements_AdvertisementId",
-                        column: x => x.AdvertisementId,
-                        principalTable: "Advertisements",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Mentors_ProfilePictures_ProfilePictureId",
-                        column: x => x.ProfilePictureId,
-                        principalTable: "ProfilePictures",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -223,6 +245,7 @@ namespace Fintorly.Infrastructure.Migrations
                     EmailAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Gender = table.Column<int>(type: "int", nullable: false),
+                    Language = table.Column<int>(type: "int", nullable: false),
                     Birthday = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PaymentChannel = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsPhoneNumberVerified = table.Column<bool>(type: "bit", nullable: false),
@@ -282,180 +305,125 @@ namespace Fintorly.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ApplicationRequests",
+                name: "Mentors",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RejectionReason = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsAccepted = table.Column<bool>(type: "bit", nullable: false),
-                    AcceptedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AdminId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EmailAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Gender = table.Column<int>(type: "int", nullable: false),
+                    Language = table.Column<int>(type: "int", nullable: false),
+                    Birthday = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Iban = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PaymentChannel = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsPhoneNumberVerified = table.Column<bool>(type: "bit", nullable: false),
+                    IsEmailAddressVerified = table.Column<bool>(type: "bit", nullable: false),
+                    LastLogin = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    IsMentorVerified = table.Column<bool>(type: "bit", nullable: false),
+                    Rank = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    TotalEarnedPrice = table.Column<int>(type: "int", nullable: false),
+                    TotalRefund = table.Column<int>(type: "int", nullable: false),
+                    ProfilePictureId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ApplicationRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PointAverage = table.Column<double>(type: "float", nullable: false),
+                    TotalPoint = table.Column<double>(type: "float", nullable: false),
+                    TotalVote = table.Column<int>(type: "int", nullable: false),
+                    CurrentPortfolioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AdvertisementId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    AnalysisId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    StepId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OsType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    OsType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ApplicationRequests", x => x.Id);
+                    table.PrimaryKey("PK_Mentors", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ApplicationRequests_Mentors_MentorId",
-                        column: x => x.MentorId,
-                        principalTable: "Mentors",
+                        name: "FK_Mentors_Advertisements_AdvertisementId",
+                        column: x => x.AdvertisementId,
+                        principalTable: "Advertisements",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Mentors_Analyzes_AnalysisId",
+                        column: x => x.AnalysisId,
+                        principalTable: "Analyzes",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Mentors_ApplicationRequests_ApplicationRequestId",
+                        column: x => x.ApplicationRequestId,
+                        principalTable: "ApplicationRequests",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Mentors_ProfilePictures_ProfilePictureId",
+                        column: x => x.ProfilePictureId,
+                        principalTable: "ProfilePictures",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Mentors_Steps_StepId",
+                        column: x => x.StepId,
+                        principalTable: "Steps",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "Groups",
+                name: "UserAndCategories",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Groups", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Groups_Mentors_MentorId",
-                        column: x => x.MentorId,
-                        principalTable: "Mentors",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MentorAndCategories",
-                columns: table => new
-                {
-                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MentorAndCategories", x => new { x.MentorId, x.CategoryId });
+                    table.PrimaryKey("PK_UserAndCategories", x => new { x.CategoryId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_MentorAndCategories_Categories_CategoryId",
+                        name: "FK_UserAndCategories_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_MentorAndCategories_Mentors_MentorId",
-                        column: x => x.MentorId,
-                        principalTable: "Mentors",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MentorAndOperationClaims",
-                columns: table => new
-                {
-                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OperationClaimId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OsType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MentorAndOperationClaims", x => new { x.MentorId, x.OperationClaimId });
-                    table.ForeignKey(
-                        name: "FK_MentorAndOperationClaims_Mentors_MentorId",
-                        column: x => x.MentorId,
-                        principalTable: "Mentors",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_MentorAndOperationClaims_OperationClaims_OperationClaimId",
+                        name: "FK_UserAndCategories_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserAndOperationClaims",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OperationClaimId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAndOperationClaims", x => new { x.UserId, x.OperationClaimId });
+                    table.ForeignKey(
+                        name: "FK_UserAndOperationClaims_OperationClaims_OperationClaimId",
                         column: x => x.OperationClaimId,
                         principalTable: "OperationClaims",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tiers",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PointAverage = table.Column<double>(type: "float", nullable: false),
-                    TotalPoint = table.Column<int>(type: "int", nullable: false),
-                    TotalVote = table.Column<int>(type: "int", nullable: false),
-                    IsChatable = table.Column<bool>(type: "bit", nullable: false),
-                    PackageType = table.Column<int>(type: "int", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OsType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tiers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tiers_Mentors_MentorId",
-                        column: x => x.MentorId,
-                        principalTable: "Mentors",
+                        name: "FK_UserAndOperationClaims_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tokens",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OsType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tokens", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Tokens_Mentors_MentorId",
-                        column: x => x.MentorId,
-                        principalTable: "Mentors",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -500,8 +468,8 @@ namespace Fintorly.Infrastructure.Migrations
                     Choice = table.Column<int>(type: "int", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -564,6 +532,62 @@ namespace Fintorly.Infrastructure.Migrations
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MentorAndCategories",
+                columns: table => new
+                {
+                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MentorAndCategories", x => new { x.MentorId, x.CategoryId });
+                    table.ForeignKey(
+                        name: "FK_MentorAndCategories_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MentorAndCategories_Mentors_MentorId",
+                        column: x => x.MentorId,
+                        principalTable: "Mentors",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MentorAndOperationClaims",
+                columns: table => new
+                {
+                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OperationClaimId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OsType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MentorAndOperationClaims", x => new { x.MentorId, x.OperationClaimId });
+                    table.ForeignKey(
+                        name: "FK_MentorAndOperationClaims_Mentors_MentorId",
+                        column: x => x.MentorId,
+                        principalTable: "Mentors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MentorAndOperationClaims_OperationClaims_OperationClaimId",
+                        column: x => x.OperationClaimId,
+                        principalTable: "OperationClaims",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -660,83 +684,21 @@ namespace Fintorly.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserAndCategories",
-                columns: table => new
-                {
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserAndCategories", x => new { x.CategoryId, x.UserId });
-                    table.ForeignKey(
-                        name: "FK_UserAndCategories_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserAndCategories_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserAndOperationClaims",
-                columns: table => new
-                {
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OperationClaimId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserAndOperationClaims", x => new { x.UserId, x.OperationClaimId });
-                    table.ForeignKey(
-                        name: "FK_UserAndOperationClaims_OperationClaims_OperationClaimId",
-                        column: x => x.OperationClaimId,
-                        principalTable: "OperationClaims",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserAndOperationClaims_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "GroupAndUsers",
-                columns: table => new
-                {
-                    GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GroupAndUsers", x => new { x.GroupId, x.UserId });
-                    table.ForeignKey(
-                        name: "FK_GroupAndUsers_Groups_GroupId",
-                        column: x => x.GroupId,
-                        principalTable: "Groups",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_GroupAndUsers_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Messages",
+                name: "Tiers",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PointAverage = table.Column<double>(type: "float", nullable: false),
+                    TotalPoint = table.Column<int>(type: "int", nullable: false),
+                    TotalVote = table.Column<int>(type: "int", nullable: false),
+                    PackageType = table.Column<int>(type: "int", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -749,17 +711,170 @@ namespace Fintorly.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Messages", x => x.Id);
+                    table.PrimaryKey("PK_Tiers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Messages_Groups_GroupId",
-                        column: x => x.GroupId,
-                        principalTable: "Groups",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Messages_Mentors_MentorId",
+                        name: "FK_Tiers_Mentors_MentorId",
                         column: x => x.MentorId,
                         principalTable: "Mentors",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tokens",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OsType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tokens_Mentors_MentorId",
+                        column: x => x.MentorId,
+                        principalTable: "Mentors",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PortfolioChartHistories",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PortfolioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotalPriceChange = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotalPriceChangePercent = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotalPriceUser24Hour = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PortfolioChartHistories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PortfolioChartHistories_Portfolios_PortfolioId",
+                        column: x => x.PortfolioId,
+                        principalTable: "Portfolios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PortfolioTokens",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PortfolioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Symbol = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BaseAsset = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BaseAssetName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Amount = table.Column<float>(type: "real", nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PriceDiffPercentChange = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PriceChangeDiff = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    LastPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PortfolioTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PortfolioTokens_Portfolios_PortfolioId",
+                        column: x => x.PortfolioId,
+                        principalTable: "Portfolios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Groups",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    TierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Groups", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Groups_Mentors_MentorId",
+                        column: x => x.MentorId,
+                        principalTable: "Mentors",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Groups_Tiers_TierId",
+                        column: x => x.TierId,
+                        principalTable: "Tiers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Posts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    TotalNorth = table.Column<int>(type: "int", nullable: false),
+                    TotalSouth = table.Column<int>(type: "int", nullable: false),
+                    AveragePoint = table.Column<double>(type: "float", nullable: false),
+                    TierId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OsType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Posts_Mentors_MentorId",
+                        column: x => x.MentorId,
+                        principalTable: "Mentors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Posts_Tiers_TierId",
+                        column: x => x.TierId,
+                        principalTable: "Tiers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -872,63 +987,201 @@ namespace Fintorly.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PortfolioChartHistories",
+                name: "PortfolioTransactions",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PortfolioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TotalPriceChange = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TotalPriceChangePercent = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TotalPriceUser24Hour = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PortfolioTokenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PercentChange = table.Column<float>(type: "real", nullable: false),
+                    PriceChange = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PortfolioChartHistories", x => x.Id);
+                    table.PrimaryKey("PK_PortfolioTransactions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PortfolioChartHistories_Portfolios_PortfolioId",
-                        column: x => x.PortfolioId,
-                        principalTable: "Portfolios",
+                        name: "FK_PortfolioTransactions_PortfolioTokens_PortfolioTokenId",
+                        column: x => x.PortfolioTokenId,
+                        principalTable: "PortfolioTokens",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PortfolioTokens",
+                name: "GroupAndUsers",
+                columns: table => new
+                {
+                    GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GroupAndUsers", x => new { x.GroupId, x.UserId });
+                    table.ForeignKey(
+                        name: "FK_GroupAndUsers_Groups_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Groups",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_GroupAndUsers_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Messages",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PortfolioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Symbol = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BaseAsset = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BaseAssetName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Amount = table.Column<float>(type: "real", nullable: false),
-                    Value = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PriceDiffPercentChange = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PriceChangeDiff = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    LastPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OsType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PortfolioTokens", x => x.Id);
+                    table.PrimaryKey("PK_Messages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PortfolioTokens_Portfolios_PortfolioId",
-                        column: x => x.PortfolioId,
-                        principalTable: "Portfolios",
+                        name: "FK_Messages_Groups_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Groups",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Messages_Mentors_MentorId",
+                        column: x => x.MentorId,
+                        principalTable: "Mentors",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AdditionalFeatures",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    TierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Key = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OsType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AdditionalFeatures", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AdditionalFeatures_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_AdditionalFeatures_Tiers_TierId",
+                        column: x => x.TierId,
+                        principalTable: "Tiers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PostPicture",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OsType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostPicture", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PostPicture_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reports",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsSolved = table.Column<bool>(type: "bit", nullable: false),
+                    AdminNote = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CommentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    PostId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OsType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reports", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reports_Comments_CommentId",
+                        column: x => x.CommentId,
+                        principalTable: "Comments",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Reports_Mentors_MentorId",
+                        column: x => x.MentorId,
+                        principalTable: "Mentors",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Reports_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Reports_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -985,79 +1238,15 @@ namespace Fintorly.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Reports",
-                columns: table => new
+            migrationBuilder.InsertData(
+                table: "OperationClaims",
+                columns: new[] { "Id", "CreatedBy", "CreatedDate", "IsActive", "IsDeleted", "ModifiedBy", "ModifiedDate", "Name" },
+                values: new object[,]
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsSolved = table.Column<bool>(type: "bit", nullable: false),
-                    AdminNote = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CommentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MentorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OsType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneModel = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Reports", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Reports_Comments_CommentId",
-                        column: x => x.CommentId,
-                        principalTable: "Comments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Reports_Mentors_MentorId",
-                        column: x => x.MentorId,
-                        principalTable: "Mentors",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Reports_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PortfolioTransactions",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PortfolioTokenId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PercentChange = table.Column<float>(type: "real", nullable: false),
-                    PriceChange = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PortfolioTransactions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PortfolioTransactions_PortfolioTokens_PortfolioTokenId",
-                        column: x => x.PortfolioTokenId,
-                        principalTable: "PortfolioTokens",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    { new Guid("07b3749a-c3f5-4e9e-8c23-2add82113921"), new Guid("00000000-0000-0000-0000-000000000000"), new DateTime(2023, 2, 22, 21, 51, 4, 448, DateTimeKind.Local).AddTicks(6370), true, false, new Guid("00000000-0000-0000-0000-000000000000"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Mentor" },
+                    { new Guid("8124a9b5-15c1-4bef-9937-ee8c32a09bd1"), new Guid("00000000-0000-0000-0000-000000000000"), new DateTime(2023, 2, 22, 21, 51, 4, 448, DateTimeKind.Local).AddTicks(6390), true, false, new Guid("00000000-0000-0000-0000-000000000000"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Guest" },
+                    { new Guid("a1ee4640-430d-4324-87f0-e6b66c7a96d0"), new Guid("00000000-0000-0000-0000-000000000000"), new DateTime(2023, 2, 22, 21, 51, 4, 448, DateTimeKind.Local).AddTicks(6360), true, false, new Guid("00000000-0000-0000-0000-000000000000"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "User" },
+                    { new Guid("aca70efb-c87f-4c0b-87c4-e4b06f51407b"), new Guid("00000000-0000-0000-0000-000000000000"), new DateTime(2023, 2, 22, 21, 51, 4, 448, DateTimeKind.Local).AddTicks(6380), true, false, new Guid("00000000-0000-0000-0000-000000000000"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Admin" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -1069,6 +1258,16 @@ namespace Fintorly.Infrastructure.Migrations
                 name: "IX_AccessTokens_UserId",
                 table: "AccessTokens",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdditionalFeatures_PostId",
+                table: "AdditionalFeatures",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdditionalFeatures_TierId",
+                table: "AdditionalFeatures",
+                column: "TierId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Answers_MentorId",
@@ -1084,12 +1283,6 @@ namespace Fintorly.Infrastructure.Migrations
                 name: "IX_Answers_UserId",
                 table: "Answers",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ApplicationRequests_MentorId",
-                table: "ApplicationRequests",
-                column: "MentorId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Choices_QuestionId",
@@ -1127,6 +1320,13 @@ namespace Fintorly.Infrastructure.Migrations
                 column: "MentorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Groups_TierId",
+                table: "Groups",
+                column: "TierId",
+                unique: true,
+                filter: "[TierId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MentorAndCategories_CategoryId",
                 table: "MentorAndCategories",
                 column: "CategoryId");
@@ -1152,9 +1352,29 @@ namespace Fintorly.Infrastructure.Migrations
                 column: "AdvertisementId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Mentors_AnalysisId",
+                table: "Mentors",
+                column: "AnalysisId",
+                unique: true,
+                filter: "[AnalysisId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Mentors_ApplicationRequestId",
+                table: "Mentors",
+                column: "ApplicationRequestId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Mentors_ProfilePictureId",
                 table: "Mentors",
                 column: "ProfilePictureId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Mentors_StepId",
+                table: "Mentors",
+                column: "StepId",
+                unique: true,
+                filter: "[StepId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MessageAndReactions_ReactionId",
@@ -1202,6 +1422,21 @@ namespace Fintorly.Infrastructure.Migrations
                 column: "PortfolioTokenId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PostPicture_PostId",
+                table: "PostPicture",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_MentorId",
+                table: "Posts",
+                column: "MentorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_TierId",
+                table: "Posts",
+                column: "TierId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reports_CommentId",
                 table: "Reports",
                 column: "CommentId");
@@ -1210,6 +1445,11 @@ namespace Fintorly.Infrastructure.Migrations
                 name: "IX_Reports_MentorId",
                 table: "Reports",
                 column: "MentorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reports_PostId",
+                table: "Reports",
+                column: "PostId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reports_UserId",
@@ -1268,10 +1508,10 @@ namespace Fintorly.Infrastructure.Migrations
                 name: "AccessTokens");
 
             migrationBuilder.DropTable(
-                name: "Answers");
+                name: "AdditionalFeatures");
 
             migrationBuilder.DropTable(
-                name: "ApplicationRequests");
+                name: "Answers");
 
             migrationBuilder.DropTable(
                 name: "Choices");
@@ -1305,6 +1545,9 @@ namespace Fintorly.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "PortfolioTransactions");
+
+            migrationBuilder.DropTable(
+                name: "PostPicture");
 
             migrationBuilder.DropTable(
                 name: "Reports");
@@ -1343,7 +1586,7 @@ namespace Fintorly.Infrastructure.Migrations
                 name: "Comments");
 
             migrationBuilder.DropTable(
-                name: "Tiers");
+                name: "Posts");
 
             migrationBuilder.DropTable(
                 name: "Categories");
@@ -1361,6 +1604,9 @@ namespace Fintorly.Infrastructure.Migrations
                 name: "Tokens");
 
             migrationBuilder.DropTable(
+                name: "Tiers");
+
+            migrationBuilder.DropTable(
                 name: "Users");
 
             migrationBuilder.DropTable(
@@ -1370,7 +1616,16 @@ namespace Fintorly.Infrastructure.Migrations
                 name: "Advertisements");
 
             migrationBuilder.DropTable(
+                name: "Analyzes");
+
+            migrationBuilder.DropTable(
+                name: "ApplicationRequests");
+
+            migrationBuilder.DropTable(
                 name: "ProfilePictures");
+
+            migrationBuilder.DropTable(
+                name: "Steps");
         }
     }
 }

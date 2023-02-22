@@ -33,6 +33,8 @@ public class MentorConfiguration:IEntityTypeConfiguration<Mentor>
         
         //builder.HasMany<Group>(a => a.Groups).WithOne(a => a.Mentor).HasForeignKey(a => a.MentorId);
         builder.HasOne<Advertisement>(a => a.Advertisement).WithMany(a => a.Mentors).HasForeignKey(a => a.AdvertisementId);
+        builder.HasOne<Step>(a => a.Step).WithOne(a => a.Mentor).HasForeignKey<Step>(a => a.MentorId);
+        builder.HasOne<Analysis>(a => a.Analysis).WithOne(a => a.Mentor).HasForeignKey<Analysis>(a => a.MentorId);
         builder.ToTable("Mentors");
     }
     

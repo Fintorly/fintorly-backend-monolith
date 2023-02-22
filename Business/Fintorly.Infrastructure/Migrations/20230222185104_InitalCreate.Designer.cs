@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fintorly.Infrastructure.Migrations
 {
     [DbContext(typeof(FintorlyContext))]
-    [Migration("20221226194538_InitalCreate5")]
-    partial class InitalCreate5
+    [Migration("20230222185104_InitalCreate")]
+    partial class InitalCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -72,7 +72,6 @@ namespace Fintorly.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("IpAddress")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
@@ -88,11 +87,9 @@ namespace Fintorly.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("OsType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneModel")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("MentorId", "OperationClaimId");
@@ -262,6 +259,65 @@ namespace Fintorly.Infrastructure.Migrations
                     b.ToTable("AccessTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Fintorly.Domain.Entities.AdditionalFeature", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OsType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneModel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("TierId");
+
+                    b.ToTable("AdditionalFeatures", (string)null);
+                });
+
             modelBuilder.Entity("Fintorly.Domain.Entities.Advertisement", b =>
                 {
                     b.Property<Guid>("Id")
@@ -303,6 +359,56 @@ namespace Fintorly.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Advertisements", (string)null);
+                });
+
+            modelBuilder.Entity("Fintorly.Domain.Entities.Analysis", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("AveragePoint")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("MentorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("MentorSuccessScore")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TotalNorth")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalPost")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalReports")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalSouth")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Analyzes", (string)null);
                 });
 
             modelBuilder.Entity("Fintorly.Domain.Entities.Answer", b =>
@@ -374,7 +480,7 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Property<DateTime>("AcceptedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("AdminId")
+                    b.Property<Guid?>("AdminId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CreatedBy")
@@ -384,11 +490,12 @@ namespace Fintorly.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("IpAddress")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAccepted")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -406,20 +513,16 @@ namespace Fintorly.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("OsType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneModel")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RejectionReason")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("MentorId")
-                        .IsUnique();
 
                     b.ToTable("ApplicationRequests", (string)null);
                 });
@@ -435,6 +538,14 @@ namespace Fintorly.Infrastructure.Migrations
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -652,7 +763,7 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("MentorId")
+                    b.Property<Guid?>("MentorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ModifiedBy")
@@ -661,6 +772,9 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("TierId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -668,6 +782,10 @@ namespace Fintorly.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("MentorId");
+
+                    b.HasIndex("TierId")
+                        .IsUnique()
+                        .HasFilter("[TierId] IS NOT NULL");
 
                     b.ToTable("Groups", (string)null);
                 });
@@ -679,6 +797,9 @@ namespace Fintorly.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("AdvertisementId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AnalysisId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ApplicationRequestId")
@@ -728,6 +849,9 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Property<bool>("IsPhoneNumberVerified")
                         .HasColumnType("bit");
 
+                    b.Property<int>("Language")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("LastLogin")
                         .HasColumnType("datetime2");
 
@@ -772,6 +896,9 @@ namespace Fintorly.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(0);
 
+                    b.Property<Guid?>("StepId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("TotalEarnedPrice")
                         .HasColumnType("int");
 
@@ -792,7 +919,18 @@ namespace Fintorly.Infrastructure.Migrations
 
                     b.HasIndex("AdvertisementId");
 
+                    b.HasIndex("AnalysisId")
+                        .IsUnique()
+                        .HasFilter("[AnalysisId] IS NOT NULL");
+
+                    b.HasIndex("ApplicationRequestId")
+                        .IsUnique();
+
                     b.HasIndex("ProfilePictureId");
+
+                    b.HasIndex("StepId")
+                        .IsUnique()
+                        .HasFilter("[StepId] IS NOT NULL");
 
                     b.ToTable("Mentors", (string)null);
                 });
@@ -938,9 +1076,9 @@ namespace Fintorly.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("93bd5b1a-be65-4d95-94b4-c35741d8e773"),
+                            Id = new Guid("a1ee4640-430d-4324-87f0-e6b66c7a96d0"),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
-                            CreatedDate = new DateTime(2022, 12, 26, 22, 45, 38, 757, DateTimeKind.Local).AddTicks(1520),
+                            CreatedDate = new DateTime(2023, 2, 22, 21, 51, 4, 448, DateTimeKind.Local).AddTicks(6360),
                             IsActive = true,
                             IsDeleted = false,
                             ModifiedBy = new Guid("00000000-0000-0000-0000-000000000000"),
@@ -949,9 +1087,9 @@ namespace Fintorly.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("2cd462c1-59c5-4fff-87e7-52e4cc88eac0"),
+                            Id = new Guid("07b3749a-c3f5-4e9e-8c23-2add82113921"),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
-                            CreatedDate = new DateTime(2022, 12, 26, 22, 45, 38, 757, DateTimeKind.Local).AddTicks(1530),
+                            CreatedDate = new DateTime(2023, 2, 22, 21, 51, 4, 448, DateTimeKind.Local).AddTicks(6370),
                             IsActive = true,
                             IsDeleted = false,
                             ModifiedBy = new Guid("00000000-0000-0000-0000-000000000000"),
@@ -960,9 +1098,9 @@ namespace Fintorly.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("bcf0bd41-b86b-43f6-9c51-cdb7303af2dd"),
+                            Id = new Guid("aca70efb-c87f-4c0b-87c4-e4b06f51407b"),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
-                            CreatedDate = new DateTime(2022, 12, 26, 22, 45, 38, 757, DateTimeKind.Local).AddTicks(1540),
+                            CreatedDate = new DateTime(2023, 2, 22, 21, 51, 4, 448, DateTimeKind.Local).AddTicks(6380),
                             IsActive = true,
                             IsDeleted = false,
                             ModifiedBy = new Guid("00000000-0000-0000-0000-000000000000"),
@@ -971,9 +1109,9 @@ namespace Fintorly.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("0da58992-6ff0-4861-8628-3dc046772f2e"),
+                            Id = new Guid("8124a9b5-15c1-4bef-9937-ee8c32a09bd1"),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
-                            CreatedDate = new DateTime(2022, 12, 26, 22, 45, 38, 757, DateTimeKind.Local).AddTicks(1550),
+                            CreatedDate = new DateTime(2023, 2, 22, 21, 51, 4, 448, DateTimeKind.Local).AddTicks(6390),
                             IsActive = true,
                             IsDeleted = false,
                             ModifiedBy = new Guid("00000000-0000-0000-0000-000000000000"),
@@ -1204,6 +1342,125 @@ namespace Fintorly.Infrastructure.Migrations
                     b.ToTable("PortfolioTransactions", (string)null);
                 });
 
+            modelBuilder.Entity("Fintorly.Domain.Entities.Post", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("AveragePoint")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("MentorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OsType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneModel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("TotalNorth")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalSouth")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MentorId");
+
+                    b.HasIndex("TierId");
+
+                    b.ToTable("Posts", (string)null);
+                });
+
+            modelBuilder.Entity("Fintorly.Domain.Entities.PostPicture", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OsType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneModel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("PostPicture");
+                });
+
             modelBuilder.Entity("Fintorly.Domain.Entities.ProfilePicture", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1282,6 +1539,9 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Property<string>("PhoneModel")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("QuestionType")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Questions", (string)null);
@@ -1342,7 +1602,7 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Property<string>("AdminNote")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("CommentId")
+                    b.Property<Guid?>("CommentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Content")
@@ -1373,7 +1633,7 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Property<bool>("IsSolved")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("MentorId")
+                    b.Property<Guid?>("MentorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ModifiedBy")
@@ -1388,11 +1648,14 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Property<string>("PhoneModel")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -1400,6 +1663,8 @@ namespace Fintorly.Infrastructure.Migrations
                     b.HasIndex("CommentId");
 
                     b.HasIndex("MentorId");
+
+                    b.HasIndex("PostId");
 
                     b.HasIndex("UserId");
 
@@ -1460,6 +1725,62 @@ namespace Fintorly.Infrastructure.Migrations
                     b.ToTable("ReviewComments", (string)null);
                 });
 
+            modelBuilder.Entity("Fintorly.Domain.Entities.Step", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("CurrentPoint")
+                        .HasColumnType("float");
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("MentorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("NextSegmentRequiredPoint")
+                        .HasColumnType("float");
+
+                    b.Property<string>("OsType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneModel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Segment")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalPost")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Steps", (string)null);
+                });
+
             modelBuilder.Entity("Fintorly.Domain.Entities.Tier", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1476,13 +1797,21 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("IpAddress")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsChatable")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
@@ -1623,6 +1952,9 @@ namespace Fintorly.Infrastructure.Migrations
 
                     b.Property<bool>("IsPhoneNumberVerified")
                         .HasColumnType("bit");
+
+                    b.Property<int>("Language")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("LastLogin")
                         .HasColumnType("datetime2");
@@ -1939,6 +2271,21 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Fintorly.Domain.Entities.AdditionalFeature", b =>
+                {
+                    b.HasOne("Fintorly.Domain.Entities.Post", "Post")
+                        .WithMany("AdditionalFeatures")
+                        .HasForeignKey("PostId");
+
+                    b.HasOne("Fintorly.Domain.Entities.Tier", "Tier")
+                        .WithMany("AdditionalFeatures")
+                        .HasForeignKey("TierId");
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Tier");
+                });
+
             modelBuilder.Entity("Fintorly.Domain.Entities.Answer", b =>
                 {
                     b.HasOne("Fintorly.Domain.Entities.Mentor", "Mentor")
@@ -1962,17 +2309,6 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Navigation("Question");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Fintorly.Domain.Entities.ApplicationRequest", b =>
-                {
-                    b.HasOne("Fintorly.Domain.Entities.Mentor", "Mentor")
-                        .WithOne("ApplicationRequest")
-                        .HasForeignKey("Fintorly.Domain.Entities.ApplicationRequest", "MentorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Mentor");
                 });
 
             modelBuilder.Entity("Fintorly.Domain.Entities.Choice", b =>
@@ -2028,10 +2364,16 @@ namespace Fintorly.Infrastructure.Migrations
                     b.HasOne("Fintorly.Domain.Entities.Mentor", "Mentor")
                         .WithMany("Groups")
                         .HasForeignKey("MentorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Fintorly.Domain.Entities.Tier", "Tier")
+                        .WithOne("Group")
+                        .HasForeignKey("Fintorly.Domain.Entities.Group", "TierId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Mentor");
+
+                    b.Navigation("Tier");
                 });
 
             modelBuilder.Entity("Fintorly.Domain.Entities.Mentor", b =>
@@ -2040,14 +2382,34 @@ namespace Fintorly.Infrastructure.Migrations
                         .WithMany("Mentors")
                         .HasForeignKey("AdvertisementId");
 
+                    b.HasOne("Fintorly.Domain.Entities.Analysis", "Analysis")
+                        .WithOne("Mentor")
+                        .HasForeignKey("Fintorly.Domain.Entities.Mentor", "AnalysisId");
+
+                    b.HasOne("Fintorly.Domain.Entities.ApplicationRequest", "ApplicationRequest")
+                        .WithOne("Mentor")
+                        .HasForeignKey("Fintorly.Domain.Entities.Mentor", "ApplicationRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Fintorly.Domain.Entities.ProfilePicture", "ProfilePicture")
                         .WithMany("Mentors")
                         .HasForeignKey("ProfilePictureId")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("Fintorly.Domain.Entities.Step", "Step")
+                        .WithOne("Mentor")
+                        .HasForeignKey("Fintorly.Domain.Entities.Mentor", "StepId");
+
                     b.Navigation("Advertisement");
 
+                    b.Navigation("Analysis");
+
+                    b.Navigation("ApplicationRequest");
+
                     b.Navigation("ProfilePicture");
+
+                    b.Navigation("Step");
                 });
 
             modelBuilder.Entity("Fintorly.Domain.Entities.Message", b =>
@@ -2130,29 +2492,61 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Navigation("PortfolioToken");
                 });
 
+            modelBuilder.Entity("Fintorly.Domain.Entities.Post", b =>
+                {
+                    b.HasOne("Fintorly.Domain.Entities.Mentor", "Mentor")
+                        .WithMany("Posts")
+                        .HasForeignKey("MentorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Fintorly.Domain.Entities.Tier", "Tier")
+                        .WithMany("Posts")
+                        .HasForeignKey("TierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Mentor");
+
+                    b.Navigation("Tier");
+                });
+
+            modelBuilder.Entity("Fintorly.Domain.Entities.PostPicture", b =>
+                {
+                    b.HasOne("Fintorly.Domain.Entities.Post", "Post")
+                        .WithMany("PostPictures")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+                });
+
             modelBuilder.Entity("Fintorly.Domain.Entities.Report", b =>
                 {
                     b.HasOne("Fintorly.Domain.Entities.Comment", "Comment")
                         .WithMany("Reports")
-                        .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CommentId");
 
                     b.HasOne("Fintorly.Domain.Entities.Mentor", "Mentor")
                         .WithMany("Reports")
                         .HasForeignKey("MentorId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Fintorly.Domain.Entities.Post", "Post")
+                        .WithMany("Reports")
+                        .HasForeignKey("PostId");
 
                     b.HasOne("Fintorly.Domain.Entities.User", "User")
                         .WithMany("Reports")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Comment");
 
                     b.Navigation("Mentor");
+
+                    b.Navigation("Post");
 
                     b.Navigation("User");
                 });
@@ -2181,7 +2575,7 @@ namespace Fintorly.Infrastructure.Migrations
                     b.HasOne("Fintorly.Domain.Entities.Mentor", "Mentor")
                         .WithMany("Tiers")
                         .HasForeignKey("MentorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Mentor");
@@ -2209,6 +2603,18 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Navigation("Mentors");
                 });
 
+            modelBuilder.Entity("Fintorly.Domain.Entities.Analysis", b =>
+                {
+                    b.Navigation("Mentor")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Fintorly.Domain.Entities.ApplicationRequest", b =>
+                {
+                    b.Navigation("Mentor")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Fintorly.Domain.Entities.Category", b =>
                 {
                     b.Navigation("MentorAndCategories");
@@ -2234,9 +2640,6 @@ namespace Fintorly.Infrastructure.Migrations
 
                     b.Navigation("Answers");
 
-                    b.Navigation("ApplicationRequest")
-                        .IsRequired();
-
                     b.Navigation("Comments");
 
                     b.Navigation("Connections");
@@ -2256,6 +2659,8 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Navigation("Messages");
 
                     b.Navigation("Portfolios");
+
+                    b.Navigation("Posts");
 
                     b.Navigation("Reports");
 
@@ -2290,6 +2695,15 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Navigation("PortfolioTransactions");
                 });
 
+            modelBuilder.Entity("Fintorly.Domain.Entities.Post", b =>
+                {
+                    b.Navigation("AdditionalFeatures");
+
+                    b.Navigation("PostPictures");
+
+                    b.Navigation("Reports");
+                });
+
             modelBuilder.Entity("Fintorly.Domain.Entities.ProfilePicture", b =>
                 {
                     b.Navigation("Mentors");
@@ -2309,8 +2723,21 @@ namespace Fintorly.Infrastructure.Migrations
                     b.Navigation("MessageAndReactions");
                 });
 
+            modelBuilder.Entity("Fintorly.Domain.Entities.Step", b =>
+                {
+                    b.Navigation("Mentor")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Fintorly.Domain.Entities.Tier", b =>
                 {
+                    b.Navigation("AdditionalFeatures");
+
+                    b.Navigation("Group")
+                        .IsRequired();
+
+                    b.Navigation("Posts");
+
                     b.Navigation("TierAndUsers");
                 });
 

@@ -96,12 +96,12 @@ namespace Fintorly.Domain.Entities
         public ICollection<MentorAndOperationClaim> MentorAndOperationClaims { get; set; }
         public Guid? AdvertisementId { get; set; }
         public Advertisement? Advertisement { get; set; }
-        public Guid AnalysisId { get; set; }
-        public Analysis Analysis { get; set; }
+        public Guid? AnalysisId { get; set; }
+        public Analysis? Analysis { get; set; }
 
-        public Guid StepId { get; set; }
+        public Guid ?StepId { get; set; }
 
-        public Step Step { get; set; }
+        public Step? Step { get; set; }
         //Mentor'un postları
         public ICollection<Post> Posts { get; set; }
         public Mentor() => Id = Guid.NewGuid();

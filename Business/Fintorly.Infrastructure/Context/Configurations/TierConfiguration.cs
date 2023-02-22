@@ -19,8 +19,8 @@ public class TierConfiguration : IEntityTypeConfiguration<Tier>
         builder.Property(a => a.IpAddress).IsRequired(false);
         builder.Property(a => a.OsType).IsRequired(false);
         builder.Property(a => a.PhoneModel).IsRequired(false);
-        builder.HasOne<Mentor>(a => a.Mentor).WithMany(a => a.Tiers).HasForeignKey(a => a.MentorId);
-        builder.HasOne<Group>(a => a.Group).WithOne(a => a.Tier).HasForeignKey<Group>(a => a.TierId);
+        builder.HasOne<Mentor>(a => a.Mentor).WithMany(a => a.Tiers).HasForeignKey(a => a.MentorId).OnDelete(DeleteBehavior.NoAction);;
+        builder.HasOne<Group>(a => a.Group).WithOne(a => a.Tier).HasForeignKey<Group>(a => a.TierId).OnDelete(DeleteBehavior.NoAction);;
         builder.ToTable("Tiers");
     }
 }
