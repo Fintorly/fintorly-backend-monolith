@@ -26,7 +26,7 @@ public class CreateQuestionCommandHandler : IRequestHandler<CreateQuestionComman
         var question = _mapper.Map<Question>(request);
         var result = await _questionRepository.AddAsync(question);
         if (result)
-            return Result.Success();
-        return Result.Fail();
+            return await Result.SuccessAsync();
+        return await Result.FailAsync();
     }
 }

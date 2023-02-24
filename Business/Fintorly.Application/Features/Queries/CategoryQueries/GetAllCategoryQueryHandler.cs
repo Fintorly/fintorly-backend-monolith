@@ -26,7 +26,7 @@ namespace Fintorly.Application.Features.Queries.CategoryQueries
         {
             var result = await _category.GetAllAsync();
             var dto = _mapper.Map<IList<CategoryDto>>(result);
-            return Result<IList<CategoryDto>>.Success(dto);
+            return await Result<IList<CategoryDto>>.SuccessAsync(dto);
         }
     }
 }

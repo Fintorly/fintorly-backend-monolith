@@ -13,7 +13,7 @@ public class DeleteAdvertisementCommandHandler : IRequestHandler<DeleteAdvertise
     {
         var result =await _advertisementRepository.DeleteByIdAsync(request.Id);
         if (result)
-            return Result.Success();
-        return Result.Fail();
+            return await Result.SuccessAsync();
+        return await Result.FailAsync();
     }
 }

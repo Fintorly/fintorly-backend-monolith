@@ -51,19 +51,19 @@ namespace Fintorly.Infrastructure.Repositories
             var user = await _context.Users.SingleOrDefaultAsync(a =>
                 a.PhoneNumber == codeIsTrueByPhoneNumberQuery.PhoneNumber);
             if (user is null)
-                return Result.Fail("Böyle bir kullanıcı bulunamadı");
+                return await Result.FailAsync("Böyle bir kullanıcı bulunamadı");
 
             var codeVerify =
                 await _context.VerificationCodes.SingleOrDefaultAsync(a =>
                     a.PhoneNumber == codeIsTrueByPhoneNumberQuery.PhoneNumber);
             if (codeVerify is null)
-                return Result.Fail("Bu Telefon Numarasına ait bir doğrulama bilgisi bulunamadı.", ResultStatus.Warning);
+                return await Result.FailAsync("Bu Telefon Numarasına ait bir doğrulama bilgisi bulunamadı.", ResultStatus.Warning);
             if (codeVerify.PhoneCode != codeIsTrueByPhoneNumberQuery.VerificationCode)
-                return Result.Fail("Doğrulama Kodu Doğru değil..", ResultStatus.Warning);
+                return await Result.FailAsync("Doğrulama Kodu Doğru değil..", ResultStatus.Warning);
             if (codeVerify.VerificationCodeValidDate < DateTime.Now)
-                return Result.Fail("Doğrulama kodu süresi geçmiştir lütfen tekrar deneyiniz", ResultStatus.Warning);
+                return await Result.FailAsync("Doğrulama kodu süresi geçmiştir lütfen tekrar deneyiniz", ResultStatus.Warning);
 
-            return Result.Success("Doğrulama Başarılı.");
+            return await Result.SuccessAsync("Doğrulama Başarılı.");
         }
 
         public async Task<IResult> CheckCodeIsTrueByEmailAsync(
@@ -72,18 +72,18 @@ namespace Fintorly.Infrastructure.Repositories
             var user = await _context.Users.SingleOrDefaultAsync(a =>
                 a.EmailAddress == codeIsTrueByEmailAddressQuery.EmailAddress);
             if (user is null)
-                return Result.Fail("Böyle bir kullanıcı bulunamadı");
+                return await Result.FailAsync("Böyle bir kullanıcı bulunamadı");
 
             var codeVerify = await _context.VerificationCodes.SingleOrDefaultAsync(a =>
                 a.EmailAddress == codeIsTrueByEmailAddressQuery.EmailAddress);
             if (codeVerify is null)
-                return Result.Fail("Bu Maile ait bir doğrulama bilgisi bulunamadı.", ResultStatus.Warning);
+                return await Result.FailAsync("Bu Maile ait bir doğrulama bilgisi bulunamadı.", ResultStatus.Warning);
             if (codeVerify.MailCode != codeIsTrueByEmailAddressQuery.VerificationCode)
-                return Result.Fail("Doğrulama Kodu Doğru değil..", ResultStatus.Warning);
+                return await Result.FailAsync("Doğrulama Kodu Doğru değil..", ResultStatus.Warning);
             if (codeVerify.VerificationCodeValidDate < DateTime.Now)
-                return Result.Fail("Doğrulama kodu süresi geçmiştir lütfen tekrar deneyiniz", ResultStatus.Warning);
+                return await Result.FailAsync("Doğrulama kodu süresi geçmiştir lütfen tekrar deneyiniz", ResultStatus.Warning);
 
-            return Result.Success("Doğrulama Başarılı.");
+            return await Result.SuccessAsync("Doğrulama Başarılı.");
         }
 
         public async Task<AccessToken> CreateAccessTokenAsync(User user)
@@ -97,12 +97,12 @@ namespace Fintorly.Infrastructure.Repositories
         {
             var user = await _context.Users.SingleOrDefaultAsync(a => a.Id == userChangePasswordCommand.UserId);
             if (user is null)
-                return Result.Fail("Böyle bir kullanıcı bulunamadı.");
+                return await Result.FailAsync("Böyle bir kullanıcı bulunamadı.");
 
             var isPasswordTrue = HashingHelper.VerifyPasswordHash(userChangePasswordCommand.Password, user.PasswordHash,
                 user.PasswordSalt);
             if (!isPasswordTrue)
-                return Result.Fail(ResultStatus.Warning);
+                return await Result.FailAsync(ResultStatus.Warning);
 
             byte[] passwordHash, passwordSalt;
             HashingHelper.CreatePasswordHash(userChangePasswordCommand.NewPassword, out passwordHash, out passwordSalt);
@@ -111,7 +111,7 @@ namespace Fintorly.Infrastructure.Repositories
             user.ModifiedDate = DateTime.Now;
             _context.Update(user);
             await _context.SaveChangesAsync();
-            return Result.Success();
+            return await Result.SuccessAsync();
         }
 
         public async Task<IResult> ForgotPasswordEmailAsync(
@@ -120,9 +120,9 @@ namespace Fintorly.Infrastructure.Repositories
             var user = await _context.Users.SingleOrDefaultAsync(a =>
                 a.EmailAddress == userChangePasswordEmailCommand.EmailAddress);
             if (user is null)
-                return Result.Fail(Messages.General.NotFoundArgument("kullanıcı"));
+                return await Result.FailAsync(Messages.General.NotFoundArgument("kullanıcı"));
             if (userChangePasswordEmailCommand.Password != userChangePasswordEmailCommand.ReTypePassword)
-                return Result.Fail("Şifreler aynı değil.", ResultStatus.Warning);
+                return await Result.FailAsync("Şifreler aynı değil.", ResultStatus.Warning);
 
             byte[] passwordHash, passwordSalt;
             HashingHelper.CreatePasswordHash(userChangePasswordEmailCommand.Password, out passwordHash,
@@ -132,7 +132,7 @@ namespace Fintorly.Infrastructure.Repositories
             user.ModifiedDate = DateTime.Now;
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
-            return Result.Success("Şifre başarıyla değiştirildi.");
+            return await Result.SuccessAsync("Şifre başarıyla değiştirildi.");
         }
 
         public async Task<IResult> ForgotPasswordPhoneAsync(ForgotPasswordPhoneCommand userChangePasswordCommand)
@@ -140,9 +140,9 @@ namespace Fintorly.Infrastructure.Repositories
             var user = await _context.Users.SingleOrDefaultAsync(a =>
                 a.PhoneNumber == userChangePasswordCommand.PhoneNumber);
             if (user is null)
-                return Result.Fail(Messages.General.NotFoundArgument("kullanıcı"));
+                return await Result.FailAsync(Messages.General.NotFoundArgument("kullanıcı"));
             if (userChangePasswordCommand.Password != userChangePasswordCommand.ReTypePassword)
-                return Result.Fail("Şifreler aynı değil.", ResultStatus.Warning);
+                return await Result.FailAsync("Şifreler aynı değil.", ResultStatus.Warning);
 
             byte[] passwordHash, passwordSalt;
             HashingHelper.CreatePasswordHash(userChangePasswordCommand.Password, out passwordHash, out passwordSalt);
@@ -152,7 +152,7 @@ namespace Fintorly.Infrastructure.Repositories
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
 
-            return Result.Success("Şifre başarıyla değiştirildi.");
+            return await Result.SuccessAsync("Şifre başarıyla değiştirildi.");
         }
 
         public async Task<IEnumerable<OperationClaim>> GetClaimsAsync(User user)
@@ -175,15 +175,15 @@ namespace Fintorly.Infrastructure.Repositories
                 a.EmailAddress == loginWithMailCommand.EmailAddress);
 
             if (user is null)
-                return Result<UserAndTokenDto>.Fail(Messages.General.NotFoundArgument("kullanıcı"));
+                return await Result<UserAndTokenDto>.FailAsync(Messages.General.NotFoundArgument("kullanıcı"));
 
             if (HashingHelper.VerifyPasswordHash(loginWithMailCommand.Password, user.PasswordHash, user.PasswordSalt))
             {
                 if (!user.IsActive)
-                    return Result<UserAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.",
+                    return await Result<UserAndTokenDto>.FailAsync("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.",
                         ResultStatus.Warning);
                 if (!user.IsEmailAddressVerified)
-                    return Result<UserAndTokenDto>.Fail(
+                    return await Result<UserAndTokenDto>.FailAsync(
                         "Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.", ResultStatus.Warning);
 
                 user.LastLogin = DateTime.Now;
@@ -221,10 +221,10 @@ namespace Fintorly.Infrastructure.Repositories
                 userLoginCommand.User.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
                 userLoginCommand.User.CurrentPortfolioId = user.CurrentPortfolioId;
 
-                return Result<UserAndTokenDto>.Success(userLoginCommand);
+                return await Result<UserAndTokenDto>.SuccessAsync(userLoginCommand);
             }
 
-            return Result<UserAndTokenDto>.Fail(ResultStatus.Warning);
+            return await Result<UserAndTokenDto>.FailAsync(ResultStatus.Warning);
         }
 
         public async Task<IResult<UserAndTokenDto>> LoginWithPhoneAsync(LoginWithPhoneCommand loginWithPhoneCommand)
@@ -234,15 +234,15 @@ namespace Fintorly.Infrastructure.Repositories
             var user = await _context.Users.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a=>a.PortfolioTransactions).SingleOrDefaultAsync(
                 a => a.PhoneNumber == loginWithPhoneCommand.PhoneNumber);
             if (user is null)
-                return Result<UserAndTokenDto>.Fail(Messages.General.NotFoundArgument("kullanıcı"));
+                return await Result<UserAndTokenDto>.FailAsync(Messages.General.NotFoundArgument("kullanıcı"));
 
             if (HashingHelper.VerifyPasswordHash(loginWithPhoneCommand.Password, user.PasswordHash, user.PasswordSalt))
             {
                 if (!user.IsActive)
-                    return Result<UserAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.",
+                    return await Result<UserAndTokenDto>.FailAsync("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.",
                         ResultStatus.Warning);
                 if (!user.IsEmailAddressVerified)
-                    return Result<UserAndTokenDto>.Fail(
+                    return await Result<UserAndTokenDto>.FailAsync(
                         "Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.", ResultStatus.Warning);
 
                 user.LastLogin = DateTime.Now;
@@ -280,10 +280,10 @@ namespace Fintorly.Infrastructure.Repositories
                 };
                 userLoginCommand.User.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
                 userLoginCommand.User.CurrentPortfolioId = user.CurrentPortfolioId;
-                return Result<UserAndTokenDto>.Success(userLoginCommand);
+                return await Result<UserAndTokenDto>.SuccessAsync(userLoginCommand);
             }
 
-            return Result<UserAndTokenDto>.Fail("Lütfen bilgilerinizi kontrol ediniz.", ResultStatus.Warning);
+            return await Result<UserAndTokenDto>.FailAsync("Lütfen bilgilerinizi kontrol ediniz.", ResultStatus.Warning);
         }
 
         public async Task<IResult<UserAndTokenDto>> LoginWithUserNameAsync(
@@ -294,16 +294,16 @@ namespace Fintorly.Infrastructure.Repositories
 
             var user = await _context.Users.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a=>a.PortfolioTransactions).SingleOrDefaultAsync(a => a.UserName == loginWithUserNameCommand.UserName);
             if (user is null)
-                return Result<UserAndTokenDto>.Fail(Messages.General.NotFoundArgument("kullanıcı"));
+                return await Result<UserAndTokenDto>.FailAsync(Messages.General.NotFoundArgument("kullanıcı"));
 
             if (HashingHelper.VerifyPasswordHash(loginWithUserNameCommand.Password, user.PasswordHash,
                     user.PasswordSalt))
             {
                 if (!user.IsActive)
-                    return Result<UserAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.",
+                    return await Result<UserAndTokenDto>.FailAsync("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.",
                         ResultStatus.Warning);
                 if (!user.IsEmailAddressVerified)
-                    return Result<UserAndTokenDto>.Fail(
+                    return await Result<UserAndTokenDto>.FailAsync(
                         "Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.", ResultStatus.Warning);
 
                 user.LastLogin = DateTime.Now;
@@ -341,10 +341,10 @@ namespace Fintorly.Infrastructure.Repositories
                 };
                 userLoginCommand.User.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
                 userLoginCommand.User.CurrentPortfolioId = user.CurrentPortfolioId;
-                return Result<UserAndTokenDto>.Success(userLoginCommand);
+                return await Result<UserAndTokenDto>.SuccessAsync(userLoginCommand);
             }
 
-            return Result<UserAndTokenDto>.Fail("Lütfen bilgilerinizi kontrol ediniz.", ResultStatus.Warning);
+            return await Result<UserAndTokenDto>.FailAsync("Lütfen bilgilerinizi kontrol ediniz.", ResultStatus.Warning);
         }
 
         public async Task<IResult<UserAndTokenDto>> RegisterAsync(RegisterCommand registerCommand)
@@ -354,13 +354,13 @@ namespace Fintorly.Infrastructure.Repositories
             if (await _context.Users.AnyAsync(a =>
                     a.PhoneNumber == registerCommand.PhoneNumber || a.UserName == registerCommand.UserName ||
                     a.EmailAddress == registerCommand.EmailAddress))
-                return Result<UserAndTokenDto>.Fail("Bu kullanıcı mevcut");
+                return await Result<UserAndTokenDto>.FailAsync("Bu kullanıcı mevcut");
             //var userVerifyCheck = await _context.VerificationCodes.SingleOrDefaultAsync(a => a.EmailAddress == registerCommand.EmailAddress && a.PhoneNumber == registerCommand.PhoneNumber);
             var userVerifyCheck =
                 await _context.VerificationCodes.SingleOrDefaultAsync(a =>
                     a.EmailAddress == registerCommand.EmailAddress);
             if (userVerifyCheck is null)
-                return Result<UserAndTokenDto>.Fail("Böyle bir kayıt bulunamadı.", ResultStatus.Warning);
+                return await Result<UserAndTokenDto>.FailAsync("Böyle bir kayıt bulunamadı.", ResultStatus.Warning);
 
             byte[] passwordHash, passwordSalt;
             HashingHelper.CreatePasswordHash(registerCommand.Password, out passwordHash, out passwordSalt);
@@ -409,7 +409,7 @@ namespace Fintorly.Infrastructure.Repositories
             userAndTokenDto.User.Portfolio = _mapper.Map<PortfolioDto>(portfolio);
             userAndTokenDto.User.CurrentPortfolioId = portfolio.Id;
 
-            return Result<UserAndTokenDto>.Success($"Hoşgeldiniz Sayın {user.FirstName} {user.LastName}.",
+            return await Result<UserAndTokenDto>.SuccessAsync($"Hoşgeldiniz Sayın {user.FirstName} {user.LastName}.",
                 userAndTokenDto);
         }
 

@@ -19,14 +19,14 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
     public async Task<IResult> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(request.Title))
-            return Result.Fail("Tilte Alanı boş kalamaz");
+            return await Result.FailAsync("Tilte Alanı boş kalamaz");
         if (string.IsNullOrEmpty(request.Content))
-            return Result.Fail("Content Alanı boş kalamaz");
+            return await Result.FailAsync("Content Alanı boş kalamaz");
         if (request.Price <= 0)
-            return Result.Fail("Fiyat 0'dan büyük olmalıdır.");
+            return await Result.FailAsync("Fiyat 0'dan büyük olmalıdır.");
 
         var category = _mapper.Map<Category>(request);
-        var uploadResult = FileUpload.UploadAlternative(request.File, "Categories");
+        var uploadResult =await FileUpload.UploadAlternative(request.File, "Categories");
         if (uploadResult.Succeeded)
         {
             var uploadResultData=_mapper.Map<UploadResult>(uploadResult.Data);
@@ -34,6 +34,6 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
             category.FileName = uploadResultData.FileVirtualPath;
         }
         var result = await _category.AddAsync(category);
-        return Result.Success();
+        return await Result.SuccessAsync();
     }
 }

@@ -50,7 +50,7 @@ namespace Fintorly.Infrastructure.Utilities.Services
             string imagePath = "";
             if (oneSignalNotificationDto.File is not null)
             {
-                var result = FileUpload.UploadAlternative(oneSignalNotificationDto.File, "Notification");
+                var result =await FileUpload.UploadAlternative(oneSignalNotificationDto.File, "Notification");
                 imagePath = result.Data.ToString();
             }
 
@@ -68,7 +68,7 @@ namespace Fintorly.Infrastructure.Utilities.Services
 
             var response = await appInstance.CreateNotificationAsync(notification);
 
-            return Result.Success("İşlem Başarı ile gerçekleşti", notification);
+            return await Result.SuccessAsync("İşlem Başarı ile gerçekleşti", notification);
         }
 
 

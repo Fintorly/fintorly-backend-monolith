@@ -9,22 +9,22 @@ namespace Fintorly.Infrastructure.Utilities.FileManager
     {
         private static string _currentDirectory = Environment.CurrentDirectory + @"\wwwroot\Uploads\";
 
-        public static IResult Upload(IFormFile file, string folderName)
+        public static async Task<IResult> Upload(IFormFile file, string folderName)
         {
-            var fileExists = CheckFileExists(file);
+            var fileExists =await CheckFileExists(file);
             if (!fileExists.Succeeded )
-                return Result.Fail(fileExists.Message);
+                return await Result.FailAsync(fileExists.Message);
             var type = Path.GetExtension(file.FileName);
-            var typeValid = CheckFileTypeValid(type);
+            var typeValid =await CheckFileTypeValid(type);
             if (!typeValid.Succeeded)
-                return Result.Fail(typeValid.Message);
+                return await Result.FailAsync(typeValid.Message);
             var randomName = Guid.NewGuid().ToString();
             CheckDirectoryExists(_currentDirectory);
             CreateImageFile(_currentDirectory + randomName + type, file);
-            return Result.Success((_currentDirectory + $"\\{folderName}\\" + randomName + type).Replace("\\", "/"), randomName + type + file);
+            return await Result.SuccessAsync((_currentDirectory + $"\\{folderName}\\" + randomName + type).Replace("\\", "/"), randomName + type + file);
         }
 
-        public static IResult UploadAlternative(IFormFile file, string folderName, string? oldFilePath = "")
+        public static async Task<IResult> UploadAlternative(IFormFile file, string folderName, string? oldFilePath = "")
         {
             if (!string.IsNullOrEmpty(oldFilePath) && oldFilePath != null && File.Exists(oldFilePath))
                 File.Delete(oldFilePath);
@@ -35,53 +35,53 @@ namespace Fintorly.Infrastructure.Utilities.FileManager
             var path = _currentDirectory + folderName + @"\" + fileName;
             var virtualPath = "Uploads/" + folderName + "/" + fileName;
             var type = Path.GetExtension(file.FileName);
-            var typeValid = CheckFileTypeValid(type);
+            var typeValid =await CheckFileTypeValid(type);
             if (!typeValid.Succeeded)
-                return Result.Fail(typeValid.Message);
+                return await Result.FailAsync(typeValid.Message);
 
             using (var stream = new FileStream(path, FileMode.Create))
             {
                 file.CopyTo(stream);
             }
-            return Result.Success(virtualPath, path);
+            return await Result.SuccessAsync(virtualPath, path);
         }
-        public static IResult Update(IFormFile file, string folderName, string oldImageName)
+        public static async Task<IResult> Update(IFormFile file, string folderName, string oldImageName)
         {
-            var fileExists = CheckFileExists(file);
+            var fileExists =await CheckFileExists(file);
             if (fileExists.Message != null)
-                return Result.Fail(fileExists.Message);
+                return await Result.FailAsync(fileExists.Message);
             var type = Path.GetExtension(file.FileName);
-            var typeValid = CheckFileTypeValid(type);
+            var typeValid =await CheckFileTypeValid(type);
             var randomName = Guid.NewGuid().ToString();
 
             if (typeValid.Message != null)
-                return Result.Fail(typeValid.Message);
+                return await Result.FailAsync(typeValid.Message);
 
             DeleteOldImageFile((_currentDirectory + $"\\{folderName}" + oldImageName).Replace("/", "\\"));
             CheckDirectoryExists(_currentDirectory + $"\\{folderName}");
             CreateImageFile(_currentDirectory + $"\\{folderName}" + randomName + type, file);
-            return Result.Success((_currentDirectory + randomName + type).Replace("\\", "/"));
+            return await Result.SuccessAsync((_currentDirectory + randomName + type).Replace("\\", "/"));
         }
 
-        public static IResult Delete(string path)
+        public static async Task<IResult> Delete(string path)
         {
             DeleteOldImageFile((_currentDirectory + path).Replace("/", "\\"));
-            return Result.Success("Başarıyla silindi.");
+            return await Result.SuccessAsync("Başarıyla silindi.");
         }
 
-        private static IResult CheckFileExists(IFormFile file)
+        private static async Task<IResult> CheckFileExists(IFormFile file)
         {
             if (file != null && file.Length > 0)
-                return Result.Fail("Mevcut.");
-            return Result.Success("Böyle bir dosya mevcut değil");
+                return await Result.FailAsync("Mevcut.");
+            return await Result.SuccessAsync("Böyle bir dosya mevcut değil");
         }
 
-        private static IResult CheckFileTypeValid(string type)
+        private static async Task<IResult> CheckFileTypeValid(string type)
         {
             type = type.ToLower();
             if (type == ".jpeg" || type == ".png" || type == ".jpg")
-                return Result.Success("Geçerli dosya");
-            return Result.Fail("Dosya tipi yanlış formatta.");
+                return await Result.SuccessAsync("Geçerli dosya");
+            return await Result.FailAsync("Dosya tipi yanlış formatta.");
         }
         private static void CheckDirectoryExists(string directory)
         {

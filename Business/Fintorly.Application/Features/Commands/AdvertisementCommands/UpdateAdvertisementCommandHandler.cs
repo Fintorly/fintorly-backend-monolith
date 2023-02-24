@@ -18,7 +18,7 @@ public class UpdateAdvertisementCommandHandler : IRequestHandler<UpdateAdvertise
         var advertisement = _mapper.Map<Advertisement>(request);
         var result= await _advertisementRepository.UpdateAsync(advertisement);
         if (result)
-            return Result.Success();
-        return Result.Fail();
+            return await Result.SuccessAsync();
+        return await Result.FailAsync();
     }
 }

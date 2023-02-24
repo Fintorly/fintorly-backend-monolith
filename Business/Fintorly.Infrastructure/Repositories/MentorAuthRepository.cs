@@ -48,19 +48,19 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         var mentor = await _context.Mentors.SingleOrDefaultAsync(a =>
             a.PhoneNumber == codeIsTrueByPhoneNumberQuery.PhoneNumber);
         if (mentor is null)
-            return Result.Fail("Böyle bir kullanıcı bulunamadı");
+            return await Result.FailAsync("Böyle bir kullanıcı bulunamadı");
 
         var codeVerify =
             await _context.VerificationCodes.SingleOrDefaultAsync(a =>
                 a.PhoneNumber == codeIsTrueByPhoneNumberQuery.PhoneNumber);
         if (codeVerify is null)
-            return Result.Fail("Bu Telefon Numarasına ait bir doğrulama bilgisi bulunamadı.", ResultStatus.Warning);
+            return await Result.FailAsync("Bu Telefon Numarasına ait bir doğrulama bilgisi bulunamadı.", ResultStatus.Warning);
         if (codeVerify.PhoneCode != codeIsTrueByPhoneNumberQuery.VerificationCode)
-            return Result.Fail("Doğrulama Kodu Doğru değil..", ResultStatus.Warning);
+            return await Result.FailAsync("Doğrulama Kodu Doğru değil..", ResultStatus.Warning);
         if (codeVerify.VerificationCodeValidDate < DateTime.Now)
-            return Result.Fail("Doğrulama kodu süresi geçmiştir lütfen tekrar deneyiniz", ResultStatus.Warning);
+            return await Result.FailAsync("Doğrulama kodu süresi geçmiştir lütfen tekrar deneyiniz", ResultStatus.Warning);
 
-        return Result.Success("Doğrulama Başarılı.");
+        return await Result.SuccessAsync("Doğrulama Başarılı.");
     }
 
     public async Task<IResult> CheckCodeIsTrueByEmailAsync(
@@ -69,18 +69,18 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         var mentor = await _context.Mentors.SingleOrDefaultAsync(a =>
             a.EmailAddress == codeIsTrueByEmailAddressQuery.EmailAddress);
         if (mentor is null)
-            return Result.Fail("Böyle bir mentör bulunamadı");
+            return await Result.FailAsync("Böyle bir mentör bulunamadı");
 
         var codeVerify = await _context.VerificationCodes.SingleOrDefaultAsync(a =>
             a.EmailAddress == codeIsTrueByEmailAddressQuery.EmailAddress);
         if (codeVerify is null)
-            return Result.Fail("Bu Maile ait bir doğrulama bilgisi bulunamadı.", ResultStatus.Warning);
+            return await Result.FailAsync("Bu Maile ait bir doğrulama bilgisi bulunamadı.", ResultStatus.Warning);
         if (codeVerify.MailCode != codeIsTrueByEmailAddressQuery.VerificationCode)
-            return Result.Fail("Doğrulama Kodu Doğru değil..", ResultStatus.Warning);
+            return await Result.FailAsync("Doğrulama Kodu Doğru değil..", ResultStatus.Warning);
         if (codeVerify.VerificationCodeValidDate < DateTime.Now)
-            return Result.Fail("Doğrulama kodu süresi geçmiştir lütfen tekrar deneyiniz", ResultStatus.Warning);
+            return await Result.FailAsync("Doğrulama kodu süresi geçmiştir lütfen tekrar deneyiniz", ResultStatus.Warning);
 
-        return Result.Success("Doğrulama Başarılı.");
+        return await Result.SuccessAsync("Doğrulama Başarılı.");
     }
 
 
@@ -88,14 +88,14 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
     {
         var mentor = await _context.Mentors.SingleOrDefaultAsync(a => a.Id == changePasswordCommand.UserId);
         if (mentor is null)
-            return Result.Fail("Böyle bir kullanıcı bulunamadı.");
+            return await Result.FailAsync("Böyle bir kullanıcı bulunamadı.");
 
         if (changePasswordCommand.NewPassword != changePasswordCommand.ReTypePassword)
-            return Result.Fail(ResultStatus.Warning);
+            return await Result.FailAsync(ResultStatus.Warning);
         var isPasswordTrue = HashingHelper.VerifyPasswordHash(changePasswordCommand.Password, mentor.PasswordHash,
             mentor.PasswordSalt);
         if (!isPasswordTrue)
-            return Result.Fail(ResultStatus.Warning);
+            return await Result.FailAsync(ResultStatus.Warning);
 
         byte[] passwordHash, passwordSalt;
         HashingHelper.CreatePasswordHash(changePasswordCommand.NewPassword, out passwordHash, out passwordSalt);
@@ -104,7 +104,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         mentor.ModifiedDate = DateTime.Now;
         _context.Update(mentor);
         await _context.SaveChangesAsync();
-        return Result.Success();
+        return await Result.SuccessAsync();
     }
 
     public async Task<IResult> ForgotPasswordEmailAsync(
@@ -113,9 +113,9 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         var mentor = await _context.Mentors.SingleOrDefaultAsync(a =>
             a.EmailAddress == changePasswordEmailCommand.EmailAddress);
         if (mentor is null)
-            return Result.Fail(Messages.General.NotFoundArgument("kullanıcı"));
+            return await Result.FailAsync(Messages.General.NotFoundArgument("kullanıcı"));
         if (changePasswordEmailCommand.Password != changePasswordEmailCommand.ReTypePassword)
-            return Result.Fail("Şifreler aynı değil.", ResultStatus.Warning);
+            return await Result.FailAsync("Şifreler aynı değil.", ResultStatus.Warning);
 
         byte[] passwordHash, passwordSalt;
         HashingHelper.CreatePasswordHash(changePasswordEmailCommand.Password, out passwordHash,
@@ -125,7 +125,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         mentor.ModifiedDate = DateTime.Now;
         _context.Mentors.Update(mentor);
         await _context.SaveChangesAsync();
-        return Result.Success("Şifre başarıyla değiştirildi.");
+        return await Result.SuccessAsync("Şifre başarıyla değiştirildi.");
     }
 
     public async Task<IResult> ForgotPasswordPhoneAsync(ForgotPasswordPhoneCommand changePasswordCommand)
@@ -133,9 +133,9 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         var mentor = await _context.Mentors.SingleOrDefaultAsync(a =>
             a.PhoneNumber == changePasswordCommand.PhoneNumber);
         if (mentor is null)
-            return Result.Fail(Messages.General.NotFoundArgument("kullanıcı"));
+            return await Result.FailAsync(Messages.General.NotFoundArgument("kullanıcı"));
         if (changePasswordCommand.Password != changePasswordCommand.ReTypePassword)
-            return Result.Fail("Şifreler aynı değil.", ResultStatus.Warning);
+            return await Result.FailAsync("Şifreler aynı değil.", ResultStatus.Warning);
 
         byte[] passwordHash, passwordSalt;
         HashingHelper.CreatePasswordHash(changePasswordCommand.Password, out passwordHash, out passwordSalt);
@@ -145,7 +145,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         _context.Mentors.Update(mentor);
         await _context.SaveChangesAsync();
 
-        return Result.Success("Şifre başarıyla değiştirildi.");
+        return await Result.SuccessAsync("Şifre başarıyla değiştirildi.");
     }
 
     public async Task<IEnumerable<OperationClaim>> GetClaimsAsync(Mentor mentor)
@@ -169,18 +169,18 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
             a.EmailAddress == loginWithMailCommand.EmailAddress);
 
         if (mentor is null)
-            return Result<UserAndTokenDto>.Fail(Messages.General.NotFoundArgument("mentör"));
+            return await Result<UserAndTokenDto>.FailAsync(Messages.General.NotFoundArgument("mentör"));
 
         if (!mentor.IsEmailAddressVerified)
-            return Result<UserAndTokenDto>.Fail("Mail adresinizi doğrulayın.", ResultStatus.Warning);
+            return await Result<UserAndTokenDto>.FailAsync("Mail adresinizi doğrulayın.", ResultStatus.Warning);
 
         if (HashingHelper.VerifyPasswordHash(loginWithMailCommand.Password, mentor.PasswordHash, mentor.PasswordSalt))
         {
             if (!mentor.IsActive)
-                return Result<UserAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.",
+                return await Result<UserAndTokenDto>.FailAsync("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.",
                     ResultStatus.Warning);
             if (!mentor.IsEmailAddressVerified)
-                return Result<UserAndTokenDto>.Fail(
+                return await Result<UserAndTokenDto>.FailAsync(
                     "Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.", ResultStatus.Warning);
 
             mentor.LastLogin = DateTime.Now;
@@ -218,10 +218,10 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
             userLoginCommand.User.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
             userLoginCommand.User.CurrentPortfolioId = mentor.CurrentPortfolioId;
 
-            return Result<UserAndTokenDto>.Success(userLoginCommand);
+            return await Result<UserAndTokenDto>.SuccessAsync(userLoginCommand);
         }
 
-        return Result<UserAndTokenDto>.Fail(ResultStatus.Warning);
+        return await Result<UserAndTokenDto>.FailAsync(ResultStatus.Warning);
     }
 
     public async Task<IResult<UserAndTokenDto>> LoginWithPhoneAsync(LoginWithPhoneCommand loginWithPhoneCommand)
@@ -232,15 +232,15 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
             .SingleOrDefaultAsync(
                 a => a.PhoneNumber == loginWithPhoneCommand.PhoneNumber);
         if (mentor is null)
-            return Result<UserAndTokenDto>.Fail(Messages.General.NotFoundArgument("kullanıcı"));
+            return await Result<UserAndTokenDto>.FailAsync(Messages.General.NotFoundArgument("kullanıcı"));
 
         if (HashingHelper.VerifyPasswordHash(loginWithPhoneCommand.Password, mentor.PasswordHash, mentor.PasswordSalt))
         {
             if (!mentor.IsActive)
-                return Result<UserAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.",
+                return await Result<UserAndTokenDto>.FailAsync("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.",
                     ResultStatus.Warning);
             if (!mentor.IsEmailAddressVerified)
-                return Result<UserAndTokenDto>.Fail(
+                return await Result<UserAndTokenDto>.FailAsync(
                     "Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.", ResultStatus.Warning);
             if (!mentor.IsPhoneNumberVerified)
                 //return Result.(ResultStatus.Error, "Hesabınızı Aktif Etmek İçin Telefon Numaranızı Doğrulamanız Gerekmektedir.");
@@ -278,10 +278,10 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
             };
             userLoginCommand.User.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
             userLoginCommand.User.CurrentPortfolioId = mentor.CurrentPortfolioId;
-            return Result<UserAndTokenDto>.Success(userLoginCommand);
+            return await Result<UserAndTokenDto>.SuccessAsync(userLoginCommand);
         }
 
-        return Result<UserAndTokenDto>.Fail("Lütfen bilgilerinizi kontrol ediniz.", ResultStatus.Warning);
+        return await Result<UserAndTokenDto>.FailAsync("Lütfen bilgilerinizi kontrol ediniz.", ResultStatus.Warning);
     }
 
     public async Task<IResult<UserAndTokenDto>> LoginWithUserNameAsync(
@@ -291,16 +291,16 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         //.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a=>a.PortfolioTransactions)
         var mentor = await _context.Mentors.Include(a => a.Portfolios).ThenInclude(c => c.PortfolioTokens).ThenInclude(a=>a.PortfolioTransactions).SingleOrDefaultAsync(a => a.UserName == loginWithUserNameCommand.UserName);
         if (mentor is null)
-            return Result<UserAndTokenDto>.Fail(Messages.General.NotFoundArgument("kullanıcı"));
+            return await Result<UserAndTokenDto>.FailAsync(Messages.General.NotFoundArgument("kullanıcı"));
 
         if (HashingHelper.VerifyPasswordHash(loginWithUserNameCommand.Password, mentor.PasswordHash,
                 mentor.PasswordSalt))
         {
             if (!mentor.IsActive)
-                return Result<UserAndTokenDto>.Fail("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.",
+                return await Result<UserAndTokenDto>.FailAsync("Hesabınızı Aktif Etmek İçin Destek ile İletişime Geçiniz.",
                     ResultStatus.Warning);
             if (!mentor.IsEmailAddressVerified)
-                return Result<UserAndTokenDto>.Fail(
+                return await Result<UserAndTokenDto>.FailAsync(
                     "Hesabınızı Aktif Etmek İçin Mailinizi Doğrulamanız Gerekmektedir.", ResultStatus.Warning);
 
             mentor.LastLogin = DateTime.Now;
@@ -337,10 +337,10 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
             };
             userLoginCommand.User.Portfolio = _mapper.Map<PortfolioDto>(currentPortfolio);
             userLoginCommand.User.CurrentPortfolioId = mentor.CurrentPortfolioId;
-            return Result<UserAndTokenDto>.Success(userLoginCommand);
+            return await Result<UserAndTokenDto>.SuccessAsync(userLoginCommand);
         }
 
-        return Result<UserAndTokenDto>.Fail("Lütfen bilgilerinizi kontrol ediniz.", ResultStatus.Warning);
+        return await Result<UserAndTokenDto>.FailAsync("Lütfen bilgilerinizi kontrol ediniz.", ResultStatus.Warning);
     }
 
     public async Task<IResult<UserAndTokenDto>> RegisterAsync(RegisterCommand registerCommand)
@@ -350,13 +350,13 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         if (await _context.Mentors.SingleOrDefaultAsync(a =>
                 a.PhoneNumber == registerCommand.PhoneNumber || a.UserName == registerCommand.UserName ||
                 a.EmailAddress == registerCommand.EmailAddress) is not null)
-            return Result<UserAndTokenDto>.Fail("Bu kullanıcı mevcut");
+            return await Result<UserAndTokenDto>.FailAsync("Bu kullanıcı mevcut");
         //var userVerifyCheck = await _context.VerificationCodes.SingleOrDefaultAsync(a => a.EmailAddress == registerCommand.EmailAddress && a.PhoneNumber == registerCommand.PhoneNumber);
         var mentorVerifyCheck =
             await _context.VerificationCodes.SingleOrDefaultAsync(a =>
                 a.EmailAddress == registerCommand.EmailAddress);
         if (mentorVerifyCheck is null)
-            return Result<UserAndTokenDto>.Fail("Böyle bir kayıt bulunamadı.");
+            return await Result<UserAndTokenDto>.FailAsync("Böyle bir kayıt bulunamadı.");
 
         byte[] passwordHash, passwordSalt;
         HashingHelper.CreatePasswordHash(registerCommand.Password, out passwordHash, out passwordSalt);
@@ -396,7 +396,7 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
         userAndTokenDto.User.Portfolio = _mapper.Map<PortfolioDto>(portfolio);
         userAndTokenDto.User.CurrentPortfolioId = portfolio.Id;
         await _context.SaveChangesAsync();
-        return Result<UserAndTokenDto>.Success($"Hoşgeldiniz Sayın {mentor.FirstName} {mentor.LastName}.",
+        return await Result<UserAndTokenDto>.SuccessAsync($"Hoşgeldiniz Sayın {mentor.FirstName} {mentor.LastName}.",
             userAndTokenDto);
     }
 

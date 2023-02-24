@@ -32,7 +32,7 @@ public class PortfolioRepository:GenericRepository<Portfolio>,IPortfolioReposito
             mentorExist.Portfolios.Add(portfolio);
             await _context.Portfolios.AddAsync(portfolio);
             await _context.SaveChangesAsync();
-            return Result<Portfolio>.Success(portfolio);
+            return await Result<Portfolio>.SuccessAsync(portfolio);
     }
     
     public async Task<IResult<Portfolio>> CreatePortfolioAsync(User user)
@@ -52,6 +52,6 @@ public class PortfolioRepository:GenericRepository<Portfolio>,IPortfolioReposito
         userExist.Portfolios.Add(portfolio);
         await _context.Portfolios.AddAsync(portfolio);
         await _context.SaveChangesAsync();
-        return Result<Portfolio>.Success(portfolio);
+        return await Result<Portfolio>.SuccessAsync(portfolio);
     }
 }

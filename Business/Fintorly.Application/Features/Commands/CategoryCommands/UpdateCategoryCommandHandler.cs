@@ -17,7 +17,7 @@ namespace Fintorly.Application.Features.Commands.CategoryCommands
         {
             var result = await _categoryRepository.GetByIdAsync(request.Id);
             var dto = _mapper.Map<CategoryDto>(result);
-            return Result<CategoryDto>.Success(dto);
+            return await Result<CategoryDto>.SuccessAsync(dto);
         }
     }
 }

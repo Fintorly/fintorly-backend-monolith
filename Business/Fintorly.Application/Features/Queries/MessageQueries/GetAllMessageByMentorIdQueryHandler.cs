@@ -18,8 +18,8 @@ public class
     {
         var result= await _messageRepository.GetAllMessageByMentorIdAsync(request.MentorId,cancellationToken);
         if (result == null)
-            return Result<List<MessageDto>>.Fail();
+            return await Result<List<MessageDto>>.FailAsync();
         var messages = _mapper.Map<List<MessageDto>>(result);
-        return Result<List<MessageDto>>.Success(messages);
+        return await Result<List<MessageDto>>.SuccessAsync(messages);
     }
 }

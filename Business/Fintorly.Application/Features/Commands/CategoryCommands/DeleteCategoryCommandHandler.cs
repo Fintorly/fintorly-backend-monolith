@@ -12,7 +12,7 @@ public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryComman
 	{
 		var result = await _categoryRepository.DeleteByIdAsync(request.Id);
 		if (result)
-			return Result.Success();
-		return Result.Fail();
+			return await Result.SuccessAsync();
+		return await Result.FailAsync();
 	}
 }

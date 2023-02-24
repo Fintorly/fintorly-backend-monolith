@@ -35,7 +35,7 @@ namespace Fintorly.Infrastructure.Utilities.Services
             message.Body = body;
             client.Send(message);
             client.Dispose();
-            return Result.Success("Mail Başarıyla Gönderildi");
+            return await Result.SuccessAsync("Mail Başarıyla Gönderildi");
         }
 
         public Task<IResult> SendLandingEmail(LandingEmailCommand landingEmailDto)

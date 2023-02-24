@@ -17,8 +17,8 @@ public class GetMessageQueryHandler : IRequestHandler<GetMessageQuery, IResult<M
     {
         var message = await _messageRepository.GetByIdAsync(request.MessageId);
         if (message == null)
-            return Result<MessageDto>.Fail();
+            return await Result<MessageDto>.FailAsync();
         var messageDto = _mapper.Map<MessageDto>(message);
-        return Result<MessageDto>.Success(messageDto);
+        return await Result<MessageDto>.SuccessAsync(messageDto);
     }
 }

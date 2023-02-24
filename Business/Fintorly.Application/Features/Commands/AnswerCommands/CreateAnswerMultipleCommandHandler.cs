@@ -15,7 +15,7 @@ public class CreateAnswerMultipleCommandHandler : IRequestHandler<CreateAnswerMu
     {
         var result=await _answerRepository.AddMultipleAnswer(request);
         if (result)
-            return Result.Success();
-        return Result.Fail();
+            return await Result.SuccessAsync();
+        return await Result.FailAsync();
     }
 }

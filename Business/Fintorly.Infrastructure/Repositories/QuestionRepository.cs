@@ -36,7 +36,7 @@ namespace Fintorly.Infrastructure.Repositories
                 await _context.Choices.AddAsync(newChoice);
                 await _context.Questions.AddAsync(newQuestion);
                 await _context.SaveChangesAsync();
-                return Result.Success();
+                return await Result.SuccessAsync();
             }
             else
             {
@@ -58,7 +58,7 @@ namespace Fintorly.Infrastructure.Repositories
                 }
                 _context.Update(question);
                 await _context.SaveChangesAsync();
-                return Result.Success();
+                return await Result.SuccessAsync();
             }
         }
     }

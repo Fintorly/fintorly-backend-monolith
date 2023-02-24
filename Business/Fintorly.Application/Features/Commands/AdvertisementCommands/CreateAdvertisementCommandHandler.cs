@@ -17,15 +17,15 @@ public class CreateAdvertisementCommandHandler : IRequestHandler<CreateAdvertise
     public async Task<IResult> Handle(CreateAdvertisementCommand request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(request.Title))
-            return Result.Fail("Title alanı boş olamaz");
+            return await Result.FailAsync("Title alanı boş olamaz");
         if (string.IsNullOrEmpty(request.Content))
-            return Result.Fail("Content alanı boş olamaz");
+            return await Result.FailAsync("Content alanı boş olamaz");
         if (request.Price <= 0)//Price 0'dan büyükse
-            return Result.Fail("Content alanı boş olamaz");
+            return await Result.FailAsync("Content alanı boş olamaz");
 
         var advertisement = _mapper.Map<Advertisement>(request);
         var result = await _advertisement.AddAsync(advertisement);
-        return Result.Success();
+        return await Result.SuccessAsync();
     }
 
 

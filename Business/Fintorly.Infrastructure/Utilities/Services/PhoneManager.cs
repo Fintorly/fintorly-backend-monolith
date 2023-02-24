@@ -30,7 +30,7 @@ namespace Fintorly.Infrastructure.Utilities.Services
                            "<numaralar>" + phoneNumber + "</numaralar>" +
                            "<tur>" + tur + "</tur></sms>";
             string a = XmlPost("http://panel.vatansms.com/panel/smsgonder1Npost.php", sms1N);
-            return Result.Success("Doğrulama kodu başarıyla gönderildi");
+            return await Result.SuccessAsync("Doğrulama kodu başarıyla gönderildi");
         }
 
         private string XmlPost(string PostAddress, string xmlData)

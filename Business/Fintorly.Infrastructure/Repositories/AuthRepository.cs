@@ -33,17 +33,17 @@ public class AuthRepository:IAuthRepository
             await _context.VerificationCodes.SingleOrDefaultAsync(a =>
                 a.EmailAddress == emailActiveCommand.EmailAddress);
         if (verificationCode is null)
-            return Result.Fail("Bu Mail adresi ile daha önce kayıt oluşturma işleminde bulunulmamıştır.");
+            return await Result.FailAsync("Bu Mail adresi ile daha önce kayıt oluşturma işleminde bulunulmamıştır.");
         if (verificationCode.MailCode != emailActiveCommand.ActivationCode)
-            return Result.Fail("Doğrulamada kodu doğru değildir.");
+            return await Result.FailAsync("Doğrulamada kodu doğru değildir.");
         if (verificationCode.MailCode == emailActiveCommand.ActivationCode &&
             verificationCode.VerificationCodeValidDate < DateTime.Now)
-            return Result.Fail("Bu kodun geçerlilik süresi sona ermiştir");
+            return await Result.FailAsync("Bu kodun geçerlilik süresi sona ermiştir");
         
         verificationCode.IsMailConfirmed = true;
         _context.VerificationCodes.Update(verificationCode);
         await _context.SaveChangesAsync();
-        return Result.Success($"{emailActiveCommand.EmailAddress} mail adresi başarıyla onaylanmıştır.");
+        return await Result.SuccessAsync($"{emailActiveCommand.EmailAddress} mail adresi başarıyla onaylanmıştır.");
     }
 
     public async Task<IResult> ActivePhoneByActivationCodeAsync(PhoneActiveCommand phoneActiveCommand)
@@ -53,17 +53,17 @@ public class AuthRepository:IAuthRepository
             await _context.VerificationCodes.SingleOrDefaultAsync(a =>
                 a.PhoneNumber == phoneActiveCommand.PhoneNumber);
         if (verificationCode is null)
-            return Result.Fail("Bu Telefon numarası ile daha önce kayıt oluşturma işleminde bulunulmamıştır.");
+            return await Result.FailAsync("Bu Telefon numarası ile daha önce kayıt oluşturma işleminde bulunulmamıştır.");
         if (verificationCode.PhoneCode == phoneActiveCommand.ActivationCode &&
             verificationCode.VerificationCodeValidDate < DateTime.Now)
-            return Result.Fail("Bu kodun geçerlilik süresi sona ermiştir");
+            return await Result.FailAsync("Bu kodun geçerlilik süresi sona ermiştir");
         if (verificationCode.PhoneCode != phoneActiveCommand.ActivationCode)
-            return Result.Fail("Doğrulamada kodu doğru değildir.");
+            return await Result.FailAsync("Doğrulamada kodu doğru değildir.");
 
         verificationCode.IsPhoneNumberConfirmed = true;
         _context.VerificationCodes.Update(verificationCode);
         await _context.SaveChangesAsync();
-        return Result.Success($"{phoneActiveCommand.PhoneNumber} numaralı hesap başarıyla onaylanmıştır.");
+        return await Result.SuccessAsync($"{phoneActiveCommand.PhoneNumber} numaralı hesap başarıyla onaylanmıştır.");
     }
 
     public async Task<IResult> SendActivationCodeEmailAsync(
@@ -72,7 +72,7 @@ public class AuthRepository:IAuthRepository
         var verification = await _context.VerificationCodes.SingleOrDefaultAsync(a =>
             a.EmailAddress == activationCodeEmailAddressCommand.EmailAddress);
         if (verification is null)
-            return Result.Fail("Lütfen kayıt olma ekranına geri dönüp tekrar deneyiniz.");
+            return await Result.FailAsync("Lütfen kayıt olma ekranına geri dönüp tekrar deneyiniz.");
       
         verification.MailCode = VerificationCodeGenerator.Generate();
         verification.VerificationCodeValidDate = DateTime.Now.AddMinutes(3);
@@ -86,7 +86,7 @@ public class AuthRepository:IAuthRepository
             Content =
                 $@" Doğrulama kodunun süresi 3 dakika ile sınırlıdır. Doğrulama kodunuz: {verification.MailCode}"
         });
-        return Result.Success(
+        return await Result.SuccessAsync(
             "Doğrulama kodu başarıyla mail adresinize gönderildi. Kodun geçerlilik süresi 3 dakikadır.",
             verification);
     }
@@ -97,7 +97,7 @@ public class AuthRepository:IAuthRepository
         var phoneIsExist = await _context.VerificationCodes.SingleOrDefaultAsync(a =>
             a.PhoneNumber == activationCodePhoneNumberCommand.PhoneNumber);
         if (phoneIsExist is null)
-            return Result.Fail("Lütfen kayıt olma ekranına geri dönüp tekrar deneyiniz.");
+            return await Result.FailAsync("Lütfen kayıt olma ekranına geri dönüp tekrar deneyiniz.");
         phoneIsExist.PhoneCode = VerificationCodeGenerator.Generate();
         phoneIsExist.VerificationCodeValidDate = DateTime.Now.AddMinutes(3);
         phoneIsExist.ModifiedDate = DateTime.Now;
@@ -105,7 +105,7 @@ public class AuthRepository:IAuthRepository
         await _context.SaveChangesAsync();
         await _phoneService.SendPhoneVerificationCodeAsync(activationCodePhoneNumberCommand.PhoneNumber,
             phoneIsExist.PhoneCode);
-        return Result.Success(
+        return await Result.SuccessAsync(
             "Doğrulama kodu başarıyla telefon numaranıza gönderildi. Kodun geçerlilik süresi 3 dakikadır.",
             phoneIsExist);
     }
@@ -131,6 +131,6 @@ public class AuthRepository:IAuthRepository
 
         await _context.VerificationCodes.AddAsync(verificationCode);
         await _context.SaveChangesAsync();
-        return Result.Success("Kod eşleşmesi başarıyla oluşturuldu.");
+        return await Result.SuccessAsync("Kod eşleşmesi başarıyla oluşturuldu.");
     }
 }

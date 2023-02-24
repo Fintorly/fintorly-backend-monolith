@@ -20,7 +20,7 @@ namespace Fintorly.Application.Behaviors
                 var validationResults = await Task.WhenAll(_validators.Select(v => v.ValidateAsync(context, cancellationToken)));
                 var failures = validationResults.Where(a => a.Errors.Any()).SelectMany(a => a.Errors).ToList();
                 if (failures.Any())
-                    return (TResponse) Result.Fail(failures.First().ErrorMessage.Remove(0));
+                    return (TResponse)await Result.FailAsync(failures.First().ErrorMessage.Remove(0));
             }
             return await next();
         }

@@ -18,6 +18,6 @@ public class GetAllAdvertisementQueryHandler : IRequestHandler<GetAllAdvertiseme
     {
         var result=await _advertisement.GetAllAsync();
         var advertisementsDtos = _mapper.Map<List<AdvertisementDto>>(result);
-        return Result<List<AdvertisementDto>>.Success(advertisementsDtos);
+        return await Result<List<AdvertisementDto>>.SuccessAsync(advertisementsDtos);
     }
 }

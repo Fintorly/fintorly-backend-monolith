@@ -18,7 +18,7 @@ public class CreateMessageCommandHandler : IRequestHandler<CreateMessageCommand,
         var message = _mapper.Map<Message>(request);
         var result = await _messageRepository.AddAsync(message);
         if (result)
-            return Result.Success();
-        return Result.Fail();
+            return await Result.SuccessAsync();
+        return await Result.FailAsync();
     }
 }

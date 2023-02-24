@@ -17,6 +17,6 @@ public class GetByIdAdvertisementQueryHandler : IRequestHandler<GetByIdAdvertise
     {
         var advertisement= await _advertisementRepository.GetByIdAsync(request.Id);
         var dto = _mapper.Map<AdvertisementDto>(advertisement);
-        return Result<AdvertisementDto>.Success(dto);
+        return await Result<AdvertisementDto>.SuccessAsync(dto);
     }
 }
