@@ -118,7 +118,7 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(x => { x.SwaggerEndpoint("/swagger/v1/swagger.yaml", "Fintorly Dashboard API"); });
 //app.UseHangfireDashboard("/dashboard");
 app.UseCors(x => x
     .AllowAnyMethod()
