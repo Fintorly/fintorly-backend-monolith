@@ -91,11 +91,11 @@ public class MentorAuthRepository : GenericRepository<Mentor>, IMentorAuthReposi
             return await Result.FailAsync("Böyle bir kullanıcı bulunamadı.");
 
         if (changePasswordCommand.NewPassword != changePasswordCommand.ReTypePassword)
-            return await Result.FailAsync(ResultStatus.Warning);
+            return await Result.FailAsync(ResultStatus.Error);
         var isPasswordTrue = HashingHelper.VerifyPasswordHash(changePasswordCommand.Password, mentor.PasswordHash,
             mentor.PasswordSalt);
         if (!isPasswordTrue)
-            return await Result.FailAsync(ResultStatus.Warning);
+            return await Result.FailAsync(ResultStatus.Error);
 
         byte[] passwordHash, passwordSalt;
         HashingHelper.CreatePasswordHash(changePasswordCommand.NewPassword, out passwordHash, out passwordSalt);
